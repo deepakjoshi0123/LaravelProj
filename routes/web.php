@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\IndexController;
+use App\Http\Controllers\ProjectController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +13,5 @@ use App\Http\Controllers\IndexController;
 |
 */
 
-Route::get('/data',[IndexController::class,'index']);
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/projects',[ProjectController::class,'getProjects']);
+Route::post('/createProject',[ProjectController::class,'createProject']);
