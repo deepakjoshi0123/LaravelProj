@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('task__mems', function (Blueprint $table) {
            
             $table->unsignedBigInteger('task_id');
-            $table->foreign('task_id')->references('id')->on('tasks');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');;
             $table->unsignedBigInteger('member_id');
-            $table->foreign('member_id')->references('id')->on('members');
+            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');;
             $table->timestamps();
         });
     }
