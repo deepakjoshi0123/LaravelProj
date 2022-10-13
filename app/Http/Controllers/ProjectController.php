@@ -23,4 +23,7 @@ class ProjectController extends Controller
     public function getMembers(Request $req){ 
         return $this->projectService->getAllMembers($req->getContent());
     }
+    public function dashboard(){
+        return view('dashboard');
+    }
 }
