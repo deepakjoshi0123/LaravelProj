@@ -9,11 +9,10 @@ Class ProjectService{
     //can we do same query in one
             //-getting all projects for the given user_id
             //-getting all the users for the given project_id
-    public function getAllProjects($request){
-        $user = json_decode($request,true)['member_id'];
+    public function getAllProjects($member_id){
         $project = Proj_Mem::query()->with(['project'=> function($query){ //hasmanythrough
         $query->select('id','project_name');
-          }])->where('member_id',$user)->get(['project_id']);
+          }])->where('member_id',$member_id)->get(['project_id']);
          return $project;
     }
     // validation

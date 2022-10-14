@@ -20,7 +20,7 @@ class TaskController extends Controller
         $this->taskService = $taskService;  
     }
     public function getTasks(Request $req){ 
-        return $this->taskService->getTasks($req->getContent());
+        return $this->taskService->getTasks($req['project_id']);
     }
     public function addTask(Request $req){ 
         return $this->taskService->addTask($req->getContent());

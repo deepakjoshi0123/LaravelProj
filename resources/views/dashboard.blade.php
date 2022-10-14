@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Dashboard</title>
@@ -35,7 +36,7 @@
         <a class="navbar-brand mt-2 mt-lg-0" href="#">
           <img
             src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-            height="15"
+            height="18"
             alt="MDB Logo"
             loading="lazy"
           />
@@ -45,7 +46,7 @@
           <li class="nav-item">
             <a class="nav-link" href="#" data-mdb-toggle="modal" data-mdb-target="#exampleModal">Create Project</a>
           </li>
-          <form class="d-flex input-group w-auto" style="margin-left:500px">
+          <form class="d-flex input-group w-auto" style="margin-left:730px">
             <input
               type="search"
               class="form-control rounded"
@@ -63,12 +64,7 @@
       <!-- Collapsible wrapper -->
   
       <!-- Right elements -->
-      <div class="d-flex align-items-center">
-        <!-- Icon -->
-        <a class="text-reset me-3" href="#">
-          <i class="fas fa-shopping-cart"></i>
-        </a>
-  
+      <div class="d-flex align-items-center"> 
         <!-- Notifications -->
         <div class="dropdown">
           <a
@@ -141,32 +137,8 @@
         <div class="div" style="width:30% ">
             <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
                 <div class="position-sticky">
-                  <div class="list-group list-group-flush mx-3 mt-4">
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
-                      <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple active">
-                      <i class="fas fa-chart-area fa-fw me-3"></i><span>Webiste traffic</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-lock fa-fw me-3"></i><span>Password</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-chart-line fa-fw me-3"></i><span>Analytics</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple">
-                      <i class="fas fa-chart-pie fa-fw me-3"></i><span>SEO</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-globe fa-fw me-3"></i><span>International</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-building fa-fw me-3"></i><span>Partners</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-calendar fa-fw me-3"></i><span>Calendar</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-users fa-fw me-3"></i><span>Users</span></a>
-                    <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class="fas fa-money-bill fa-fw me-3"></i><span>Sales</span></a>
+                  <div class="list-group list-group-flush mx-3 mt-4" id="side-bar">
+                   
                   </div>
                 </div>
               </nav>
@@ -193,70 +165,83 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <!-- Left links -->
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Dashboard</a>
+                        <li class="nav-item" style="margin-right:20px">
+                            <a class="nav-link link-info" href="#">Project Name</a>
+                        </li>
+                        <li class="nav-item" >
+                            <img
+                            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                            class="rounded-circle"
+                            height="40"
+                            alt="Black and White Portrait of a Man"
+                            loading="lazy"
+                          />
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Team</a>
+                            <img
+                            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                            class="rounded-circle"
+                            height="40"
+                            style="margin-left:4px"
+                            alt="Black and White Portrait of a Man"
+                            loading="lazy"
+                          />
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Projects</a>
-                        </li>
+                        <button style="margin-left:10px" type="button" class="btn btn-info">Share
+                            <i class="far fa-share-square"></i>
+                        </button>
+                        <button style="margin-left:10px" type="button" class="btn btn-info">Add Task
+                            <i class="fas fa-tasks"></i>
+                        </button>
                         </ul>
+                        <div class="dropdown">
+                            <a
+                              class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                              href="#"
+                              id="navbarDropdownMenuAvatar"
+                              role="button"
+                              data-mdb-toggle="dropdown"
+                              aria-expanded="false"
+                              
+                            >
+                            <button style="margin-left:5px" type="button" class="btn btn-info">Filters
+                                <i class="fas fa-filter"></i>
+                            </button>
+                            </a>
+                            
+                            <ul
+                              class="dropdown-menu dropdown-menu-end"
+                              aria-labelledby="navbarDropdownMenuAvatar"
+                            >
+                              <li>
+                                <h6>Members</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                    <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
+                                  </div>
+                              </li>
+                              <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                    <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
+                                  </div>
+                              </li>
+                              <li>
+                                <h5>Status</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                    <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
+                                  </div>
+                              </li>
+                            </ul>
+                          </div>
                         <!-- Left links -->
                     </div>
-                    <!-- Collapsible wrapper -->
-                
-                    <!-- Right elements -->
-                    <div class="d-flex align-items-center">
-                        <!-- Icon -->
-                        <a class="text-reset me-3" href="#">
-                        <i class="fas fa-shopping-cart"></i>
-                        </a>
-                
-                    
-                    <!-- Right elements -->
-                    </div>
-                    <!-- Container wrapper -->
+                   
                 </nav>
                 <div class="div" style="overflow: auto">
-                    <ul class="list-group list-group-light">
-                        <span class="badge rounded-pill badge-primary" style="width: 10%">Open</span>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                              <div class="fw-bold">John Doe</div>
-                              <div class="text-muted">john.doe@gmail.com</div>
-                            </div>
-                          </li>
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                              <div class="fw-bold">Alex Ray</div>
-                              <div class="text-muted">alex.ray@gmail.com</div>
-                            </div>
-                           
-                          </li>
-                          <span class="badge rounded-pill badge-success" style="width: 10%">Closed</span>
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                              <div>
-                                <div class="fw-bold">John Doe</div>
-                                <div class="text-muted">john.doe@gmail.com</div>
-                              </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                              <div>
-                                <div class="fw-bold">Alex Ray</div>
-                                <div class="text-muted">alex.ray@gmail.com</div>
-                              </div>
-                             
-                            </li>
-                            <span class="badge rounded-pill badge-warning" style="width:10%">Pending</span>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                  <div class="fw-bold">John Doe</div>
-                                  <div class="text-muted">john.doe@gmail.com</div>
-                                </div>
-                              </li>
-                      </ul>
+                    <ul class="list-group list-group-light" id="task-listing">
+                    </ul>
 
                 </div>
   <!-- Navbar -->
@@ -280,6 +265,67 @@
                     </div>
    </div>
 </body>
-<script src="{{ asset('js/mdb.min.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+$.ajax({
+    url:'projects',
+    data:{"member_id":"1"},
+    type:'get',
+    // crossDomain: true,
+    success:  function (response) {
+        $.each(response,function(key,item){
+            
+            $('#side-bar').append(
+                `<div   data-project-id=`+item.project_id+` class="project-item list-group-item list-group-item-action py-2 ripple "><i class="fab fa-medapps"></i><span>`+item.project[0].project_name+`</span></div>`
+            )
+        });
+    },
+    error: function(x,xs,xt){
+       console.log(x);
+
+    }
+    }); //prettier 
+        $(document).on('click','.project-item',function(e){
+            console.log($(this).attr('data-project-id'))
+    $.ajax({
+    url:'tasks',
+    data:{"project_id":$(this).attr('data-project-id')},
+    type:'get',
+    success:  function (response) {
+        $('#task-listing').html("")
+        $.each(response,function(key,item){
+            $.each(item,function(key2,item2){
+                $('#task-listing').append(
+                ` <span class="badge rounded-pill badge-primary" style="width: 10%">`+key+`</span>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                              <div class="fw-bold">`+item2.title+`</div>
+                              <div class="text-muted">`+item2.description+`</div>
+                            </div>
+                          </li>`   
+                 )
+            })
+           
+            
+        });
+    },
+    error: function(x,xs,xt){
+         
+    }
+    });
+        })
+       
+        })
+</script>
+<script  src="{{ asset('js/mdb.min.js') }}">
+</script>
+
 
 </html>

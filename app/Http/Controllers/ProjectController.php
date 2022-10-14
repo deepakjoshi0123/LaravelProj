@@ -12,7 +12,8 @@ class ProjectController extends Controller
         $this->projectService = $projectService;  
     }
     public function getProjects(Request $req){  //custom req class and pass it the functon arguments for validation
-        return $this->projectService->getAllProjects($req->getContent());
+        
+        return $this->projectService->getAllProjects($req['member_id']);
     }
     public function createProject(Request $req){
         return $this->projectService->createProject($req->getContent());

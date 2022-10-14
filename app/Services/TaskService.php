@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use Response;
 
 Class TaskService{
-    public function getTasks($request){
-        $proj_id = json_decode($request,true)['project_id'];;
-        $project = Task::where('project_id',$proj_id)->get();
+    public function getTasks($project_id){
+        $project = Task::where('project_id',$project_id)->get(['id','title','description','status','attachment']);
         $res=array();
         for($i=0;$i<count($project);$i++){
             $res[$project[$i]['status']] =  array();
