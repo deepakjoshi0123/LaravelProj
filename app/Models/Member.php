@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     use HasFactory;
+    public function projects(){
+        return $this->belongsToMany(Project::class,Proj_Mem::class);
+    }
 }

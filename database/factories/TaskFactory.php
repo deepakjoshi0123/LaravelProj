@@ -19,7 +19,7 @@ class TaskFactory extends Factory
     {
         return [
             'title' => fake()->paragraph(1),
-            'description' => fake()->paragraph(3),
+            'description' => fake()->paragraph(6),
             'status' => 'open',
             'project_id' => \App\Models\Project::get()->random(),  
             'attachment' =>fake()->paragraph(1),

@@ -2,17 +2,19 @@
 namespace App\Services;
 use App\Models\Proj_Mem;
 use App\Models\Project;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Response;
 
 Class ProjectService{
-    //can we do same query in one
-            //-getting all projects for the given user_id
-            //-getting all the users for the given project_id
     public function getAllProjects($member_id){
-        $project = Proj_Mem::query()->with(['project'=> function($query){ //hasmanythrough
+        $project = Proj_Mem::query()->with(['project'=> function($query){ 
         $query->select('id','project_name');
           }])->where('member_id',$member_id)->get(['project_id']);
+        // dd($member_id);
+        // dd(Member::find($member_id));
+        // $project = Member::find($member_id)->projects;
+        
          return $project;
     }
     // validation
