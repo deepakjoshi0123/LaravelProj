@@ -27,8 +27,17 @@ Route::get('/comments',[CommentController::class,'getComments']);
 Route::post('/addComment',[CommentController::class,'addComment']);
 
 //auth routes
-Route::post('/login',[MemberAuthController::class,'login']);
-Route::post('/register',[MemberAuthController::class,'register']);
+// Route::post('/login',[MemberAuthController::class,'login']);
+// Route::post('/register',[MemberAuthController::class,'register']);
 
 Route::get('/dashboard',[ProjectController::class,'dashboard']);
 
+Route::group([
+    'middleware' => 'api',
+ ], function ($router) {
+    
+    Route::post('/login', [MemberAuthController::class,'login']);
+    Route::post('/logout', [MemberAuthController::class,'logout']);
+    Route::post('/refresh', [MemberAuthController::class,'refresh']);
+    Route::post('/me', [MemberAuthController::class,'me']);
+ });
