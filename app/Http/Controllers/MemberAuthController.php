@@ -15,7 +15,7 @@ class MemberAuthController extends Controller
        return $this->respondWithToken($token);
     }
     public function me()
-   {   echo "hey";
+   {   
        return response()->json(auth()->user());
    }
    public function logout()

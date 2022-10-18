@@ -5,12 +5,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MemberAuthController;
-//project routes
 
-Route::get('/projects',[ProjectController::class,'getProjects']);
-Route::post('/createProject',[ProjectController::class,'createProject']);
-Route::post('/addMember',[ProjectController::class,'addMemberToProject']);
-Route::get('/projMembers',[ProjectController::class,'getMembers']);
 
 //task routes
 
@@ -31,12 +26,14 @@ Route::post('/addComment',[CommentController::class,'addComment']);
 // Route::post('/register',[MemberAuthController::class,'register']);
 
 Route::get('/dashboard',[ProjectController::class,'dashboard']);
-
-Route::group([
-    'middleware' => 'api',
- ], function ($router) {
-    
-    Route::post('/login', [MemberAuthController::class,'login']);
+Route::post('/login', [MemberAuthController::class,'login']);
+Route::group(['middleware' => ['jwt.verify']
+    ], function ($router) {
+    //project routes
+    Route::get('/projects',[ProjectController::class,'getProjects']);
+    Route::post('/createProject',[ProjectController::class,'createProject']);
+    Route::post('/addMember',[ProjectController::class,'addMemberToProject']);
+    Route::get('/projMembers',[ProjectController::class,'getMembers']);
     Route::post('/logout', [MemberAuthController::class,'logout']);
     Route::post('/refresh', [MemberAuthController::class,'refresh']);
     Route::post('/me', [MemberAuthController::class,'me']);
