@@ -39,7 +39,6 @@ class MemberAuthController extends Controller
    }
     public function register(Request $request){
         $memberData = $request->all();
-        // dd($memberData);
         $member = Member::create($memberData);
         return $member;
     }

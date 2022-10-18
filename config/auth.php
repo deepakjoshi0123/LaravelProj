@@ -38,7 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'members',
+            'provider' => 'users',
         ],
         'api' => [
             'driver' => 'jwt',
@@ -62,7 +62,7 @@ return [
     | Supported: "database", "eloquent"
     |
     */
-
+    // this needs to updated if we are trying to generate token from other than user table
     'providers' => [
         'members' => [
             'driver' => 'eloquent',
@@ -91,8 +91,8 @@ return [
     */
 
     'passwords' => [
-        'members' => [
-            'provider' => 'members',
+        'users' => [
+            'provider' => 'users',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
