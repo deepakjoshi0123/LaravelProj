@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     use HasFactory;
-    public function member(){
-        return $this->hasMany('App\Models\Member','id','owner');
+    protected $fillable = ['project_name','owner'];
+    protected $hidden = ['pivot'];
+    public function members(){
+        return $this->belongsToMany(Member::class,Proj_Mem::class);
     }
 }

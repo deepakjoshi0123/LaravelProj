@@ -2,12 +2,59 @@
 namespace App\Services;
 use App\Models\Task_Mem;
 use App\Models\Task;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Response;
 
 Class TaskService{
-    public function getTasks($project_id){
-        $project = Task::where('project_id',$project_id)->get(['id','title','description','status','attachment']);
+    public function addTask($request){
+        (new Task())->fill($request)->save();
+        return array(
+        'success' => true,
+            ); 
+    }
+    //why vaidation failed are redirecting to this function
+    public function members($request){
+        return Task::find($request['task_id'])->getMembers()->get(['id','first_name','last_name','email']);
+    }
+
+    public function assignTask($request){
+        (new Task_Mem())->fill($request)->save();
+        return Response::json(array(
+            'success' => true,
+        )); 
+        // Task::find($request['task_id'])->members()->get(['id','first_name','last_name','email']);
+        //send notification only this newly added user query using new update in task model for geeting user email
+    }
+    public function editTask($request){
+        $task = Task::find($request['id']);
+        if(is_null($task)){
+            return Response::json(array(
+                'message' => 'no task exist for the given id',
+              )); 
+        }
+        else{
+            $task = Task::find($request['id']);
+            $task->fill($request)->save();
+             // Task::find($request['task_id'])->members()->get(['id','first_name','last_name','email']);
+             // notify all users assosiated with that task id; try to di it in async way  just like 
+            return array(
+                'success' => true
+              ); 
+        }
+    }
+
+    public function delTask($request){
+        Task::find($request['task_id'])->delete();
+        return array('success' => true);
+    }
+
+    public function taskDetails($request){
+        return Task::with('comments')->where('id',$request['id'])->get(['id','title','description','attachment','status']);
+    }
+   
+    public function getTasks($request){
+        $project = Task::find($request['project_id'])->get(['id','title','description','status','attachment']);
         $res=array();
         for($i=0;$i<count($project);$i++){
             $res[$project[$i]['status']] =  array();
@@ -16,69 +63,5 @@ Class TaskService{
            array_push($res[$project[$i]['status']],$project[$i]);
         }
         return $res;
-    }
-    public function addTask($request){
-       $task = new Task;
-       $req = json_decode($request,true);
-       
-       $task->title = $req['title'];
-       $task->description = $req['description'];
-       $task->attachment = $req['attachment'];
-       $task->status = $req['status'];
-       $task->project_id = $req['project_id'];
-       $task->save();
-       return Response::json(array(
-        'success' => true,
-      )); 
-    }
-    public function assignTask($request){
-        $tsk_mem = json_decode($request,true);
-        $task_Mem = new Task_Mem;
-        $task_Mem ->task_id  = $tsk_mem['task_id']; 
-        $task_Mem ->member_id = $tsk_mem['member_id'];
-        $task_Mem->save();
-        return Response::json(array(
-            'success' => true,
-          )); 
-        //send notification only this newly added user
-    }
-    public function editTask($request){
-        $tsk = json_decode($request,true);
-        $task = Task::find($tsk['task_id']);
-        if(is_null($task)){
-            return Response::json(array(
-                'message' => 'no task exist for the given id',
-              )); 
-        }
-        else{
-            $task->title = $tsk['title'];
-            $task->description = $tsk['description'];
-            $task->attachment = $tsk['attachment'];
-            $task->status = $tsk['status'];
-            $task->save();
-
-             // notify all users assosiated with that task id; try to di it in async way  
-
-            $user = Task_Mem::query()->with(['member'=> function($query){ //hasmanythrough
-                $query->select('id','email');
-                  }])->where('task_id',$tsk['task_id'])->get(['member_id']);
-
-            return Response::json(array(
-                'success' => true,
-                'data' => $user
-              )); 
-           
-        }
-    }
-    public function delTask($request){
-        $id = json_decode($request,true)['task_id'];
-        Task::find($id)->delete();
-    }
-    public function members($request){
-        $tsk = json_decode($request,true);
-        $user = Task_Mem::query()->with(['member'=> function($query){ //hasmanythrough
-        $query->select('id','first_name','last_name','email');
-            }])->where('task_id',$tsk['task_id'])->get(['member_id']);
-        return $user;
     }
 }

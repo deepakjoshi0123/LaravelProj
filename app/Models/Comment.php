@@ -9,10 +9,10 @@ class Comment extends Model
 {
     use HasFactory;
     public function task(){
-        return $this->hasMany('App\Models\Task','id','task_id');
+        // return $this->belongsTo('App\Models\Task','id','task_id');
     }
-    public function member(){
-        return $this->hasMany('App\Models\Member','id','member_id');
+    public function commentMem(){
+        return $this->belongsToMany(Member::class,Comment::class);
     }
     //belongs to gic=ves error
   // task belongs comment  

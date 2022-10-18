@@ -10,11 +10,12 @@ use App\Http\Controllers\MemberAuthController;
 Route::get('/projects',[ProjectController::class,'getProjects']);
 Route::post('/createProject',[ProjectController::class,'createProject']);
 Route::post('/addMember',[ProjectController::class,'addMemberToProject']);
-Route::get('/members',[ProjectController::class,'getMembers']);
+Route::get('/projMembers',[ProjectController::class,'getMembers']);
 
 //task routes
 
 Route::get('/tasks',[TaskController::class,'getTasks']);
+Route::get('/task',[TaskController::class,'taskDetails']);
 Route::post('/addTask',[TaskController::class,'addTask']);
 Route::post('/assignTask',[TaskController::class,'assignTask']);
 Route::post('/editTask',[TaskController::class,'editTask']);
@@ -26,7 +27,8 @@ Route::get('/comments',[CommentController::class,'getComments']);
 Route::post('/addComment',[CommentController::class,'addComment']);
 
 //auth routes
-Route::get('/login',[MemberAuthController::class,'login']);
-Route::get('/register',[MemberAuthController::class,'register']);
+Route::post('/login',[MemberAuthController::class,'login']);
+Route::post('/register',[MemberAuthController::class,'register']);
 
 Route::get('/dashboard',[ProjectController::class,'dashboard']);
+

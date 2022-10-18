@@ -3,14 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Member;
 
 class MemberAuthController extends Controller
 {
     public function login(){
-        return view('auth.login');
+        $credentials = request(['email', 'password']);
+       if (! $token = auth()->attempt($credentials)) {
+           return response()->json(['error' => 'Unauthorized'], 401);
+       }
+       return $this->respondWithToken($token);
     }
-    public function register(){
-        return view('auth.register');
+    public function me()
+   {
+       return response()->json(auth()->user());
+   }
+   public function logout()
+   {
+       auth()->logout();
+ 
+       return response()->json(['message' => 'Successfully logged out']);
+   }
+
+   public function refresh()
+   {
+       return $this->respondWithToken(auth()->refresh());
+   }
+   protected function respondWithToken($token)
+   {
+       return response()->json([
+           'access_token' => $token,
+           'token_type' => 'bearer',
+           'expires_in' => auth()->factory()->getTTL() * 60
+       ]);
+   }
+    public function register(Request $request){
+        $memberData = $request->all();
+        // dd($memberData);
+        $member = Member::create($memberData);
+        return $member;
     }
 
 }

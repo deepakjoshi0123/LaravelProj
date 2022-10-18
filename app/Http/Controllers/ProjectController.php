@@ -13,17 +13,31 @@ class ProjectController extends Controller
     }
     public function getProjects(Request $req){  //custom req class and pass it the functon arguments for validation
         
-        // ($this->projectService->getAllProjects($req->get('member_id')));
-        return response()->json(($this->projectService->getAllProjects($req->get('member_id'))));
+        $validated = $req->validate([ 
+            'member_id' => 'required', 
+        ]);
+        return response()->json(($this->projectService->getAllProjects($req->all())));
     }
     public function createProject(Request $req){
-        return $this->projectService->createProject($req->getContent());
+        $validated = $req->validate([ 
+            'name' => 'required', 
+            'owner' => 'required'
+        ]);
+        return response()->json(($this->projectService->createProject($req->all())));
+        
     }
     public function addMemberToProject(Request $req){
-        return $this->projectService->addMemberToProject($req->getContent());
+        $validated = $req->validate([ 
+            'project_id' => 'required', 
+            'member_id' => 'required'
+        ]);
+        return response()->json(($this->projectService->addMemberToProject($req->all())));
     }
     public function getMembers(Request $req){ 
-        return $this->projectService->getAllMembers($req->getContent());
+        $validated = $req->validate([ 
+            'project_id' => 'required'
+        ]);
+        return response()->json(($this->projectService->getAllMembers($req->all())));
     }
     public function dashboard(){
         return view('dashboard');

@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
         'editTask',
         'delTask',
         'addComment',
-        'register'
+        'register',
+        'login'
     ];
 }

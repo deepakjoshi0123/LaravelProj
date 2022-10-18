@@ -20,21 +20,41 @@ class TaskController extends Controller
         $this->taskService = $taskService;  
     }
     public function getTasks(Request $req){ 
-        return $this->taskService->getTasks($req['project_id']);
+        return $this->taskService->getTasks($req->all());
     }
     public function addTask(Request $req){ 
-        return $this->taskService->addTask($req->getContent());
+       
+        $validated = $req->validate([ 
+            'title' => 'required', 
+            'description' => 'required', 
+            'attachment' => 'required',
+            'status' => 'required',
+            'project_id' => 'required',   
+        ]);
+        // dd($req->all());
+        return $this->taskService->addTask($req->all());
     }
     public function assignTask(Request $req){ 
-        return $this->taskService->assignTask($req->getContent());
+        return $this->taskService->assignTask($req->all());
     }
     public function editTask(Request $req){ 
-        return $this->taskService->editTask($req->getContent());
+        $validated = $req->validate([ 
+            'id' => 'required',
+            'title' => 'required', 
+            'description' => 'required', 
+            'attachment' => 'required',
+            'status' => 'required',
+            'project_id' => 'required',   
+        ]);
+        return $this->taskService->editTask($req->all());
     }
     public function delTask(Request $req){ 
-        return $this->taskService->delTask($req->getContent());
+        return $this->taskService->delTask($req->all());
     }
     public function members(Request $req){ 
-        return $this->taskService->members($req->getContent());
+        return $this->taskService->members($req->all());
+    }
+    public function taskDetails(Request $req){ 
+        return $this->taskService->taskDetails($req->all());
     }
 }
