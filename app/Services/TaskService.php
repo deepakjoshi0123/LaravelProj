@@ -48,13 +48,14 @@ Class TaskService{
         Task::find($request['task_id'])->delete();
         return array('success' => true);
     }
-
+        //
     public function taskDetails($request){
         return Task::with('comments')->where('id',$request['id'])->get(['id','title','description','attachment','status']);
     }
    
     public function getTasks($request){
-        $project = Task::find($request['project_id'])->get(['id','title','description','status','attachment']);
+        // return $request;
+        $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status','attachment']);//get(['id',etc..]) was giving error when
         $res=array();
         for($i=0;$i<count($project);$i++){
             $res[$project[$i]['status']] =  array();

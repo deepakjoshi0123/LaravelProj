@@ -137,7 +137,7 @@
                 <button style="margin-left:10px" type="button" class="btn btn-info">Share
                   <i class="far fa-share-square"></i>
                 </button>
-                <button style="margin-left:10px" type="button" class="btn btn-info">Add Task
+                <button id="add-task" style="margin-left:10px" type="button" class="btn btn-info">Add Task
                   <i class="fas fa-tasks"></i>
                 </button>
               </ul>
@@ -189,14 +189,22 @@
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="modal-title"></h5>
+            <h5 class="modal-title" id="modal-title">Ttile</h5>
             <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
           </div>
           <div id="modal-body">
+            <input id="task-title" class="form-control" />
+            <h6 class="modal-desc" id="modal-desc">Descriptiom</h6>
+            <input class="form-control" id="task-desc" />
+            <h6 class="modal-attach" id="modal-desc">Attachment</h6>
+            <input class="form-control" id="task-attachment" />
+            <h6 class="modal-status" id="modal-desc">Status</h6>
+            <input class="form-control" id="task-status" />
+            <input id="task-comment" class="form-control" placeholder="Add Comment ..." />
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
+            <button id="save-task" type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>
@@ -207,6 +215,7 @@
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
   $(document).ready(function(){
+    var project_id,task_id
     var tasks = {};
     $.ajaxSetup({
     headers: {
@@ -218,12 +227,11 @@ $.ajax({
     url:'projects',
     data:{"member_id":"2"},
     type:'get',
-    // crossDomain: true,
     success:  function (response) {
         $.each(response,function(key,item){
             
             $('#side-bar').append(
-                `<div   data-project-id=`+item.project_id+` class="project-item list-group-item list-group-item-action py-2 ripple "><i class="fab fa-medapps"></i><span>`+item.project[0].project_name+`</span></div>`
+                `<div   data-project-id=`+item.id+` class="project-item list-group-item list-group-item-action py-2 ripple "><i class="fab fa-medapps"></i><span>`+item.project_name+`</span></div>`
             )
         });
     },
@@ -233,6 +241,7 @@ $.ajax({
     } 
     }); //prettier 
         $(document).on('click','.project-item',function(e){
+          project_id = $(this).attr('data-project-id')
             // console.log(e)
             // console.log($(this).attr('data-project-id'))
     $.ajax({
@@ -240,14 +249,14 @@ $.ajax({
     data:{"project_id":$(this).attr('data-project-id')},
     type:'get',
     success:  function (response) {
+       
         $('#task-listing').html("")
         tasks=response
-        console.log(response)
         $.each(response,function(key,item){
+          $('#task-listing').append(`<span class="badge rounded-pill badge-primary" style="width: 10%">`+key+`</span>`)
             $.each(item,function(key2,item2){
                 $('#task-listing').append(
-                  ` <span class="badge rounded-pill badge-primary" style="width: 10%">`+key+`</span>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                  `<li class="list-group-item d-flex justify-content-between align-items-center">
                             <div data-task-id=`+item2.id+` class="task-item" >
                               <div class="fw-bold">`+item2.title+`</div>
                               <div class="text-muted">`+item2.description+`</div>
@@ -256,47 +265,80 @@ $.ajax({
                             <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones"></i>
                           </li>`   
                  )
-            })
-           
-            
+            })            
         });
     },
     error: function(x,xs,xt){
     }
     });
         })
-        $(document).on('click','.task-item',function(e){
-             var id =$(this).attr('data-task-id')
-             var task= tasks.open.filter(function (task) {
-                return task.id == id;
-              })
-              $('#modal-body').html("")
-              $('#modal-title').html(task[0].title)
-              $('#modal-body').append(`<h4 id="modal-desc"> Description <\h4>`)
-              $('#modal-desc').append(`<h6>`+task[0].description+`</h6>`)
-              $('#modal-body').append(`<h4 id="modal-attach"> Attachment <\h4>`)
-              $('#modal-attach').append(`<h6>`+task[0].attachment+`</h6>`)
-              $('#modal-body').append(`<h4 id="modal-activity">Activity <\h4>`)
-              $('#modal-body').append(`<input id="modal-activity" placeholder="write comment" class="form-control" \>`)  
-             
-              var comments = [{"name":"Deepak joshi","desc":"heyyyyyyyyyy"},{"name":"Alex ","desc":"yesssssssssss"}]  
-              $.each(comments,function(key,cmnt){
-                console.log(cmnt)
-                $('#modal-activity').append(`<h5 id="modal-desc">`+ cmnt.name +`<\h5>`)
-                $('#modal-activity').append(`<h6 id="modal-desc">`+ cmnt.desc +`<\h6>`)
-              })
-              
-              $('#exampleModal').modal('show')
-          })
+    
+        $(document).on('click','#add-task',function(e){
+          $('#exampleModal').modal('show')   
+      });  
+      function resetModal(){
+        $("#task-title").val("")
+        $("#task-desc").val("")
+        $("#task-status").val("")
+        $("#task-attachment").val("")
+        $("#task-comment").val("")
+      }
+      $(document).on('click','#save-task',function(e){
+        
+        var data ={
           
-          $(document).on('click','.edit-task',function(e){
-            console.log($(this).attr('data-task-edit-id'))
-            //  var id =$(this).attr('data-task-id')
-            //  var task= tasks.open.filter(function (task) {
-            //     return task.id == id;
-            //   })
+          "title":$("#task-title").val(),
+          "description":$("#task-desc").val(),
+          "status":$("#task-status").val(),
+          "attachment":$("#task-attachment").val(),
+          "comment":$("#task-comment").val()
+        }
+        $('#exampleModal').modal('toggle')
+        console.log(data,project_id)
+        resetModal()
+        //  $.ajax({
+        //     url:'task',
+        //     data:{"id":id},
+        //     type:'get',
+        //     success:  function (task) {
+        //     },
+        //     error: function(x,xs,xt){}
+        //   })
+      });
+      
+      function modalForEditOrAdd(task){
+       
+        $("#task-title").val(task[0].title)
+        $("#task-desc").val(task[0].description)
+        $("#task-status").val(task[0].status)
+        $("#task-attachment").val(task[0].attachment)
+        $('#modal-body').append(`<h5 id ="modal-comments"> Comments <\h5>`)
+              $.each(task[0].comments,function(key,cmnt){
+        
+                $('#modal-body').append(`<h5 id="modal-desc">`+ cmnt.member_id +`<\h5>`)
+                $('#modal-body').append(`<h5 id="modal-desc">`+ cmnt.description +`<\h5>`)
+              })
+        $('#exampleModal').modal('show')
+                
+      }
+
+      function editOrAddTask(id){
+        task_id=id
+        $.ajax({
+            url:'task',
+            data:{"id":id},
+            type:'get',
+            success:  function (task) {
+              modalForEditOrAdd(task)
+            },
+            error: function(x,xs,xt){}
           })
-          $(document).on('click','.del-task',function(e){
+      //[{"title":"","attachment":"","description":""}]
+      }
+      $(document).on('click','.edit-task',function(e){
+            editOrAddTask($(this).attr('data-task-edit-id'))
+          })
+      $(document).on('click','.del-task',function(e){
             console.log($(this).attr('data-task-del-id'))
             //  var id =$(this).attr('data-task-id')
             //  var task= tasks.open.filter(function (task) {

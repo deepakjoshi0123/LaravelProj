@@ -12,7 +12,7 @@ class Comment extends Model
         // return $this->belongsTo('App\Models\Task','id','task_id');
     }
     public function commentMem(){
-        return $this->belongsToMany(Member::class,Comment::class);
+        return $this->belongsTo(Member::class,Comment::class);
     }
     //belongs to gic=ves error
   // task belongs comment  
