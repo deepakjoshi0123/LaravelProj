@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     use HasFactory;
-    public function task(){
-        // return $this->belongsTo('App\Models\Task','id','task_id');
+    public function getTask(){
+        return $this->belongsTo(Task::class);
     }
-    public function commentMem(){
-        return $this->belongsTo(Member::class,Comment::class);
+    public function getMember(){
+        return $this->belongsTo(Member::class);
     }
     //belongs to gic=ves error
   // task belongs comment  
  //comment belongs to vs beongs to many
+ //
 }
 //form vali

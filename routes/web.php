@@ -25,12 +25,15 @@ Route::get('/members',[TaskController::class,'members']);
 //comments Routes
 Route::get('/comments',[CommentController::class,'getComments']);
 Route::post('/addComment',[CommentController::class,'addComment']);
-
+Route::get('/dashboard',[ProjectController::class,'dashboard']);
 //auth routes
 // Route::post('/login',[MemberAuthController::class,'login']);
-// Route::post('/register',[MemberAuthController::class,'register']);
+Route::post('/register',[MemberAuthController::class,'register']);
+Route::get('/register',[MemberAuthController::class,'register_view']);
+Route::get('/login', [MemberAuthController::class,'login_view']);
 
-Route::get('/dashboard',[ProjectController::class,'dashboard']);
+Route::get('/member/verify/{token}',[MemberAuthController::class,'verifyMember']);
+
 Route::post('/login', [MemberAuthController::class,'login']);
 Route::group(['middleware' => ['jwt.verify']
     ], function ($router) {

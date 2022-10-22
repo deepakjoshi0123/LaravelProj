@@ -13,9 +13,11 @@ class Task extends Model
     public function getMembers(){
         return $this->belongsToMany(Member::class,Task_Mem::class);
     }
-
+    public function commentMember(){
+        return $this->getComments()->with('getMember');
+    }
     public function comments(){
-        return $this->hasMany(Comment::class,'task_id','id');
+        return $this->hasMany(Comment::class);
     }
     // public function commentMem(){
     //     return $this->belongsToMany(Member::class,Comment::class);

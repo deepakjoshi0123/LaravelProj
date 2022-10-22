@@ -55,6 +55,6 @@ class TaskController extends Controller
         return $this->taskService->members($req->all());
     }
     public function taskDetails(Request $req){ 
-        return $this->taskService->taskDetails($req->all());
+        return response()->json($this->taskService->taskDetails($req->all())) ;
     }
 }
