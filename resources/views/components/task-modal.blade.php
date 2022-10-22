@@ -8,7 +8,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div style="display: flex ">
-          <div style="width: 70%">
+          <div style="width: 80%">
             <div class="modal-header ">
               <h4 class="ms-4 " id="modal-title">Trello Clone</h4>
             </div>
@@ -76,7 +76,7 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer me-5">
           <button onClick="resetModal" type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
           <button id="save-task" type="button" class="btn btn-info">Save changes</button>
         </div>
