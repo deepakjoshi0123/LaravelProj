@@ -33,9 +33,8 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
-
- // add listener to add task on changing it's value we can enable or disable add task button
- // as without clicking on project add task should be disabled
+    localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
+ 
 $.ajax({
     url:'projects',
     data:{"member_id":"2"},
@@ -45,7 +44,7 @@ $.ajax({
         $.each(response,function(key,item){
             
             $('#side-bar').append(
-                `<div   data-project-id=`+item.id+` 
+                `<div data-project-id=`+item.id+` 
                         style="background-color: #e9f1f7;border-radius: 30px 15px;"
                         class="project-item list-group-item list-group-item-action py-2 ripple ">
                         <i class="fab fa-medapps"></i><span>`+item.project_name+`</span></div>`
@@ -59,7 +58,8 @@ $.ajax({
     }); //prettier 
         $(document).on('click','.project-item',function(e){
           console.log(e.target)// fetch project name from e.target.value
-          project_id = $(this).attr('data-project-id')
+          
+          localStorage.setItem("project_id", $(this).attr('data-project-id'));
           document.getElementById("add-task").disabled = false;
             // console.log(e)
             // console.log($(this).attr('data-project-id'))
@@ -72,18 +72,21 @@ $.ajax({
         $('#task-listing').html("")
         tasks=response
         $.each(response,function(key,item){
-          $('#task-listing').append(`<span class="badge rounded-pill badge-primary mt-2" style="width: 10%";>`+key+`</span>`)
+          $('#task-listing').append(`<a class="badge badge-dark mt-2 mb-2" style="width: 10%";>`+key+`</a>`)
             $.each(item,function(key2,item2){
                 $('#task-listing').append(
-                  `<li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div data-task-id=`+item2.id+`
-                             class="task-item" style="background-color:#eef3f7;border-radius: 30px 20px;width:80%; " >
-                              <div  class="mt-1 ms-3 fw-bold">`+item2.title+`</div>
-                              <div class="mt-1 ms-3 text-muted">`+item2.description+`</div>
-                            </div>
-                            <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-lg"></i>
-                            <i style="margin-right: 60px;" data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-lg"></i>
-                      </li>`   
+                  `
+                  <div style="display:flex">
+                    <div class="card border-primary mb-3" style="max-width: 50rem;" data-task-id=`+item2.id+`>
+                      <div class="card-header">`+item2.title+`</div>
+                      <div class="card-body text-primary">
+                        <p class="card-text">`+item2.description+`</p>
+                      </div>
+                    </div>
+                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-lg mt-5 ms-4 me-4">edit</i>
+                    <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-lg mt-5 ms-3">delete</i>
+                  </div>
+                  `
                  )
             })            
         });

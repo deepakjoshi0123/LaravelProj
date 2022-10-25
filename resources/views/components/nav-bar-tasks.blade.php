@@ -15,7 +15,7 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" style="margin-right:20px">
-                        <a class="nav-link link-info" href="#">Project Name</a>
+                        <div class="nav-link link-primary font-weight-bolder" href="#">Project Name</div>
                     </li>
                     <li class="nav-item">
                         <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="40"
@@ -25,17 +25,18 @@
                         <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="40"
                             style="margin-left:4px" alt="Black and White Portrait of a Man" loading="lazy" />
                     </li>
-                    <button style="margin-left:10px" type="button" class="btn btn-info">Share
+                    <button style="margin-left:10px" type="button" class="btn btn-primary">Share
                         <i class="far fa-share-square"></i>
                     </button>
-                    <button disabled id="add-task" style="margin-left:10px" type="button" class="btn btn-info">Add Task
+                    <button disabled id="add-task" style="margin-left:10px" type="button" class="btn btn-primary">Add
+                        Task
                         <i class="fas fa-tasks"></i>
                     </button>
                 </ul>
                 <div class="dropdown">
                     <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
                         id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                        <button style="margin-left:5px" type="button" class="btn btn-info">Filters
+                        <button style="margin-left:5px" type="button" class="btn btn-primary">Filters
                             <i class="fas fa-filter"></i>
                         </button>
                     </a>

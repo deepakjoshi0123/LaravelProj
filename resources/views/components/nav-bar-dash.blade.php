@@ -18,7 +18,7 @@
             <!-- Left links -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="btn btn-info" data-mdb-toggle="modal" data-mdb-target="#projectModal">
+                    <a class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#projectModal">
                         Project
                         <i class="fas fa-puzzle-piece"></i>
                     </a>
@@ -46,13 +46,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                     <li>
-                        <a class="dropdown-item" href="#">Some news</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">Another news</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-item" href="#">Web sockets Notifications pending</a>
                     </li>
                 </ul>
             </div>

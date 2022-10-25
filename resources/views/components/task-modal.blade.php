@@ -12,7 +12,7 @@
             <div class="modal-header ">
               <h4 class="ms-4 " id="modal-title">Trello Clone</h4>
             </div>
-            <div id="modal-body">
+            <div>
               <h6 class="ms-4 mt-1" id="modal-title">Ttile</h6>
               <input id="task-title" class="form-control ms-4 mt-3" />
               <h6 class="modal-desc ms-4 mt-3" id="modal-desc">Descriptiom</h6>
@@ -20,14 +20,14 @@
                 <textarea class="form-control ms-4  mt-3" id="task-desc" rows="3"></textarea>
               </div>
               <input id="task-comment" class="ms-4 mb-3 mt-5 form-control" placeholder="Add Comment ..." />
-
+              <div id="modal-body"></div>
             </div>
           </div>
           <div class="ms-5 mt-4">
             <div class="ms-5">
               <h5>Add to Task</h5>
               <div class="mt-3 btn-group dropdown">
-                <button style="min-width: 180px;" type="button" class="btn btn-info dropdown-toggle"
+                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
                   data-mdb-toggle="dropdown" aria-expanded="false">
                   Members
                   <i class="fas fa-users ms-2"></i>
@@ -47,38 +47,40 @@
               <input style="width:60%" class="form-control" list="datalistOptions" id="exampleDataList"
                 placeholder="Type to assign...">
               <datalist id="datalistOptions">
-                <option value="San Francisco">
-                <option value="New York">
-                <option value="Seattle">
-                <option value="Los Angeles">
-                <option value="Chicago">
+                <option value="Deepak">
+                <option value="ankit">
+                <option value="ram">
+                <option value="shyaam">
+                <option value="john">
               </datalist>
               <h6 class="mt-4">Attachment</h6>
               <input type="file" />
               <h6 class="mt-4">Status</h6>
               <div class="btn-group">
-                <button style="min-width: 180px;" type="button" class="btn btn-info dropdown-toggle "
+                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle "
                   data-bs-toggle="dropdown" aria-expanded="false">
                   Action
                 </button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <ul class="dropdown-menu" id="task-status">
+                  <li><a class="dropdown-item" href="#">Open</a></li>
+                  <li><a class="dropdown-item" href="#">pending</a></li>
+                  <li><a class="dropdown-item" href="#">Closed</a></li>
                   <li>
                     <hr class="dropdown-divider">
                   </li>
-                  <li>
-                    <input class="form-control" placeholder="Custom Status ..." />
-                  </li>
+
+                  <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
+                    placeholder="Custom Status ..." />
+
                 </ul>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer me-5">
-          <button onClick="resetModal" type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
-          <button id="save-task" type="button" class="btn btn-info">Save changes</button>
+          <button onClick="resetModal()" type="button" class="btn btn-secondary"
+            data-mdb-dismiss="modal">Cancel</button>
+          <button id="save-task" type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
@@ -91,30 +93,32 @@
           editOrAddFlag="add"
           $('#exampleModal').modal('show')   
       });  
+      console.log('modal is used')
       function resetModal(){
+        localStorage.setItem("status","");
         $("#task-title").val("")
         $("#task-desc").val("")
-        $("#task-status").val("")
-        $("#task-attachment").val("")
+        $("#custom-status").val("")
         $("#task-comment").val("")
-        $("#modal-comments").html("")
-        $("#modal-attachments").html("")
+        $("#modal-body").html("")
+        // localStorage.setItem("comments",[])
       }
       $(document).on('click','#save-task',function(e){
         var data ={
           "title":$("#task-title").val(),
           "description":$("#task-desc").val(),
-          "status":$("#task-status").val(),
-          "attachment":$("#task-attachment").val(),
-          "comment":$("#task-comment").val()
+          "status":localStorage.getItem("status"),
+          // "attachment":$("#task-attachment").val(),
+          "comments":localStorage.getItem("comments")
         }
         $('#exampleModal').modal('toggle')
         if(editOrAddFlag === "add"){
-          data['project_id'] = project_id
+          data['project_id'] = localStorage.getItem("project_id");
         }
         else {
           data['task_id'] = task_id
         }
+        console.log(data,)
         resetModal()
         //  $.ajax({
         //     url:'task',
@@ -126,22 +130,9 @@
         //   })
       });
       
-      function modalForEditOrAdd(task){
-        editOrAddFlag="edit"
-        $("#task-title").val(task[0].title)
-        $("#task-desc").val(task[0].description)
-        $('#task-modal-desc').append(`
-            <div id="modal-attachments">
-              <h6 class="modal-attach ms-4 mt-2" >Attachments</h6>
-              <div class="ms-4 mt-2">attachments feature pending ...</div>
-              <div class="ms-4 mt-2 ">attachments feature pending ...</div>
-            </div>
-              `)
-        $('#modal-body').append(`<div   class="ms-4 overflow-auto" id ="modal-comments"> Comments </div>`)
-              $.each(task[0].comments,function(key,cmnt){
-        
-                $('#modal-comments').append(`
-                <div class="mt-3" style="display:flex">
+      function renderComments(cmnt){
+        $('#modal-body').append(`
+                <div class="mt-3 ms-4" style="display:flex">
                   <i class="fas fa-user-tie"></i>
                   <div class="ms-4 " id="modal-desc">`+ "member name" +`</div>
                     <div class="ms-4 " id="modal-desc">`+ "12:28 pm" +`</div>
@@ -150,6 +141,22 @@
                 </div>
                 
                 `)
+      }
+
+      function modalForEditOrAdd(task){
+        editOrAddFlag="edit"
+        $("#task-title").val(task[0].title)
+        $("#task-desc").val(task[0].description)
+        $('#modal-body').append(`
+            <div id="modal-attachments">
+              <h6 class="modal-attach ms-4 mt-2" >Attachments</h6>
+              <div class="ms-4 mt-2">attachments feature pending ...</div>
+              <div class="ms-4 mt-2 ">attachments feature pending ...</div>
+            </div>
+              `)
+        $('#modal-body').append(`<div  class="ms-4 overflow-auto" id ="modal-comments"> Comments </div>`)
+              $.each(task[0].comments,function(key,cmnt){
+                renderComments(cmnt)
               }) 
         $('#exampleModal').modal('show')
       }
@@ -167,6 +174,30 @@
           })
       //[{"title":"","attachment":"","description":""}]
       }
+      
+      $("#task-status li").click(function() {
+        localStorage.setItem("status",$(this).text());         
+      })
+      
+     function getCustomTaskStatus(){
+      localStorage.setItem("status",$("#custom-status").val());
+      }
+     
+      $('#task-comment').bind('keypress', function(e) {
+        if(e.keyCode==13){
+            if($("#task-comment").val()!=""){
+              cmnts = JSON.parse(localStorage.getItem("comments")) 
+              cmnts.push($("#task-comment").val())
+              localStorage.setItem("comments",JSON.stringify(cmnts));
+              cmnt = {"description":$("#task-comment").val()}
+              // console.log(cmnt)
+              renderComments(cmnt)
+            }
+        $("#task-comment").val("")
+              
+        }
+      });
+
       $(document).on('click','.edit-task',function(e){
             editOrAddTask($(this).attr('data-task-edit-id'))
           })
