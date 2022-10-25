@@ -71,6 +71,8 @@ $.ajax({
        
         $('#task-listing').html("")
         tasks=response
+        
+        localStorage.setItem("Available_Status",JSON.stringify(Object.keys(response)));
         $.each(response,function(key,item){
           $('#task-listing').append(`<a class="badge badge-dark mt-2 mb-2" style="width: 10%";>`+key+`</a>`)
             $.each(item,function(key2,item2){

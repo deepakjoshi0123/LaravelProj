@@ -44,7 +44,7 @@
               </div>
               <h6 class="mt-4">Assign Task</h6>
 
-              <input style="width:60%" class="form-control" list="datalistOptions" id="exampleDataList"
+              <input style="width:60%" class="form-control" list="datalistOptions" name="exampleDataList"
                 placeholder="Type to assign...">
               <datalist id="datalistOptions">
                 <option value="Deepak">
@@ -62,16 +62,12 @@
                   Action
                 </button>
                 <ul class="dropdown-menu" id="task-status">
-                  <li><a class="dropdown-item" href="#">Open</a></li>
-                  <li><a class="dropdown-item" href="#">pending</a></li>
-                  <li><a class="dropdown-item" href="#">Closed</a></li>
-                  <li>
-                    <hr class="dropdown-divider">
-                  </li>
-
                   <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
                     placeholder="Custom Status ..." />
 
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
                 </ul>
               </div>
             </div>
@@ -89,6 +85,8 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
+  // var assignee = "Unassigned";
+  localStorage.setItem("assignee","UnAssigned");
   $(document).on('click','#add-task',function(e){
           editOrAddFlag="add"
           $('#exampleModal').modal('show')   
@@ -96,6 +94,8 @@
       console.log('modal is used')
       function resetModal(){
         localStorage.setItem("status","");
+        localStorage.setItem("assignee","");
+        localStorage
         $("#task-title").val("")
         $("#task-desc").val("")
         $("#custom-status").val("")
@@ -109,6 +109,7 @@
           "description":$("#task-desc").val(),
           "status":localStorage.getItem("status"),
           // "attachment":$("#task-attachment").val(),
+          "assignee":localStorage.getItem("assignee"),
           "comments":localStorage.getItem("comments")
         }
         $('#exampleModal').modal('toggle')
@@ -118,7 +119,7 @@
         else {
           data['task_id'] = task_id
         }
-        console.log(data,)
+        console.log(data)
         resetModal()
         //  $.ajax({
         //     url:'task',
@@ -144,6 +145,14 @@
       }
 
       function modalForEditOrAdd(task){
+        $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
+          $('#task-status').append(`
+          <li><a class="dropdown-item">`+status+`</a></li>
+          `)
+        })
+
+        JSON.parse(localStorage.getItem("Available_Status"))
+        // console.log('heyyyy checking aviliable status')
         editOrAddFlag="edit"
         $("#task-title").val(task[0].title)
         $("#task-desc").val(task[0].description)
@@ -175,9 +184,14 @@
       //[{"title":"","attachment":"","description":""}]
       }
       
-      $("#task-status li").click(function() {
-        localStorage.setItem("status",$(this).text());         
-      })
+      $(document).on("click", "#task-status li", function() {
+        console.log($(this).text())
+        localStorage.setItem("status",$(this).text());  
+      });
+      // $("#task-status li").click(function(e) {
+      //   console.log(e,$(this).text())
+               
+      // })
       
      function getCustomTaskStatus(){
       localStorage.setItem("status",$("#custom-status").val());
@@ -201,4 +215,7 @@
       $(document).on('click','.edit-task',function(e){
             editOrAddTask($(this).attr('data-task-edit-id'))
           })
+      $("input[name=exampleDataList]").focusout(function(){
+            localStorage.setItem("assignee",$(this).val())
+      });
 </script>
