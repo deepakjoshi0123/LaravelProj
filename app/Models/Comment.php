@@ -17,6 +17,5 @@ class Comment extends Model
     //belongs to gic=ves error
   // task belongs comment  
  //comment belongs to vs beongs to many
- //
 }
 //form vali

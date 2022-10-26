@@ -26,32 +26,13 @@
           <div class="ms-5 mt-4">
             <div class="ms-5">
               <h5>Add to Task</h5>
-              <div class="mt-3 btn-group dropdown">
-                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
-                  data-mdb-toggle="dropdown" aria-expanded="false">
-                  Members
-                  <i class="fas fa-users ms-2"></i>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                  <li>
-                    <hr class="dropdown-divider" />
-                  </li>
-                  <li><a class="dropdown-item" href="#">Separated link</a></li>
-                </ul>
-              </div>
+              <div id="modal-members"></div>
               <h6 class="mt-4">Assign Task</h6>
 
               <input style="width:60%" class="form-control" list="datalistOptions" name="exampleDataList"
                 placeholder="Type to assign...">
               <datalist id="datalistOptions">
-                <option value="Deepak">
-                <option value="ankit">
-                <option value="ram">
-                <option value="shyaam">
-                <option value="john">
+
               </datalist>
               <h6 class="mt-4">Attachment</h6>
               <input type="file" />
@@ -61,13 +42,17 @@
                   data-bs-toggle="dropdown" aria-expanded="false">
                   Action
                 </button>
-                <ul class="dropdown-menu" id="task-status">
+                <ul class="dropdown-menu">
                   <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
                     placeholder="Custom Status ..." />
 
                   <li>
                     <hr class="dropdown-divider">
                   </li>
+                  <li><a class="dropdown-item">UnAssigned</a></li>
+                  <div id="task-status">
+
+                  </div>
                 </ul>
               </div>
             </div>
@@ -88,10 +73,21 @@
   // var assignee = "Unassigned";
   localStorage.setItem("assignee","UnAssigned");
   $(document).on('click','#add-task',function(e){
+    $.ajax({
+            url:'assignees',
+            data:{"project_id":"3"},
+            type:'get',
+            success:  function (res) {
+              $.each(res,function(key,mem){
+                $('#datalistOptions').append(`<option value="`+mem.email+`">`+mem.first_name+`</option>`) 
+              })
+            },
+            error: function(x,xs,xt){}
+          })
           editOrAddFlag="add"
           $('#exampleModal').modal('show')   
       });  
-      console.log('modal is used')
+
       function resetModal(){
         localStorage.setItem("status","");
         localStorage.setItem("assignee","");
@@ -101,6 +97,10 @@
         $("#custom-status").val("")
         $("#task-comment").val("")
         $("#modal-body").html("")
+        $("#task-status").html("")
+        $('#datalistOptions').html("")
+        
+        $('#modal-members').html("")
         // localStorage.setItem("comments",[])
       }
       $(document).on('click','#save-task',function(e){
@@ -140,7 +140,6 @@
                 </div> 
                   <div class="ms-5 fs-6 text-muted" id="modal-desc">`+ cmnt.description +`</div>
                 </div>
-                
                 `)
       }
 
@@ -171,6 +170,34 @@
       }
 
       function editOrAddTask(id){
+
+        $.ajax({
+            url:'members',
+            data:{"task_id":"4"},
+            type:'get',
+            success:  function (res) {
+              // console.log(res)
+              $('#modal-members').append(`
+              <div class="mt-3 btn-group dropdown">
+                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
+                  data-mdb-toggle="dropdown" aria-expanded="false">
+                  Members
+                  <i class="fas fa-users ms-2"></i>
+                </button>
+                <ul class="dropdown-menu">
+                </ul>
+              </div>
+              `)
+              $.each(res,function(key,item){
+                $('.dropdown-menu').append(`
+                  <li >`+item.email+`</li>
+              `)
+              })
+             
+            },
+            error: function(x,xs,xt){}
+          })
+
         task_id=id
         $.ajax({
             url:'task',
@@ -185,7 +212,7 @@
       }
       
       $(document).on("click", "#task-status li", function() {
-        console.log($(this).text())
+        // console.log($(this).text())
         localStorage.setItem("status",$(this).text());  
       });
       // $("#task-status li").click(function(e) {
@@ -218,4 +245,18 @@
       $("input[name=exampleDataList]").focusout(function(){
             localStorage.setItem("assignee",$(this).val())
       });
+      $(document).on('click','.del-task',function(e){
+            console.log($(this).attr('data-task-del-id'))
+            var id=$(this).attr('data-task-del-id')
+            $.ajax({
+            url:'delTask',
+            data:{"task_id":id},
+            type:'delete',
+            success:  function (res) {
+              console.log(res)
+              $(`#project-task-${id}`).html("")
+            },
+            error: function(x,xs,xt){}
+           })
+        })
 </script>

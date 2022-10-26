@@ -37,7 +37,7 @@
  
 $.ajax({
     url:'projects',
-    data:{"member_id":"2"},
+    data:{"member_id":"3"},
     type:'get',
     success:  function (response) {
         
@@ -74,11 +74,12 @@ $.ajax({
         
         localStorage.setItem("Available_Status",JSON.stringify(Object.keys(response)));
         $.each(response,function(key,item){
-          $('#task-listing').append(`<a class="badge badge-dark mt-2 mb-2" style="width: 10%";>`+key+`</a>`)
             $.each(item,function(key2,item2){
                 $('#task-listing').append(
                   `
-                  <div style="display:flex">
+                  <div id="project-task-`+item2.id+`">
+                  <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
+                  <div style="display:flex" >
                     <div class="card border-primary mb-3" style="max-width: 50rem;" data-task-id=`+item2.id+`>
                       <div class="card-header">`+item2.title+`</div>
                       <div class="card-body text-primary">
@@ -88,25 +89,17 @@ $.ajax({
                     <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-lg mt-5 ms-4 me-4">edit</i>
                     <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-lg mt-5 ms-3">delete</i>
                   </div>
+                  </div>
                   `
                  )
             })            
         });
-    },
-    error: function(x,xs,xt){
-    }
-    });
-        })
-    
-
-      $(document).on('click','.del-task',function(e){
-            console.log($(this).attr('data-task-del-id'))
-            //  var id =$(this).attr('data-task-id')
-            //  var task= tasks.open.filter(function (task) {
-            //     return task.id == id;
-            //   })
-          })
-        })
+      },
+       error: function(x,xs,xt){
+      }
+     });
+    })
+  })
 </script>
 <script src="{{ asset('js/mdb.min.js') }}">
 </script>

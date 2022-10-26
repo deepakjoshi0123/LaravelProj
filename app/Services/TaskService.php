@@ -2,7 +2,10 @@
 namespace App\Services;
 use App\Models\Task_Mem;
 use App\Models\Task;
+use App\Models\Project;
+use App\Models\Comment;
 use App\Models\Member;
+use App\Models\Proj_Mem;
 use Illuminate\Http\Request;
 use Response;
 
@@ -50,7 +53,9 @@ Class TaskService{
     }
         //
     public function taskDetails($request){
-        return Task::with('comments')->where('id',$request['id'])->get(['id','title','description','attachment','status']);
+        $task = Task::where('id',$request['id'])->get(['id','title','description','attachment','status']);
+        $comment = Comment::with('member')->where('task_id',$request['id'])->get();
+        return $comment;
     }
    
     public function getTasks($request){
@@ -65,4 +70,17 @@ Class TaskService{
         }
         return $res;
     }
+
+    public function getAssignees($request){    
+        if($request->has('project_id')){
+            $id = $request->all()['project_id'];
+            return Project::find($id)->members()->get(['email','id','first_name']);;
+        }
+        else{
+            $id = $request->all()['task_id'];
+            //pending ................................
+            return $id;
+        }
+    }
+   
 }

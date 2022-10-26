@@ -74,4 +74,21 @@
     </div>
     <!-- Container wrapper -->
 </nav>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+    integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).on('click','#save-project',function(){
+        // console.log($('#project-name').val())
+        $.ajax({
+            url:'createProject',
+            data:{"owner":"3","name":$('#project-name').val()},
+            type:'post',
+            success:  function (res) {
+                console.log(res)
+            },
+            error: function(x,xs,xt){}
+          })
+    })
+</script>
 <!-- Navbar -->

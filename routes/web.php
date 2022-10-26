@@ -14,6 +14,8 @@ Route::get('/projMembers',[ProjectController::class,'getMembers']);
 
 //task routes
 
+Route::get('/assignees',[TaskController::class,'getAssignees']);
+
 Route::get('/tasks',[TaskController::class,'getTasks']);
 Route::get('/task',[TaskController::class,'taskDetails']);
 Route::post('/addTask',[TaskController::class,'addTask']);
