@@ -79,7 +79,8 @@
             type:'get',
             success:  function (res) {
               $.each(res,function(key,mem){
-                $('#datalistOptions').append(`<option value="`+mem.email+`">`+mem.first_name+`</option>`) 
+                console.log(mem)
+                $('#datalistOptions').append(`<option data-assignee-id=`+mem.email+` value="`+mem.id+`">`+mem.first_name+`</option>`) 
               })
             },
             error: function(x,xs,xt){}
@@ -105,13 +106,19 @@
       }
       $(document).on('click','#save-task',function(e){
         var data ={
+          
           "title":$("#task-title").val(),
           "description":$("#task-desc").val(),
           "status":localStorage.getItem("status"),
-          // "attachment":$("#task-attachment").val(),
-          "assignee":localStorage.getItem("assignee"),
-          "comments":localStorage.getItem("comments")
+          "attachment":"www.google.com",
         }
+        data2={
+        "member_id":"2",
+        "data":data,
+        "comments":JSON.parse(localStorage.getItem("comments")),
+        "assignee":localStorage.getItem("assignee"),
+      }
+        
         $('#exampleModal').modal('toggle')
         if(editOrAddFlag === "add"){
           data['project_id'] = localStorage.getItem("project_id");
@@ -119,25 +126,29 @@
         else {
           data['task_id'] = task_id
         }
-        console.log(data)
+        console.log(data2)
         resetModal()
-        //  $.ajax({
-        //     url:'task',
-        //     data:{"id":id},
-        //     type:'get',
-        //     success:  function (task) {
-        //     },
-        //     error: function(x,xs,xt){}
-        //   })
+         $.ajax({
+            url:'addTask',
+            data:JSON.stringify(data2),
+            dataType:'json',
+            type:'post',
+            contentType: "application/json; charset=utf-8",
+            success:  function (res) {
+              console.log(res)
+            },
+            error: function(x,xs,xt){}
+          })
       });
       
       function renderComments(cmnt){
+        console.log('render',cmnt.get_member.last_name)
         $('#modal-body').append(`
                 <div class="mt-3 ms-4" style="display:flex">
                   <i class="fas fa-user-tie"></i>
-                  <div class="ms-4 " id="modal-desc">`+ "member name" +`</div>
-                    <div class="ms-4 " id="modal-desc">`+ "12:28 pm" +`</div>
-                </div> 
+                  <div class="ms-4 " id="modal-desc">`+ cmnt.get_member.first_name+` `+cmnt.get_member.last_name+`</div>
+                    <div class="ms-4 " id="modal-desc">`+ cmnt.get_member.updated_at +`</div>
+                  </div> 
                   <div class="ms-5 fs-6 text-muted" id="modal-desc">`+ cmnt.description +`</div>
                 </div>
                 `)
@@ -168,7 +179,6 @@
               }) 
         $('#exampleModal').modal('show')
       }
-
       function editOrAddTask(id){
 
         $.ajax({
@@ -217,7 +227,6 @@
       });
       // $("#task-status li").click(function(e) {
       //   console.log(e,$(this).text())
-               
       // })
       
      function getCustomTaskStatus(){
@@ -230,7 +239,7 @@
               cmnts = JSON.parse(localStorage.getItem("comments")) 
               cmnts.push($("#task-comment").val())
               localStorage.setItem("comments",JSON.stringify(cmnts));
-              cmnt = {"description":$("#task-comment").val()}
+              cmnt = {"description":$("#task-comment").val(),"get_member":{"first_name":"deepak","last_name":"joshi","updated_at":"9:00 AM"}}
               // console.log(cmnt)
               renderComments(cmnt)
             }
@@ -242,7 +251,8 @@
       $(document).on('click','.edit-task',function(e){
             editOrAddTask($(this).attr('data-task-edit-id'))
           })
-      $("input[name=exampleDataList]").focusout(function(){
+      $("input[name=exampleDataList]").focusout(function(e){
+            console.log($(this).attr('data-assignee-id'),e)
             localStorage.setItem("assignee",$(this).val())
       });
       $(document).on('click','.del-task',function(e){

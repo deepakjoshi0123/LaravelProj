@@ -3,18 +3,50 @@ namespace App\Services;
 use App\Models\Task_Mem;
 use App\Models\Task;
 use App\Models\Project;
-use App\Models\Comment;
 use App\Models\Member;
+use App\Models\Comment;
 use App\Models\Proj_Mem;
 use Illuminate\Http\Request;
 use Response;
 
-Class TaskService{
+Class TaskService {
     public function addTask($request){
-        (new Task())->fill($request)->save();
+        // dd($request['comments']);
+        $data = $request->get('data');
+        // echo $data;
+        //token_user_id
+        if($request->has('data.project_id')){
+           $member_id = $request->get('assignee');
+           $task = Task::create($request['data']);
+        
+            if($member_id){
+                (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
+            }
+            // return $request['comments'];
+            //
+            
+            foreach($request->get('comments') as $cmnt){
+                (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request->get('member_id'),'description'=>$cmnt])->save();
+                // return $cmnt;
+                }
+            return $task;
+        }
+        else{
+            return "task";
+            $task = Task::find($request['task_id']);
+            $task->fill($request)->save();
+            $member_id = Member::where('email',$request['assignee'])->get(['id']);
+            if($member_id){
+                $task_mem = (new Task_Mem())->fill([$task->id,$member_id])->save();
+            }
+            foreach($request['comments'] as $cmnt){
+                (new Comment())->fill([$task->id,$cmnt])->save();
+            }
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+        
         return array(
         'success' => true,
-            ); 
+        ); 
     }
     //why vaidation failed are redirecting to this function
     public function members($request){
@@ -54,8 +86,10 @@ Class TaskService{
         //
     public function taskDetails($request){
         $task = Task::where('id',$request['id'])->get(['id','title','description','attachment','status']);
-        $comment = Comment::with('member')->where('task_id',$request['id'])->get();
-        return $comment;
+        $comment = Comment::with('getMember')->where('task_id',$request['id'])->get();
+        $task[0]->comments=$comment;
+        // dd($task->title);
+        return $task;
     }
    
     public function getTasks($request){
@@ -77,10 +111,18 @@ Class TaskService{
             return Project::find($id)->members()->get(['email','id','first_name']);;
         }
         else{
-            $id = $request->all()['task_id'];
+            $id = $request->get('task_id');//taking out task_id
+            $project_id = $request->get('project_id');//taking out project_id
+            $memToBeEliminated = Task_Mem::where('task_id',$id)->get(['member_id']);
+            $membersRes = Task::find($id)->getMembers()->whereNotIn('member_id',$memToBeEliminated)->get();
+                      
+            // $mems = Task_Mem::whereNotIn('member_id',$memToBeEliminated)->distinct()->get(['member_id']); 
+
+            // $memToRes = Project::find($project_id)->members()->whereIn('member_id',[$mems])->get();
+            // $memToRes = Project::find($project_id)->members()->get();
+            return $membersRes;
             //pending ................................
-            return $id;
+           
         }
-    }
-   
+    }  
 }

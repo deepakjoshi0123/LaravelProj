@@ -37,7 +37,7 @@
  
 $.ajax({
     url:'projects',
-    data:{"member_id":"3"},
+    data:{"member_id":"1"},
     type:'get',
     success:  function (response) {
         
@@ -80,14 +80,16 @@ $.ajax({
                   <div id="project-task-`+item2.id+`">
                   <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
                   <div style="display:flex" >
-                    <div class="card border-primary mb-3" style="max-width: 50rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header">`+item2.title+`</div>
+                    <div class="card border-primary mb-3" style="max-width: 70rem;" data-task-id=`+item2.id+`>
+                      <div class="card-header">`+item2.title+`
+                        <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm  ms-4 me-4">edit</i>
+                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm  ms-3">delete</i>  
+                      </div>
                       <div class="card-body text-primary">
                         <p class="card-text">`+item2.description+`</p>
                       </div>
+                
                     </div>
-                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-lg mt-5 ms-4 me-4">edit</i>
-                    <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-lg mt-5 ms-3">delete</i>
                   </div>
                   </div>
                   `

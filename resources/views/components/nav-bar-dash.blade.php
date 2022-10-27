@@ -86,6 +86,14 @@
             type:'post',
             success:  function (res) {
                 console.log(res)
+                $('#side-bar').append(
+                `<div data-project-id=`+res.data.id+` 
+                        style="background-color: #e9f1f7;border-radius: 30px 15px;"
+                        class="project-item list-group-item list-group-item-action py-2 ripple ">
+                        <i class="fab fa-medapps"></i><span>`+res.data.project_name+`</span></div>`
+            )
+                $('#project-name').val("")
+                console.log(res)
             },
             error: function(x,xs,xt){}
           })

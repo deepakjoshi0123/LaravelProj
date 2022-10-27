@@ -18,7 +18,9 @@ Route::get('/assignees',[TaskController::class,'getAssignees']);
 
 Route::get('/tasks',[TaskController::class,'getTasks']);
 Route::get('/task',[TaskController::class,'taskDetails']);
+
 Route::post('/addTask',[TaskController::class,'addTask']);
+
 Route::post('/assignTask',[TaskController::class,'assignTask']);
 Route::post('/editTask',[TaskController::class,'editTask']);
 Route::delete('/delTask',[TaskController::class,'delTask']);

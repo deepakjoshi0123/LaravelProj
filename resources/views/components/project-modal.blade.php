@@ -11,8 +11,7 @@
                 <input id="project-name" placeholder="Enter project name " class="form-control" />
             </div>
             <div class="modal-footer">
-
-                <button id="save-project" type="button" class="btn btn-primary">Save</button>
+                <button data-mdb-dismiss="modal" id="save-project" type="button" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>
