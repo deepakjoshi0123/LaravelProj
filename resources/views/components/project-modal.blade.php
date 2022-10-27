@@ -9,9 +9,10 @@
             <div class="modal-body">
                 <h5> Project Name</h5>
                 <input id="project-name" placeholder="Enter project name " class="form-control" />
+                <span id="prj-title"></span>
             </div>
             <div class="modal-footer">
-                <button data-mdb-dismiss="modal" id="save-project" type="button" class="btn btn-primary">Save</button>
+                <button id="save-project" type="button" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>

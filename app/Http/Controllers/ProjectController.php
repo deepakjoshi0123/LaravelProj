@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\ProjectService;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 { 
@@ -19,10 +21,12 @@ class ProjectController extends Controller
         return response()->json(($this->projectService->getAllProjects($req->all())));
     }
     public function createProject(Request $req){
-        $validated = $req->validate([ 
-            'name' => 'required', 
-            'owner' => 'required'
+        $validated = Validator::make($req->all(), [ 
+            'name' => 'required|string|min:3|max:20',    
         ]);
+        if ($validated->fails()) {    
+            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+        }
         return response()->json(($this->projectService->createProject($req->all())));
         
     }

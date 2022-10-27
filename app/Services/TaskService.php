@@ -11,36 +11,31 @@ use Response;
 
 Class TaskService {
     public function addTask($request){
-        // dd($request['comments']);
         $data = $request->get('data');
-        // echo $data;
-        //token_user_id
+        $member_id = $request->get('assignee');
         if($request->has('data.project_id')){
-           $member_id = $request->get('assignee');
+         
            $task = Task::create($request['data']);
         
             if($member_id){
                 (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
             }
-            // return $request['comments'];
-            //
-            
+                        
             foreach($request->get('comments') as $cmnt){
                 (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request->get('member_id'),'description'=>$cmnt])->save();
-                // return $cmnt;
+                
                 }
             return $task;
         }
         else{
-            return "task";
-            $task = Task::find($request['task_id']);
-            $task->fill($request)->save();
-            $member_id = Member::where('email',$request['assignee'])->get(['id']);
+            $task = Task::find($request['data.id']);
+           
+            $task->fill($request['data'])->save();           
             if($member_id){
-                $task_mem = (new Task_Mem())->fill([$task->id,$member_id])->save();
+                (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
             }
-            foreach($request['comments'] as $cmnt){
-                (new Comment())->fill([$task->id,$cmnt])->save();
+            foreach($request->get('comments') as $cmnt){
+                (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request->get('member_id'),'description'=>$cmnt])->save();
             }
         }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
         
@@ -48,7 +43,7 @@ Class TaskService {
         'success' => true,
         ); 
     }
-    //why vaidation failed are redirecting to this function
+
     public function members($request){
         return Task::find($request['task_id'])->getMembers()->get(['id','first_name','last_name','email']);
     }

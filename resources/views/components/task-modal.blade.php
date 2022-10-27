@@ -15,9 +15,11 @@
             <div>
               <h6 class="ms-4 mt-1" id="modal-title">Ttile</h6>
               <input id="task-title" class="form-control ms-4 mt-3" />
+              <span id="tsk-title"></span>
               <h6 class="modal-desc ms-4 mt-3" id="modal-desc">Descriptiom</h6>
               <div id="task-modal-desc">
                 <textarea class="form-control ms-4  mt-3" id="task-desc" rows="3"></textarea>
+                <span id="tsk-desc"></span>
               </div>
               <input id="task-comment" class="ms-4 mb-3 mt-5 form-control" placeholder="Add Comment ..." />
               <div id="modal-body"></div>
@@ -99,12 +101,17 @@
         $("#task-comment").val("")
         $("#modal-body").html("")
         $("#task-status").html("")
+        $("#tsk-title").html("")
+        $("#tsk-desc").html("")
         $('#datalistOptions').html("")
+        
         
         $('#modal-members').html("")
         // localStorage.setItem("comments",[])
       }
       $(document).on('click','#save-task',function(e){
+        $("#tsk-title").html("")
+        $("#tsk-desc").html("")
         var data ={
           
           "title":$("#task-title").val(),
@@ -119,15 +126,14 @@
         "assignee":localStorage.getItem("assignee"),
       }
         
-        $('#exampleModal').modal('toggle')
+
         if(editOrAddFlag === "add"){
           data['project_id'] = localStorage.getItem("project_id");
         }
         else {
-          data['task_id'] = task_id
+          data['id'] = task_id
         }
-        console.log(data2)
-        resetModal()
+       
          $.ajax({
             url:'addTask',
             data:JSON.stringify(data2),
@@ -135,9 +141,21 @@
             type:'post',
             contentType: "application/json; charset=utf-8",
             success:  function (res) {
-              console.log(res)
+              $('#exampleModal').modal('toggle')
+              resetModal()
+              // console.log(res.status)
             },
-            error: function(x,xs,xt){}
+            error: function(err){
+              // console.log(err.status)
+              if(err.status == 400){
+                if(JSON.parse(err.responseText)['data.title']){
+                  $('#tsk-title').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['data.title'][0].replace('data.','')+`</span>`)
+                }
+                if(JSON.parse(err.responseText)['data.description']){
+                  $('#tsk-desc').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['data.description'][0].replace('data.','')+`</span>`)
+                }
+              }
+            }
           })
       });
       

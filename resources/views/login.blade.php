@@ -22,11 +22,13 @@
                         <label for="email">Email</label>
                         <input id="email" type="text" class="form-control" name="email" value=""
                             placeholder="enter your email">
+                        <span id="email"></span>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input id="password" type="password" class="form-control" name="password" value=""
                             placeholder="enter your password">
+                        <span id="password"></span>
                     </div>
                     <div class="form-group" style="margin-top:20px">
                         <button id="login" class="btn btn-block btn-primary" type="submit">Login</button>
@@ -62,20 +64,19 @@
             data:data,
             type:'post',
             success:  function (response) {
-                console.log(response)
-                // document.cookie = "access_token="+response;
-                // $.ajaxSetup({
-                // beforeSend: function (xhr) {
-                // xhr.setRequestHeader('Authorization', `Bearer ${document.cookie.split(';')[1].split('=')[1]}` );
-                // },
-                //     headers: {
-                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                //     }
-                // });
-                // console.log(JSON.stringify(req.headers));
+               
             },
-            error: function(error){
-                console.log(error)
+            error: function(err){
+                if(err.status == 422){
+                    console.log(JSON.parse(err.responseText.email))
+                if(JSON.parse(err.responseText)['email']){
+                  
+                  $('#email').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
+                }
+                if(JSON.parse(err.responseText)['password']){
+                  $('#password').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
+                }
+              }
             }
         })
     })

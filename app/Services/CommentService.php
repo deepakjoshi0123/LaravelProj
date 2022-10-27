@@ -12,16 +12,16 @@ class CommentService{
         }])->where('task_id',$task_id)->get(['description','member_id']);
         return $comnt;
     }
-    public function addComment($request){
-        $comment = json_decode($request,true);
-        $cmnt = new Comment;
-        $cmnt ->description  = $comment['description']; 
-        $cmnt ->member_id = $comment['member_id'];
-        $cmnt ->task_id = $comment['task_id'];
-        $cmnt->save();
-        return Response::json(array(
-            'success' => true,
-          )); 
-    }
+    // public function addComment($request){
+    //     $comment = json_decode($request,true);
+    //     $cmnt = new Comment;
+    //     $cmnt ->description  = $comment['description']; 
+    //     $cmnt ->member_id = $comment['member_id'];
+    //     $cmnt ->task_id = $comment['task_id'];
+    //     $cmnt->save();
+    //     return Response::json(array(
+    //         'success' => true,
+    //       )); 
+    // }
 
 }

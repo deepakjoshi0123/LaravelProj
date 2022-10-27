@@ -85,7 +85,7 @@
             data:{"owner":"3","name":$('#project-name').val()},
             type:'post',
             success:  function (res) {
-                console.log(res)
+              
                 $('#side-bar').append(
                 `<div data-project-id=`+res.data.id+` 
                         style="background-color: #e9f1f7;border-radius: 30px 15px;"
@@ -93,9 +93,18 @@
                         <i class="fab fa-medapps"></i><span>`+res.data.project_name+`</span></div>`
             )
                 $('#project-name').val("")
-                console.log(res)
+                $('#projectModal').modal('toggle')
+                $('#prj-title').html("")
+            
             },
-            error: function(x,xs,xt){}
+            
+            error: function(err){
+                if(err.status == 400){
+                if(JSON.parse(err.responseText)['name']){
+                  $('#prj-title').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['name'][0]+`</span>`)
+                }
+              }
+            }
           })
     })
 </script>

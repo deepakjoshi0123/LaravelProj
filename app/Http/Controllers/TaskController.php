@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Services\TaskService;
 
@@ -13,8 +14,6 @@ use App\Models\Task_Mem;
 use App\Models\Task;
 use App\Models\Member;
 
-use Illuminate\Support\Facades\Validator;
-
 class TaskController extends Controller
 {
     protected $projectService;
@@ -25,15 +24,15 @@ class TaskController extends Controller
         return response()->json($this->taskService->getTasks($req->all()));
     }
     public function addTask(Request $req){ 
-    //    return "hey";
         $validated = Validator::make($req->all(), [ 
-            'data.title' => 'required', // min length , max length 
-            'data.description' => 'required', // min length , max length
-            'comments' => 'required', // min length , max length
-            'data.status' => 'required',    // min length , max length 
-            'data.project_id' => 'required',     
+            'data.title' => 'required|string|min:3|max:20', 
+            'data.description' => 'required|string|min:3|max:200', 
+            'comments' => 'nullable', 
+            'data.status' => 'nullable|string',    
         ]);
-        // return $validated->errors();
+        if ($validated->fails()) {    
+            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+        }
         return response()->json($this->taskService->addTask($req));
     }
     public function assignTask(Request $req){ 

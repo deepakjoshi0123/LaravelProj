@@ -82,14 +82,14 @@ $.ajax({
                   <div style="display:flex" >
                     <div class="card border-primary mb-3" style="max-width: 70rem;" data-task-id=`+item2.id+`>
                       <div class="card-header">`+item2.title+`
-                        <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm  ms-4 me-4">edit</i>
-                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm  ms-3">delete</i>  
+                       
                       </div>
                       <div class="card-body text-primary">
                         <p class="card-text">`+item2.description+`</p>
                       </div>
-                
                     </div>
+                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm  ms-4 me-4">edit</i>
+                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm  ms-3">delete</i>  
                   </div>
                   </div>
                   `
