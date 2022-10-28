@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Response;
 
 Class TaskService {
+    // break this service 
     public function addTask($request){
         $data = $request->get('data');
         $member_id = $request->get('assignee');
@@ -53,7 +54,6 @@ Class TaskService {
         return Response::json(array(
             'success' => true,
         )); 
-        // Task::find($request['task_id'])->members()->get(['id','first_name','last_name','email']);
         //send notification only this newly added user query using new update in task model for geeting user email
     }
     public function editTask($request){
@@ -66,7 +66,6 @@ Class TaskService {
         else{
             $task = Task::find($request['id']);
             $task->fill($request)->save();
-             // Task::find($request['task_id'])->members()->get(['id','first_name','last_name','email']);
              // notify all users assosiated with that task id; try to di it in async way  just like 
             return array(
                 'success' => true
@@ -78,17 +77,16 @@ Class TaskService {
         Task::find($request['task_id'])->delete();
         return array('success' => true);
     }
-        //
+        
     public function taskDetails($request){
         $task = Task::where('id',$request['id'])->get(['id','title','description','attachment','status']);
         $comment = Comment::with('getMember')->where('task_id',$request['id'])->get();
         $task[0]->comments=$comment;
-        // dd($task->title);
         return $task;
     }
    
     public function getTasks($request){
-        // return $request;
+       
         $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status','attachment']);//get(['id',etc..]) was giving error when
         $res=array();
         for($i=0;$i<count($project);$i++){
@@ -110,14 +108,8 @@ Class TaskService {
             $project_id = $request->get('project_id');//taking out project_id
             $memToBeEliminated = Task_Mem::where('task_id',$id)->get(['member_id']);
             $membersRes = Task::find($id)->getMembers()->whereNotIn('member_id',$memToBeEliminated)->get();
-                      
-            // $mems = Task_Mem::whereNotIn('member_id',$memToBeEliminated)->distinct()->get(['member_id']); 
-
-            // $memToRes = Project::find($project_id)->members()->whereIn('member_id',[$mems])->get();
-            // $memToRes = Project::find($project_id)->members()->get();
             return $membersRes;
-            //pending ................................
-           
+            
         }
     }  
 }

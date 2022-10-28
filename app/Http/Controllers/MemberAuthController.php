@@ -16,7 +16,7 @@ class MemberAuthController extends Controller
     }
 
     public function register(Request $req){
-        $validated = $req->validate([ 
+        $validated = Validator::make($req->all(), [
             'email' => 'required|email', 
             'password' => 'required',
             'first_name' => 'required|min:3|max:20',
@@ -24,9 +24,9 @@ class MemberAuthController extends Controller
             'is_verfied' => 'required'
         ]);
        
-        // if ($validated->fails()) {    
-        //     return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
-        // }
+        if ($validated->fails()) {    
+            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+        }
         
         $memberData = $req->all();
         $member = Member::create($memberData);
@@ -38,7 +38,7 @@ class MemberAuthController extends Controller
     }
 
     public function login(Request $req){
-        $validated = $req->validate([ 
+        $validated = Validator::make($req->all(), [ 
             'email' => 'required|email', 
             'password' => 'required'
         ]);
@@ -46,7 +46,7 @@ class MemberAuthController extends Controller
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
-        
+
         $credentials = request(['email', 'password']);
        if (! $token = auth()->attempt($credentials)) {
            return response()->json(['error' => 'Unauthorized'], 401);

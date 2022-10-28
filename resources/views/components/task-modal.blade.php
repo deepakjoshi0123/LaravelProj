@@ -257,7 +257,7 @@
               cmnts = JSON.parse(localStorage.getItem("comments")) 
               cmnts.push($("#task-comment").val())
               localStorage.setItem("comments",JSON.stringify(cmnts));
-              cmnt = {"description":$("#task-comment").val(),"get_member":{"first_name":"deepak","last_name":"joshi","updated_at":"9:00 AM"}}
+              cmnt = {"description":$("#task-comment").val(),"get_member":{"first_name":"Missouri ","last_name":"Jacobs","updated_at":"9:00 AM"}}
               // console.log(cmnt)
               renderComments(cmnt)
             }

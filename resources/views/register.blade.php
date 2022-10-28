@@ -15,6 +15,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4 col-md-offset-4" style="margin-top:50px ">
+                <div id="success-msg"></div>
                 <h4>Member Registration</h4>
                 <hr>
                 <form>
@@ -22,20 +23,24 @@
                         <label for="firstName">First Name</label>
                         <input type="text" class="form-control" id="first_name" value=""
                             placeholder="enter your first name">
+                        <div id="first_name-span"></div>
                     </div>
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
                         <input type="text" class="form-control" id="last_name" value=""
                             placeholder="enter your last name">
+                        <div id="last_name-span"></div>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="text" class="form-control" id="email" value="" placeholder="enter your email">
+                        <div id="email-span"></div>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input id="password" type="password" class="form-control" password="password" value=""
                             placeholder="enter your password">
+                        <div id="password-span"></div>
                     </div>
                     <div class="form-group" style="margin-top:20px">
                         <button id="register" class="btn btn-block btn-primary" type="submit">Register</button>
@@ -61,7 +66,11 @@
         })
         $(document).on('click','#register',function(e){
         e.preventDefault()
-
+        $('#email-span').html("")
+        $('#first_name-span').html("")
+        $('#last_name-span').html("")
+        $('#password-span').html("")
+        $('#success-msg').html("")
         data={
         'email':$('#email').val(),
         'password':$('#password').val(),
@@ -75,10 +84,26 @@
             data:data,
             type:'post',
             success:  function (response) {
-              console.log(response)
+                $('#success-msg').append(`<h6 class="ms-5" style="color:green" >congratulations! check mail for verification</h6>`)
+                setTimeout(()=>{
+                    window.location.href = "http://localhost:8000/login";
+                }, 2000);
             },
-            error: function(error){
-                console.log(error)
+            error: function(err){
+                if(err.status == 400){
+                     if(JSON.parse(err.responseText)['email']){
+                       $('#email-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
+                       }
+                     if(JSON.parse(err.responseText)['password']){
+                       $('#password-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
+                       }
+                     if(JSON.parse(err.responseText)['first_name']){
+                       $('#first_name-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['first_name'][0]+`</span>`)
+                       }
+                     if(JSON.parse(err.responseText)['last_name']){
+                       $('#last_name-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['last_name'][0]+`</span>`)
+                       }
+                }
             }
         })
     })
