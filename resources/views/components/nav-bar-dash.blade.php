@@ -24,8 +24,8 @@
                     </a>
                 </li>
                 <form class="d-flex input-group w-auto" style="margin-left:730px">
-                    <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-                        aria-describedby="search-addon" />
+                    <input id="search-task" type="search" class="form-control rounded" placeholder="Search"
+                        aria-label="Search" aria-describedby="search-addon" onChange="searchTask()" disabled />
                     <span class="input-group-text border-0" id="search-addon">
                         <i class="fas fa-search"></i>
                     </span>
@@ -58,12 +58,7 @@
                         alt="Black and White Portrait of a Man" loading="lazy" />
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                    <li>
-                        <a class="dropdown-item" href="#">My profile</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">Settings</a>
-                    </li>
+
                     <li>
                         <a class="dropdown-item" href="#">Logout</a>
                     </li>
@@ -78,6 +73,41 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
+    function searchTask(){
+        $.ajax({
+            url:'searchTask',
+            data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id')},
+            type:'get',
+            success:  function (response) {
+            console.log(response)
+            $('#task-listing').html("")
+            $.each(response,function(key,item){
+            $.each(item,function(key2,item2){
+                $('#task-listing').append(
+                  `
+                  <div id="project-task-`+item2.id+`">
+                  <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
+                  <div style="display:flex" >
+                    <div class="card border-primary mb-3" style="max-width: 70rem;" data-task-id=`+item2.id+`>
+                      <div class="card-header">`+item2.title+`
+                       
+                      </div>
+                      <div class="card-body text-primary">
+                        <p class="card-text">`+item2.description+`</p>
+                      </div>
+                    </div>
+                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm  ms-4 me-4">edit</i>
+                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm  ms-3">delete</i>  
+                  </div>
+                  </div>
+                  `
+                 )
+            })            
+        });
+     },
+            error: function(res){}
+        })
+    }
     $(document).on('click','#save-project',function(){
         // console.log($('#project-name').val())
         $.ajax({
@@ -105,7 +135,7 @@
                 }
               }
             }
-          })
+          })    
     })
 </script>
 <!-- Navbar -->

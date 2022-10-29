@@ -61,5 +61,8 @@ class TaskController extends Controller
     public function getAssignees(Request $req){ 
         return response()->json($this->taskService->getAssignees($req)) ;
     }
+    public function searchTask(Request $req){
+        return response()->json(($this->taskService->searchTask($req->all())));
+    }
     
 }

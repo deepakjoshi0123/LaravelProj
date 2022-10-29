@@ -34,34 +34,22 @@
                     </button>
                 </ul>
                 <div class="dropdown">
-                    <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
-                        id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                        <button style="margin-left:5px" type="button" class="btn btn-primary">Filters
-                            <i class="fas fa-filter"></i>
-                        </button>
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                    <button class="btn btn-primary  dropdown-toggle d-flex align-items-center hidden-arrow"
+                        id="navbarDropdownMenuAvatar-filter-task" role="button" data-mdb-toggle="dropdown"
+                        aria-expanded="false" disabled style="margin-left:5px" type="button">
+                        Filters
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar-filter-task">
                         <li>
-                            <h6>Members</h6>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
-                            </div>
+                            <h5>Members</h5>
+                            <div id="members-list-filter"></div>
                         </li>
                         <li>
                             <h5>Status</h5>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
-                            </div>
+                            <div id="status-list-filter"></div>
                         </li>
+                        <button id="save-filters" type="button" class="btn btn-primary">Save</button>
                     </ul>
                 </div>
                 <!-- Left links -->
@@ -75,3 +63,54 @@
     </div>
     <!-- Navbar -->
 </div>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+    integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).on('click','#navbarDropdownMenuAvatar-filter-task',function(e){
+
+        $('#members-list-filter').html("")
+        $('#status-list-filter').html("")
+        $.ajax({
+            url:'assignees',
+            data:{"project_id":localStorage.getItem('project_id')},
+            type:'get',
+            success:  function (res) {
+                $.each(res,function(key,mem){
+                    
+                    $('#members-list-filter').append(`
+                    <div class="form-check">
+                           <input id="filter-member" class="form-check-input" type="checkbox" value=`+mem.id+`
+                            id="flexCheckDefault" />
+                         <label class="form-check-label" for="flexCheckDefault">`+mem.first_name+`</label>
+                    </div>
+                                        
+                    `)
+                })
+            },
+            error: function (err){}
+            })   
+        $.each(JSON.parse(localStorage.getItem('Available_Status')),function(key,mem){
+           
+            $('#status-list-filter').append(`
+            <div class="form-check">
+                     <input id="filter-status" class="form-check-input" type="checkbox" value="`+mem+`"
+                        id="flexCheckDefault" />
+                <label class="form-check-label" for="flexCheckDefault">`+mem+`</label>
+            </div>
+            `)
+        })
+    })
+    $(document).on('click','#save-filters',function(e){
+       
+        var filters = {"status":[],"members":[]};
+            $("#filter-status:checked").each(function() {
+                filters['status'].push($(this).val());
+            });
+            $("#filter-member:checked").each(function() {
+                filters['members'].push($(this).val());
+            });
+        data={"project_id":localStorage.getItem("project_id"),'filters':filters}
+        console.log(data)
+       
+    })
+</script>

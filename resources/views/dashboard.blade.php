@@ -23,6 +23,7 @@
   $(document).ready(function(){
     var project_id,task_id
     var editOrAddFlag
+    
     // var member_id 
     var tasks = {};
     $.ajaxSetup({
@@ -34,20 +35,20 @@
     }
 });
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
- 
+    localStorage.setItem("proj_old_id",999999)
 $.ajax({
     url:'projects',
-    data:{"member_id":"1"},
+    data:{"member_id":"2"},
     type:'get',
     success:  function (response) {
-        
+      $('#side-bar').append(`<h3>Projects List</h3>`)
         $.each(response,function(key,item){
             
             $('#side-bar').append(
-                `<div data-project-id=`+item.id+` 
+                `<div  id="project-`+item.id+`" data-project-id=`+item.id+` 
                         style="background-color: #e9f1f7;border-radius: 30px 15px;"
                         class="project-item list-group-item list-group-item-action py-2 ripple ">
-                        <i class="fab fa-medapps"></i><span>`+item.project_name+`</span></div>`
+                        <i  class="fab fa-medapps"></i><span>`+item.project_name+`</span></div>`
             )
         });
     },
@@ -57,10 +58,26 @@ $.ajax({
     } 
     }); //prettier 
         $(document).on('click','.project-item',function(e){
-          console.log(e.target)// fetch project name from e.target.value
-          
+          var proj_id = $(this).attr('data-project-id') 
+          //break this into another function
+         //____________________________________________________________________________________________ 
+          if(localStorage.getItem('proj_old_id')!= proj_id){
+            if(document.getElementById(`project-${localStorage.getItem('proj_old_id')}`) != null){
+              document.getElementById(`project-${localStorage.getItem('proj_old_id')}`).style.backgroundColor = '#e9f1f7'
+            }
+            
+          }
+          document.getElementById(`project-${proj_id}`).style.backgroundColor = '#00bfff'
+          localStorage.setItem('proj_old_id',proj_id)
+         
           localStorage.setItem("project_id", $(this).attr('data-project-id'));
+          //___________________________________________________________________________________________ 
           document.getElementById("add-task").disabled = false;
+          document.getElementById("navbarDropdownMenuAvatar-filter-task").disabled = false;
+          
+
+          $("#search-task").prop('disabled', false);
+          
             // console.log(e)
             // console.log($(this).attr('data-project-id'))
     $.ajax({

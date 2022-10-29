@@ -81,7 +81,7 @@
             type:'get',
             success:  function (res) {
               $.each(res,function(key,mem){
-                console.log(mem)
+                
                 $('#datalistOptions').append(`<option data-assignee-id=`+mem.email+` value="`+mem.id+`">`+mem.first_name+`</option>`) 
               })
             },
@@ -270,7 +270,7 @@
             editOrAddTask($(this).attr('data-task-edit-id'))
           })
       $("input[name=exampleDataList]").focusout(function(e){
-            console.log($(this).attr('data-assignee-id'),e)
+          
             localStorage.setItem("assignee",$(this).val())
       });
       $(document).on('click','.del-task',function(e){

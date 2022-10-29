@@ -111,5 +111,23 @@ Class TaskService {
             return $membersRes;
             
         }
-    }  
+    } 
+    public function searchTask($request){
+        $project = Task::where([
+            ['title','like','%'.$request['text'].'%'],
+            ['project_id','=',$request['project_id']]
+        ])->orWhere([
+            ['description','like','%'.$request['text'].'%'],
+            ['project_id','=',$request['project_id']]
+            ])
+        ->get(['title','description','id','status']);
+        $res=array();
+        for($i=0;$i<count($project);$i++){
+            $res[$project[$i]['status']] =  array();
+         }
+        for($i=0;$i<count($project);$i++){
+           array_push($res[$project[$i]['status']],$project[$i]);
+        }
+        return $res;
+    } 
 }
