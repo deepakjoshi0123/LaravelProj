@@ -42,14 +42,14 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar-filter-task">
                         <li>
-                            <h5>Members</h5>
+                            <h5 class="ms-2">Members</h5>
                             <div id="members-list-filter"></div>
                         </li>
                         <li>
-                            <h5>Status</h5>
+                            <h5 class="ms-2">Status</h5>
                             <div id="status-list-filter"></div>
                         </li>
-                        <button id="save-filters" type="button" class="btn btn-primary">Save</button>
+                        <button id="save-filters" type="button" class="ms-2 btn btn-primary">Save</button>
                     </ul>
                 </div>
                 <!-- Left links -->
@@ -78,7 +78,7 @@
                 $.each(res,function(key,mem){
                     
                     $('#members-list-filter').append(`
-                    <div class="form-check">
+                    <div class="ms-2 form-check">
                            <input id="filter-member" class="form-check-input" type="checkbox" value=`+mem.id+`
                             id="flexCheckDefault" />
                          <label class="form-check-label" for="flexCheckDefault">`+mem.first_name+`</label>
@@ -92,7 +92,7 @@
         $.each(JSON.parse(localStorage.getItem('Available_Status')),function(key,mem){
            
             $('#status-list-filter').append(`
-            <div class="form-check">
+            <div class="ms-2 form-check">
                      <input id="filter-status" class="form-check-input" type="checkbox" value="`+mem+`"
                         id="flexCheckDefault" />
                 <label class="form-check-label" for="flexCheckDefault">`+mem+`</label>
@@ -110,7 +110,17 @@
                 filters['members'].push($(this).val());
             });
         data={"project_id":localStorage.getItem("project_id"),'filters':filters}
-        console.log(data)
+        
+
+        $.ajax({
+            url:'filterTask',
+            data:data,
+            type:'get',
+            success:  function (res) {
+                console.log(res)
+            },
+            error: function(err){}
+        })
        
     })
 </script>

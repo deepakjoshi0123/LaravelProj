@@ -130,4 +130,12 @@ Class TaskService {
         }
         return $res;
     } 
+    public function filterTask($request){
+        dd($request['filters.members']);
+        $member_id = $request['filters.member'][0];
+        $tasks = Task::with(['getMembers' => function($q) use($member_id){
+            $q->where('id',$member_id);
+        }])->get();
+        return $tasks;
+    }
 }

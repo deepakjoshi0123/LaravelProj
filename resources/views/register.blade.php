@@ -11,42 +11,49 @@
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
 
-<body>
+<body
+    style="background-size: cover ;  background-image: url(https://cdn.pixabay.com/photo/2017/10/31/19/05/web-design-2906159__480.jpg)">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 col-md-offset-4" style="margin-top:50px ">
-                <div id="success-msg"></div>
-                <h4>Member Registration</h4>
-                <hr>
-                <form>
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" class="form-control" id="first_name" value=""
-                            placeholder="enter your first name">
-                        <div id="first_name-span"></div>
+            <div class="col-md-4 col-md-offset-4" style="margin-top:60px; margin-left:330px">
+
+                <div class="card" style="width: 30rem;">
+                    <div class="card-body">
+                        <div id="success-msg"></div>
+                        <h4>Member Registration</h4>
+                        <hr>
+                        <form>
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" class="form-control" id="first_name" value=""
+                                    placeholder="enter your first name">
+                                <div id="first_name-span"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" class="form-control" id="last_name" value=""
+                                    placeholder="enter your last name">
+                                <div id="last_name-span"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="text" class="form-control" id="email" value=""
+                                    placeholder="enter your email">
+                                <div id="email-span"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password *</label>
+                                <input id="password" type="password" class="form-control" password="password" value=""
+                                    placeholder="enter your password">
+                                <div id="password-span"></div>
+                            </div>
+                            <div class="form-group" style="margin-top:20px">
+                                <button id="register" class="btn btn-block btn-primary" type="submit">Register</button>
+                            </div>
+                            <a href="login" style="margin-top:10px">If already registered Login here</a>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" class="form-control" id="last_name" value=""
-                            placeholder="enter your last name">
-                        <div id="last_name-span"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="text" class="form-control" id="email" value="" placeholder="enter your email">
-                        <div id="email-span"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input id="password" type="password" class="form-control" password="password" value=""
-                            placeholder="enter your password">
-                        <div id="password-span"></div>
-                    </div>
-                    <div class="form-group" style="margin-top:20px">
-                        <button id="register" class="btn btn-block btn-primary" type="submit">Register</button>
-                    </div>
-                    <a href="login" style="margin-top:10px">If already registered Login here</a>
-                </form>
+                </div>
             </div>
         </div>
     </div>

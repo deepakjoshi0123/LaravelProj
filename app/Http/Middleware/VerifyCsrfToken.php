@@ -23,6 +23,8 @@ class VerifyCsrfToken extends Middleware
         'login',
         'me',
         'refresh',
+        'sendRestLink',
+        'changePassword'
         
     ];
 }

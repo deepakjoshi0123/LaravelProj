@@ -15,9 +15,11 @@ class ProjectController extends Controller
     }
     public function getProjects(Request $req){  //custom req class and pass it the functon arguments for validation
         
-        $validated = $req->validate([ 
-            'member_id' => 'required', 
-        ]);
+        // $validated = $req->validate([ 
+        //     'member_id' => 'required', 
+        // ]);
+        //all json routes in api
+        //all html templetes web
         return response()->json(($this->projectService->getAllProjects($req->all())));
     }
     public function createProject(Request $req){

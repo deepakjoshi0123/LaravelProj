@@ -64,5 +64,7 @@ class TaskController extends Controller
     public function searchTask(Request $req){
         return response()->json(($this->taskService->searchTask($req->all())));
     }
-    
+    public function filterTask(Request $req){
+        return response()->json(($this->taskService->filterTask($req->all())));
+    }
 }
