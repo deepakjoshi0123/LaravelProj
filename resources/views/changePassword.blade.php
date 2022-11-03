@@ -20,6 +20,7 @@
                 <div class="card" style="width: 30rem;">
                     <div class="card-body">
                         <h5 class="card-title">Reset your password</h5>
+                        <h5 id="success-msg-password" style="color:green"></h5>
                         <hr>
                         <h6 class="card-subtitle mb-2 text-muted">Change Password</h6>
                         <form>
@@ -27,13 +28,13 @@
                                 <label for="password">Enter New Paasword</label>
                                 <input id="password" type="password" class="form-control" name="email" value=""
                                     placeholder="enter password">
-                                <span id="email-span"></span>
+                                <span id="password-span"></span>
                             </div>
                             <div class="form-group">
                                 <label for="confirm-password">Confirm Password</label>
                                 <input id="cnf-password" type="password" class="form-control" name="email" value=""
                                     placeholder="enter confirm password">
-                                <span id="email-span"></span>
+                                <span id="cnf-password-span"></span>
                             </div>
                             <div class="form-group" style="margin-top:20px">
                                 <button id="reset-password" class="btn btn-primary  btn-block" type="submit">Change
@@ -55,18 +56,27 @@
 <script type="text/javascript">
     $(document).on('click','#reset-password',function(e){
         e.preventDefault()
-        // var token = " hey"
+        $('#password-span').html('')
+        $('#cnf-password-span').html('')
+        
         var token = window.location.pathname.split('/')[2]
         $.ajax({
             url:'/changePassword',
             data:{'token':token,'password':$('#password').val(),'cnf-password':$('#cnf-password').val()},
             type:'post',
             success:  function (res) {
-
-                console.log(res)
+                $('#success-msg-password').text('your password is successfully changed')
+                setInterval(() => {
+                    window.location.href = "http://localhost:8000/login"; 
+                }, 4000);
             },
             error: function(err){
-                console.log('errr-->',err)
+                if(JSON.parse(err.responseText)['password']){
+                       $('#password-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
+                    }
+                if(JSON.parse(err.responseText)['cnf-password']){
+                       $('#cnf-password-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['cnf-password'][0]+`</span>`)
+                    }
             }
         })
     })

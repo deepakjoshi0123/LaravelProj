@@ -21,6 +21,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Reset your password</h5>
                         <hr>
+                        <h6 id="success-msg" style="color:green"></h6>
                         <h6 class="card-subtitle mb-2 text-muted">Enter your user account's verified email address and
                             we will send you a password reset link.</h6>
                         <form>
@@ -52,15 +53,27 @@
 <script type="text/javascript">
     $(document).on('click','#reset',function(e){
         e.preventDefault()
+        $('#email-span').html("")
         $.ajax({
             url:'sendRestLink',
             data:{'email':$('#email').val()},
             type:'post',
             success:  function (res) {
-                console.log(res)
+                
+                $('#success-msg').text('Check your email for password reset link')
+                setInterval(() => {
+                    window.location.href = "http://localhost:8000/login";    
+                }, 4000);
+                
             },
             error: function(err){
-                console.log('errr-->',err)
+                console.log(err.responseJSON[0])
+                if(JSON.parse(err.responseText)['email']){
+                       $('#email-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
+                    }
+                if(err.responseJSON[0]){
+                       $('#email-span').append(`<span  style="color:red">`+err.responseJSON[0]+`</span>`)
+                    }
             }
         })
         

@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Session;
 use Illuminate\Http\Request;
 use App\Services\ProjectService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Auth;
 class ProjectController extends Controller
 { 
     protected $projectService;
@@ -45,8 +45,11 @@ class ProjectController extends Controller
         ]);
         return response()->json(($this->projectService->getAllMembers($req->all())));
     }
-    public function dashboard(){
-        return view('dashboard');
+    public function dashboard(Request $req){
+      
+        if($req->session()->get('userid')){
+            return view('dashboard');
+        }
+        return redirect('login');        
     }
-   
 }

@@ -6,25 +6,34 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
-
-
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
+use Session;
 
 class MemberAuthController extends Controller
 {
-    public function login_view(){
+    public function login_view(Request $req){
+        if($req->session()->get('userid')){
+            return redirect('dashboard');
+        }
         return view('login');
     }
-    public function register_view(){
+    public function register_view(Request $req){
+        
+        if($req->session()->get('userid')){
+            return redirect('dashboard');
+        }
         return view('register');
     }
 
     public function register(Request $req){
         $validated = Validator::make($req->all(), [
             'email' => 'required|email', 
-            'password' => 'required',
             'first_name' => 'required|min:3|max:20',
             'last_name' => 'required||min:3|max:20', 
-            'is_verfied' => 'required'
+            'is_verfied' => 'required',
+            'password' => 'required_with:cnf-password|same:cnf-password',
+            'cnf-password' => 'required'
         ]);
        
         if ($validated->fails()) {    
@@ -40,51 +49,29 @@ class MemberAuthController extends Controller
         return $member;
     }
 
-    public function login(Request $req){
-        $validated = Validator::make($req->all(), [ 
-            'email' => 'required|email', 
-            'password' => 'required'
-        ]);
-       
-        if ($validated->fails()) {    
-            // return login view error
-            return redirect('login');// redirect with errors 
-            // return 
-            // return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
-        }
-
-       $credentials = request(['email', 'password']);
-        
-       if (! $token = auth()->attempt($credentials)) {
-            //login view
-            return redirect('login');
-        //    return response()->json(['error' => 'Unauthorized'], 401);
-       }
-    //    return $token;
-       return redirect('dashboard')->withCookie('token',$token);
-    //    return $this->respondWithToken($token);
-    }
+   
     public function me()
    {   
        return response()->json(auth()->user());
    }
    public function logout()
    {
-       auth()->logout();
- 
+    //    Auth::logout();
+       Session::flush();
        return response()->json(['message' => 'Successfully logged out']);
    }
 
    public function refresh()
-   {
-       return $this->respondWithToken(auth()->refresh());
+   { 
+       return auth()->refresh();
    }
+
    protected function respondWithToken($token)
    {
        return response()->json([
            'access_token' => $token,
            'token_type' => 'bearer',
-           'expires_in' => auth()->factory()->getTTL() * 60 *48
+           'expires_in' => auth()->factory()->getTTL() 
        ]);
    }
 
@@ -137,5 +124,43 @@ class MemberAuthController extends Controller
         return response()->json($member);
         }
 
+
+        public function login(Request $req){
+            $validated = Validator::make($req->all(), [ 
+                'email' => 'required|email', 
+                'password' => 'required'
+            ]);
+           
+            if ($validated->fails()) {    
+                return redirect('login')->withErrors($validated->messages());
+            }
+            
+           $credentials = request(['email', 'password']);
+           if (Auth::attempt($credentials)) {
+                    // dd(Auth::check());
+                    $req->session()->put('userid',Auth::id());
+                   
+                    return redirect('dashboard');
+           }
+           return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
+         }
+        
+         public function getToken(Request $req){
+            $validated = Validator::make($req->all(), [ 
+                'email' => 'required|email', 
+                'password' => 'required'
+            ]);
+           
+            if ($validated->fails()) {    
+                return redirect('login')->withErrors($validated->messages());
+            }
+            
+           $credentials = request(['email', 'password']);
+           if ($token = auth()->attempt($credentials)) {
+                return $token;
+            }
+            return response()->json(['unauthorized' => 'Unauthorized']);
+         }
+    
 }
 

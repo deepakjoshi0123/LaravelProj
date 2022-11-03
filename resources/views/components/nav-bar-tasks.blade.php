@@ -71,7 +71,7 @@
         $('#members-list-filter').html("")
         $('#status-list-filter').html("")
         $.ajax({
-            url:'assignees',
+            url:'api/assignees',
             data:{"project_id":localStorage.getItem('project_id')},
             type:'get',
             success:  function (res) {
@@ -113,7 +113,7 @@
         
 
         $.ajax({
-            url:'filterTask',
+            url:'api/filterTask',
             data:data,
             type:'get',
             success:  function (res) {

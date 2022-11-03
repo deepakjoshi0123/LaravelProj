@@ -19,20 +19,24 @@
                 <div id="unauth"></div>
                 <div class="card" style="width: 30rem;">
                     <div class="card-body">
+                        <h3 style="color:red;margin-left:130px">{{ $errors->first('unauthorized') }}</h3>
                         <h4>Login</h4>
+
                         <hr>
+
                         <form method="post" action="{{ url('/login') }}">
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input id="email" type="text" class="form-control" name="email" value=""
+                                {{-- old('email') not working --}}
+                                <input id="email" type="text" class="form-control" name="email" value="{{old('email')}}"
                                     placeholder="enter your email">
-                                <span id="email-span"></span>
+                                <span id="email-span" style="color:red">{{ $errors->first('email') }}</span>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <input id="password" type="password" class="form-control" name="password" value=""
                                     placeholder="enter your password">
-                                <span id="password-span"></span>
+                                <span id="email-span" style="color:red">{{ $errors->first('password') }}</span>
                             </div>
                             <div class="form-group" style="margin-top:20px">
                                 <button id="login" class="btn btn-block btn-primary" type="submit">Login</button>
@@ -53,47 +57,20 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
-        $.ajaxSetup({
-         headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-         }
-        })
-    //     $(document).on('click','#login',function(e){
-    //     $('#email-span').html("")
-    //     $('#password-span').html("")
-    //     $('#unauth').html("")
-    //     e.preventDefault()
-        
-    //     data={'email':$('#email').val(),
-    //     'password':$('#password').val() 
-    //     }
+    $(document).on('click','#login',function(e){
+              $.ajax({
+                    url:'api/getToken',
+                    data:{'email':$('#email').val(),'password':$('#password').val()},
+                    type:'get',
+                    success:  function (response) {
+                          localStorage.setItem("jwt-token", response);
+                    },
+                    error: function(err){
+                        console.log('err----->',err)
+                    }
+                    })
+              })
 
-    //     $.ajax({
-    //         url:'login',
-    //         data:data,
-    //         type:'post',
-    //         success:  function (response) {
-    //             console.log(response.access_token)
-    //             $('#unauth').append(`<h4 class="ms-5" style="color:green">`+"Success"+`</h4>`)
-    //         },
-    //         error: function(err){
-    //             if(err.status == 400){
-    //                  if(JSON.parse(err.responseText)['email']){
-    //                    $('#email-span').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
-    //                    }
-    //                  if(JSON.parse(err.responseText)['password']){
-    //                    $('#password-span').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
-    //                    }
-    //             }
-    //           if(err.status == 401){
-    //             $('#unauth').append(`<h5 class="ms-5" style="color:red">`+JSON.parse(err.responseText)['error']+`</h5>`)
-    //           }
-    //         }
-    //     })
-    // })
-         
-    })
 </script>
 
 </html>

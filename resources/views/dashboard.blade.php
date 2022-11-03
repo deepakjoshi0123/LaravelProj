@@ -20,6 +20,21 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
+  setInterval(() => {
+    // 1 hour yoken expiry 
+    // 
+    $.ajax({
+    url:'api/refresh',
+    type:'post',
+    success:  function (response) {
+      console.log(response)
+      localStorage.setItem('jwt-token',response)
+    },
+    error:    function(err){
+      console.log('err----->',err)
+    }
+      })
+  }, 57000);
   $(document).ready(function(){
     var project_id,task_id
     var editOrAddFlag
@@ -27,9 +42,9 @@
     // var member_id 
     var tasks = {};
     $.ajaxSetup({
-  //     beforeSend: function (xhr) {
-  //       xhr.setRequestHeader('Authorization', `Bearer ${document.cookie.split(';')[1].split('=')[1]}` );
-  // },
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('jwt-token')}` );
+  },
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
@@ -37,7 +52,7 @@
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
     localStorage.setItem("proj_old_id",999999)
 $.ajax({
-    url:'projects',
+    url:'api/projects',
     data:{"member_id":"2"},
     type:'get',
     success:  function (response) {
@@ -81,7 +96,7 @@ $.ajax({
             // console.log(e)
             // console.log($(this).attr('data-project-id'))
     $.ajax({
-    url:'tasks',
+    url:'api/tasks',
     data:{"project_id":$(this).attr('data-project-id')},
     type:'get',
     success:  function (response) {

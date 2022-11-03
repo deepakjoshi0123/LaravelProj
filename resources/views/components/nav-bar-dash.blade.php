@@ -60,7 +60,7 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
 
                     <li>
-                        <a class="dropdown-item" href="#">Logout</a>
+                        <a id="logout" class="dropdown-item">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -73,9 +73,20 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
+    $('#logout').on('click',function(){
+        $.ajax({
+            url:'logout',
+            type:'get',
+            success:  function (response) {
+                localStorage.clear();
+                window.location.href = "http://localhost:8000/login";
+            },
+            error: function(err){}
+        })
+    })
     function searchTask(){
         $.ajax({
-            url:'searchTask',
+            url:'api/searchTask',
             data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id')},
             type:'get',
             success:  function (response) {
@@ -111,7 +122,7 @@
     $(document).on('click','#save-project',function(){
         // console.log($('#project-name').val())
         $.ajax({
-            url:'createProject',
+            url:'api/createProject',
             data:{"owner":"3","name":$('#project-name').val()},
             type:'post',
             success:  function (res) {

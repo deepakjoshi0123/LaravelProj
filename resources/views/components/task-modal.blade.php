@@ -76,7 +76,7 @@
   localStorage.setItem("assignee","UnAssigned");
   $(document).on('click','#add-task',function(e){
     $.ajax({
-            url:'assignees',
+            url:'api/assignees',
             data:{"project_id":"3"},
             type:'get',
             success:  function (res) {
@@ -135,7 +135,7 @@
         }
        
          $.ajax({
-            url:'addTask',
+            url:'api/addTask',
             data:JSON.stringify(data2),
             dataType:'json',
             type:'post',
@@ -200,7 +200,7 @@
       function editOrAddTask(id){
 
         $.ajax({
-            url:'members',
+            url:'api/members',
             data:{"task_id":"4"},
             type:'get',
             success:  function (res) {
@@ -228,7 +228,7 @@
 
         task_id=id
         $.ajax({
-            url:'task',
+            url:'api/task',
             data:{"id":id},
             type:'get',
             success:  function (task) {
@@ -277,7 +277,7 @@
             console.log($(this).attr('data-task-del-id'))
             var id=$(this).attr('data-task-del-id')
             $.ajax({
-            url:'delTask',
+            url:'api/delTask',
             data:{"task_id":id},
             type:'delete',
             success:  function (res) {

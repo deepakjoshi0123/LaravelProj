@@ -15,12 +15,12 @@
     style="background-size: cover ;  background-image: url(https://cdn.pixabay.com/photo/2017/10/31/19/05/web-design-2906159__480.jpg)">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 col-md-offset-4" style="margin-top:60px; margin-left:330px">
+            <div class="col-md-4 col-md-offset-4" style="margin-top:25px; margin-left:330px">
 
                 <div class="card" style="width: 30rem;">
                     <div class="card-body">
                         <div id="success-msg"></div>
-                        <h4>Member Registration</h4>
+                        <h6>Member Registration</h6>
                         <hr>
                         <form>
                             <div class="form-group">
@@ -46,6 +46,12 @@
                                 <input id="password" type="password" class="form-control" password="password" value=""
                                     placeholder="enter your password">
                                 <div id="password-span"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Confirm Password *</label>
+                                <input id="cnf-password" type="password" class="form-control" password="password"
+                                    value="" placeholder="enter your password">
+                                <div id="cnf-password-span"></div>
                             </div>
                             <div class="form-group" style="margin-top:20px">
                                 <button id="register" class="btn btn-block btn-primary" type="submit">Register</button>
@@ -77,12 +83,14 @@
         $('#first_name-span').html("")
         $('#last_name-span').html("")
         $('#password-span').html("")
+        $('#cnf-password-span').html("")
         $('#success-msg').html("")
         data={
         'email':$('#email').val(),
         'password':$('#password').val(),
         'first_name':$('#first_name').val(),
         'last_name':$('#last_name').val(),
+        'cnf-password':$('#cnf-password').val(),
         'is_verfied':0
         }
         console.log(data)
@@ -99,16 +107,19 @@
             error: function(err){
                 if(err.status == 400){
                      if(JSON.parse(err.responseText)['email']){
-                       $('#email-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
+                       $('#email-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
                        }
                      if(JSON.parse(err.responseText)['password']){
-                       $('#password-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
+                       $('#password-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
                        }
                      if(JSON.parse(err.responseText)['first_name']){
-                       $('#first_name-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['first_name'][0]+`</span>`)
+                       $('#first_name-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['first_name'][0]+`</span>`)
                        }
                      if(JSON.parse(err.responseText)['last_name']){
-                       $('#last_name-span').append(`<span class="ms-2" style="color:red">`+JSON.parse(err.responseText)['last_name'][0]+`</span>`)
+                       $('#last_name-span').append(`<span style="color:red">`+JSON.parse(err.responseText)['last_name'][0]+`</span>`)
+                       }
+                     if(JSON.parse(err.responseText)['cnf-password']){
+                       $('#cnf-password-span').append(`<span style="color:red">`+JSON.parse(err.responseText)['cnf-password'][0]+`</span>`)
                        }
                 }
             }
