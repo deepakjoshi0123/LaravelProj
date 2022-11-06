@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Session;
 
 class MemberAuthController extends Controller
@@ -40,6 +41,11 @@ class MemberAuthController extends Controller
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
         
+        $email = Member::where('email',$req['email'])->get();
+        if($email->count()!==0){
+            return response()->json(['email already exists,register with another email'], Response::HTTP_BAD_REQUEST);;
+        }
+
         $memberData = $req->all();
         $member = Member::create($memberData);
         Mail::send('mail.register-mail',$memberData, function ($message) {
@@ -102,7 +108,10 @@ class MemberAuthController extends Controller
         if($email->count()===0){
             return response()->json(['email not found in db'], Response::HTTP_BAD_REQUEST);;
         }
-        Mail::send('mail.password-reset-link',$req->all(), function ($message) {
+        $encrypted = Crypt::encryptString($req->get('email'));
+        $token = array('email' => $encrypted);
+        
+        Mail::send('mail.password-reset-link',$token, function ($message) {
             $message->to('deepakjoshi0123@gmail.com','trello clone')
             ->subject('password reset link');
         });
@@ -114,11 +123,12 @@ class MemberAuthController extends Controller
             'cnf-password' => 'required'
             
         ]);
-       
+
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
-        $member = Member::where('email',$req['token'])->first();
+        $decrypt= Crypt::decryptString($req->get('token'));
+        $member = Member::where('email',$decrypt)->first();
         $member->password = $req['password'];
         $member->save();
         return response()->json($member);

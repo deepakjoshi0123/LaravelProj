@@ -26,8 +26,8 @@
                             we will send you a password reset link.</h6>
                         <form>
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input id="email" type="text" class="form-control" name="email" value=""
+                                <label for="email">Email *</label>
+                                <input id="email" type="text" class="form-control mt-2" name="email" value=""
                                     placeholder="enter your email">
                                 <span id="email-span"></span>
                             </div>
@@ -55,7 +55,7 @@
         e.preventDefault()
         $('#email-span').html("")
         $.ajax({
-            url:'sendRestLink',
+            url:'api/sendRestLink',
             data:{'email':$('#email').val()},
             type:'post',
             success:  function (res) {

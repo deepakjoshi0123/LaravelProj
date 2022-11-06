@@ -22,22 +22,21 @@
                         <h5 class="card-title">Reset your password</h5>
                         <h5 id="success-msg-password" style="color:green"></h5>
                         <hr>
-                        <h6 class="card-subtitle mb-2 text-muted">Change Password</h6>
                         <form>
-                            <div class="form-group">
-                                <label for="password">Enter New Paasword</label>
-                                <input id="password" type="password" class="form-control" name="email" value=""
-                                    placeholder="enter password">
+                            <div class="form-group mt-3">
+                                <label for="password">Enter New Paasword *</label>
+                                <input id="password" type="password" class="form-control mt-2" name="email" value=""
+                                    placeholder="Enter password">
                                 <span id="password-span"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="confirm-password">Confirm Password</label>
-                                <input id="cnf-password" type="password" class="form-control" name="email" value=""
-                                    placeholder="enter confirm password">
+                            <div class="form-group mt-3">
+                                <label for="confirm-password">Confirm Password *</label>
+                                <input id="cnf-password" type="password" class="form-control mt-2" name="email" value=""
+                                    placeholder="Enter confirm password">
                                 <span id="cnf-password-span"></span>
                             </div>
                             <div class="form-group" style="margin-top:20px">
-                                <button id="reset-password" class="btn btn-primary  btn-block" type="submit">Change
+                                <button id="reset-password" class="btn btn-primary form-control" type="submit">Change
                                     Password</button>
                             </div>
                         </form>
@@ -61,7 +60,7 @@
         
         var token = window.location.pathname.split('/')[2]
         $.ajax({
-            url:'/changePassword',
+            url:'/api/changePassword',
             data:{'token':token,'password':$('#password').val(),'cnf-password':$('#cnf-password').val()},
             type:'post',
             success:  function (res) {

@@ -17,32 +17,47 @@
     <x-project-Modal />
   </div>
 </body>
+
+
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
-  setInterval(() => {
-    // 1 hour yoken expiry 
-    // 
-    $.ajax({
-    url:'api/refresh',
-    type:'post',
-    success:  function (response) {
-      console.log(response)
-      localStorage.setItem('jwt-token',response)
-    },
-    error:    function(err){
-      console.log('err----->',err)
-    }
-      })
-  }, 57000);
   $(document).ready(function(){
+
+    function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+}
+
     var project_id,task_id
     var editOrAddFlag
     
+    
+
     // var member_id 
     var tasks = {};
     $.ajaxSetup({
       beforeSend: function (xhr) {
+        const token = localStorage.getItem('jwt-token');
+        var ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
+        console.log(ttl/60)
+        if(ttl/60<1 && ttl/60>0){
+          console.log('going to refresh')
+        }
+        else if(ttl>1){
+          console.log('token is fine')
+        }
+        else {
+          console.log('token expired going to logout')
+        }
+        
+        // decodedJwt.exp * 1000 < Date.now()
+
         xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('jwt-token')}` );
   },
     headers: {

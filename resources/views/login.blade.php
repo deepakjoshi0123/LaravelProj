@@ -29,20 +29,22 @@
                                 <label for="email">Email</label>
                                 {{-- old('email') not working --}}
                                 <input id="email" type="text" class="form-control" name="email" value="{{old('email')}}"
-                                    placeholder="enter your email">
+                                    placeholder="Enter your email">
                                 <span id="email-span" style="color:red">{{ $errors->first('email') }}</span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group md-2">
                                 <label for="password">Password</label>
                                 <input id="password" type="password" class="form-control" name="password" value=""
-                                    placeholder="enter your password">
+                                    placeholder="Enter your password">
                                 <span id="email-span" style="color:red">{{ $errors->first('password') }}</span>
                             </div>
-                            <div class="form-group" style="margin-top:20px">
-                                <button id="login" class="btn btn-block btn-primary" type="submit">Login</button>
+                            <a class="mt-2" href="enterEmail" style="text-decoration: none">Forget
+                                Password</a>
+                            <div class="form-group mt-2">
+                                <button id="login" class="btn btn-block btn-primary form-control"
+                                    type="submit">Login</button>
                             </div>
-                            <a href="enterEmail" style="margin-top:10px">Forget Password</a>
-                            <a href="register" style="margin-top:10px">New User ? Register here</a>
+                            <a href="register" class="form-control btn btn-primary mt-2">New User ? Register here</a>
                         </form>
                     </div>
                 </div>

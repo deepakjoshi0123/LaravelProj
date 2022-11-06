@@ -17,46 +17,51 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-4" style="margin-top:25px; margin-left:330px">
 
-                <div class="card" style="width: 30rem;">
+                <div class="card" style="width: 31rem;">
                     <div class="card-body">
                         <div id="success-msg"></div>
                         <h6>Member Registration</h6>
                         <hr>
                         <form>
-                            <div class="form-group">
-                                <label for="firstName">First Name *</label>
-                                <input type="text" class="form-control" id="first_name" value=""
-                                    placeholder="enter your first name">
-                                <div id="first_name-span"></div>
+                            <div class="row mt-3">
+                                <div class="form-group col">
+                                    <label for="firstName">First Name *</label>
+                                    <input type="text" class="form-control" id="first_name" value=""
+                                        placeholder="Enter your first name">
+                                    <div id="first_name-span"></div>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="lastName">Last Name *</label>
+                                    <input type="text" class="form-control" id="last_name" value=""
+                                        placeholder="Enter your last name">
+                                    <div id="last_name-span"></div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="lastName">Last Name *</label>
-                                <input type="text" class="form-control" id="last_name" value=""
-                                    placeholder="enter your last name">
-                                <div id="last_name-span"></div>
-                            </div>
-                            <div class="form-group">
+                            <div class="form-group mt-3">
                                 <label for="email">Email *</label>
                                 <input type="text" class="form-control" id="email" value=""
-                                    placeholder="enter your email">
+                                    placeholder="Enter your email">
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with
+                                    anyone else.</small>
                                 <div id="email-span"></div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mt-3">
                                 <label for="password">Password *</label>
                                 <input id="password" type="password" class="form-control" password="password" value=""
-                                    placeholder="enter your password">
+                                    placeholder="Enter your password">
                                 <div id="password-span"></div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mt-3">
                                 <label for="password">Confirm Password *</label>
                                 <input id="cnf-password" type="password" class="form-control" password="password"
-                                    value="" placeholder="enter your password">
+                                    value="" placeholder="Enter your password">
                                 <div id="cnf-password-span"></div>
                             </div>
-                            <div class="form-group" style="margin-top:20px">
-                                <button id="register" class="btn btn-block btn-primary" type="submit">Register</button>
+                            <div class="form-group mt-2">
+                                <button id="register" class="btn btn-block btn-primary form-control"
+                                    type="submit">Register</button>
                             </div>
-                            <a href="login" style="margin-top:10px">If already registered Login here</a>
+                            <a href="login" class="mt-2 btn btn-primary form-control">Login</a>
                         </form>
                     </div>
                 </div>
@@ -95,7 +100,7 @@
         }
         console.log(data)
         $.ajax({
-            url:'register',
+            url:'api/register',
             data:data,
             type:'post',
             success:  function (response) {
@@ -105,6 +110,7 @@
                 }, 2000);
             },
             error: function(err){
+                console.log(err)
                 if(err.status == 400){
                      if(JSON.parse(err.responseText)['email']){
                        $('#email-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
@@ -121,6 +127,9 @@
                      if(JSON.parse(err.responseText)['cnf-password']){
                        $('#cnf-password-span').append(`<span style="color:red">`+JSON.parse(err.responseText)['cnf-password'][0]+`</span>`)
                        }
+                    if(err.responseJSON[0]){
+                       $('#email-span').append(`<span  style="color:red">`+err.responseJSON[0]+`</span>`)
+                    }
                 }
             }
         })
