@@ -18,11 +18,11 @@ use App\Http\Controllers\MemberAuthController;
 */
 // this api will be replaced by getToken 
 Route::get('/getToken', [MemberAuthController::class,'getToken']);
-
+Route::get('/refresh', [MemberAuthController::class,'refresh']);
 
 Route::group(['middleware' => ['jwt.verify']
     ], function ($router) {
-    Route::post('/refresh', [MemberAuthController::class,'refresh']);
+
     Route::get('/projects',[ProjectController::class,'getProjects']);
     Route::get('/tasks',[TaskController::class,'getTasks']);   
     Route::post('/refresh', [MemberAuthController::class,'refresh']);

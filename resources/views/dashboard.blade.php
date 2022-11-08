@@ -25,60 +25,70 @@
   $(document).ready(function(){
 
     function parseJwt (token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    return JSON.parse(jsonPayload);
-}
+       return JSON.parse(atob(token.split('.')[1]));
+    }
 
     var project_id,task_id
     var editOrAddFlag
-    
-    
-
     // var member_id 
+
     var tasks = {};
-    $.ajaxSetup({
-      beforeSend: function (xhr) {
-        const token = localStorage.getItem('jwt-token');
+    $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+    
+    console.log(options.url)
+      if(options.url === 'api/refresh' || options.url === '/logout' || options.refreshRequest  ){
+        // console.log(originalOptions)
+        return ;
+      }
+      
+      jqXHR.abort();
+
+      const token = localStorage.getItem('jwt-token');
         var ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
         console.log(ttl/60)
         if(ttl/60<1 && ttl/60>0){
-          console.log('going to refresh')
-        }
-        else if(ttl>1){
-          console.log('token is fine')
+          options.refreshRequest = true
+          // console.log('inside --- > refresh block')
+          $.ajax({
+            url:'api/refresh',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}` },
+            type:'get',
+            success:  function (res) {
+               console.log('going to refresh')
+               localStorage.setItem('jwt-token',res) 
+               options['headers']['Authorization']=`Bearer ${localStorage.getItem('jwt-token')}`
+               $.ajax(options) 
+            },
+            error: function(err){}
+          })
         }
         else {
-          console.log('token expired going to logout')
+          options.refreshRequest = true
+            $.ajax(options)
         }
-        
-        // decodedJwt.exp * 1000 < Date.now()
+  });
 
-        xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('jwt-token')}` );
-  },
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
+   
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
     localStorage.setItem("proj_old_id",999999)
 $.ajax({
     url:'api/projects',
     data:{"member_id":"2"},
+    headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+  },
     type:'get',
     success:  function (response) {
-      $('#side-bar').append(`<h3>Projects List</h3>`)
+      //check here for response if 
+      $('#side-bar').append(`<div style="background-color:#b3d7ef" class="btn"><h5 class="mt-2 md-1">Projects</h5></div>`)
         $.each(response,function(key,item){
             
             $('#side-bar').append(
                 `<div  id="project-`+item.id+`" data-project-id=`+item.id+` 
-                        style="background-color: #e9f1f7;border-radius: 30px 15px;"
-                        class="project-item list-group-item list-group-item-action py-2 ripple ">
-                        <i  class="fab fa-medapps"></i><span>`+item.project_name+`</span></div>`
+                        style="background-color: #e9f1f7;border-radius: 10px 10px;"
+                        class=" project-item list-group-item list-group-item-action py-2 ripple ">
+                        <i  class="me-2 fab fa-medapps"></i><span>`+item.project_name+`</span>
+                  </div>`
             )
         });
     },
@@ -113,6 +123,9 @@ $.ajax({
     $.ajax({
     url:'api/tasks',
     data:{"project_id":$(this).attr('data-project-id')},
+     headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+  },
     type:'get',
     success:  function (response) {
        
@@ -124,10 +137,10 @@ $.ajax({
             $.each(item,function(key2,item2){
                 $('#task-listing').append(
                   `
-                  <div id="project-task-`+item2.id+`">
+                  <div class="me-2" id="project-task-`+item2.id+`">
                   <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
                   <div style="display:flex" >
-                    <div class="card border-primary mb-3" style="max-width: 70rem;" data-task-id=`+item2.id+`>
+                    <div class="card border-primary mb-3 w-200" style="width: 53rem;" data-task-id=`+item2.id+`>
                       <div class="card-header">`+item2.title+`
                        
                       </div>
@@ -135,8 +148,8 @@ $.ajax({
                         <p class="card-text">`+item2.description+`</p>
                       </div>
                     </div>
-                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm  ms-4 me-4">edit</i>
-                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm  ms-3">delete</i>  
+                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm mt-5 ms-4 me-4">edit</i>
+                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm mt-5 ms-3">delete</i>  
                   </div>
                   </div>
                   `

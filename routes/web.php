@@ -15,7 +15,7 @@ Route::get('/changePassword/{token}',[MemberAuthController::class,'change_passwo
 //____________________________________________________________________________________
 
 Route::group(['middleware' => ['web']], function () {
-    Route::post('/login',[MemberAuthController::class,'login']);
+    // Route::post('/login',[MemberAuthController::class,'login']);
     Route::get('/dashboard',[ProjectController::class,'dashboard'])->name('dashboard');
 });
 

@@ -12,9 +12,11 @@
 </head>
 
 <body
-    style="background-size: cover ;  background-image: url(https://cdn.pixabay.com/photo/2017/10/31/19/05/web-design-2906159__480.jpg)">
+    style="background-size: cover ;  background-image: url(https://img.freepik.com/premium-photo/abstract-smooth-dark-blue-with-black-vignette-studio-well-use-as-background-business-report-digital-website-template-backdrop_1258-53251.jpg)">
 
     <div class="container">
+        <img class="mt-2" style="height:50px;width:200px"
+            src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Trello_logo.svg/1280px-Trello_logo.svg.png" />
         <div class="row">
             <div class="col-md-6 col-md-offset-6" style="margin-top:120px; margin-left:330px">
                 <div class="card" style="width: 30rem;">
@@ -32,7 +34,7 @@
                                 <span id="email-span"></span>
                             </div>
                             <div class="form-group" style="margin-top:20px">
-                                <button id="reset" class="btn btn-block btn-primary " type="submit">Send
+                                <button id="reset" class="btn form-control btn-primary " type="submit">Send
                                     password Reset
                                     Email</button>
                             </div>

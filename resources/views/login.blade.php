@@ -12,39 +12,43 @@
 </head>
 
 <body
-    style="background-size: cover ;  background-image: url(https://cdn.pixabay.com/photo/2017/10/31/19/05/web-design-2906159__480.jpg)">
+    style="background-size: cover ;  background-image: url(https://img.freepik.com/premium-photo/abstract-smooth-dark-blue-with-black-vignette-studio-well-use-as-background-business-report-digital-website-template-backdrop_1258-53251.jpg)">
     <div class="container">
+        <img class="mt-2" style="height:50px;width:200px"
+            src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Trello_logo.svg/1280px-Trello_logo.svg.png" />
         <div class="row">
-            <div class="col-md-4 col-md-offset-4" style="margin-top:120px; margin-left:330px">
+            <div class="col-md-4 col-md-offset-4" style="margin-top:50px; margin-left:330px">
                 <div id="unauth"></div>
                 <div class="card" style="width: 30rem;">
                     <div class="card-body">
                         <h3 style="color:red;margin-left:130px">{{ $errors->first('unauthorized') }}</h3>
-                        <h4>Login</h4>
+                        <h4>Login To Trello </h4>
 
                         <hr>
 
-                        <form method="post" action="{{ url('/login') }}">
-                            <div class="form-group">
-                                <label for="email">Email</label>
+                        <form class="ms-2 me-2" method="post" action="{{ url('/login') }}">
+                            <div class="form-group mt-2">
+                                <label for="email">Email </label>
                                 {{-- old('email') not working --}}
                                 <input id="email" type="text" class="form-control" name="email" value="{{old('email')}}"
                                     placeholder="Enter your email">
-                                <span id="email-span" style="color:red">{{ $errors->first('email') }}</span>
+                                <small id="email-span" style="color:red">{{ $errors->first('email') }}</small>
                             </div>
-                            <div class="form-group md-2">
-                                <label for="password">Password</label>
+                            <div class="form-group mt-2">
+                                <label for="password">Password </label>
                                 <input id="password" type="password" class="form-control" name="password" value=""
                                     placeholder="Enter your password">
-                                <span id="email-span" style="color:red">{{ $errors->first('password') }}</span>
+                                <small id="email-span" style="color:red">{{ $errors->first('password') }}</small>
                             </div>
-                            <a class="mt-2" href="enterEmail" style="text-decoration: none">Forget
-                                Password</a>
-                            <div class="form-group mt-2">
+                            <div class="mt-2"><a href="enterEmail" style="text-decoration: none">Forget
+                                    Password</a></div>
+                            <div class="form-group mt-3">
                                 <button id="login" class="btn btn-block btn-primary form-control"
                                     type="submit">Login</button>
                             </div>
-                            <a href="register" class="form-control btn btn-primary mt-2">New User ? Register here</a>
+                            <div class="mt-4 md-3"> <a href="register" class="form-control btn btn-primary ">Sign Up</a>
+                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -60,6 +64,7 @@
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
     $(document).on('click','#login',function(e){
+        // console.log(e)
               $.ajax({
                     url:'api/getToken',
                     data:{'email':$('#email').val(),'password':$('#password').val()},
@@ -70,7 +75,7 @@
                     error: function(err){
                         console.log('err----->',err)
                     }
-                    })
+                  })
               })
 
 </script>

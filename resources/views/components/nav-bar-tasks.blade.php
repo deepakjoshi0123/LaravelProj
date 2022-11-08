@@ -1,6 +1,6 @@
 <div class="div" style="width:80%">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" style="background-color: #e9f1f7;">
+    <nav class="navbar navbar-expand-lg" style="background-color: #b3d7ef;">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Toggle button -->
@@ -56,7 +56,7 @@
             </div>
 
     </nav>
-    <div class="div" style="overflow: auto">
+    <div class="div" style="width: 1010px; height: 500px; overflow-y: scroll; scrollbar-width: none;">
         <ul class="list-group list-group-light" id="task-listing">
         </ul>
 

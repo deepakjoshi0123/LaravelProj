@@ -33,8 +33,22 @@ class MemberAuthController extends Controller
             'first_name' => 'required|min:3|max:20',
             'last_name' => 'required||min:3|max:20', 
             'is_verfied' => 'required',
-            'password' => 'required_with:cnf-password|same:cnf-password',
-            'cnf-password' => 'required'
+            'password' => [
+                'required','same:cnf-password',
+                'min:5',             // must be at least 10 characters in length
+                'regex:/[a-z]/',      // must contain at least one lowercase letter
+                'regex:/[A-Z]/',      // must contain at least one uppercase letter
+                'regex:/[0-9]/',      // must contain at least one digit
+                'regex:/[@$!%*#?&]/', // must contain a special character
+            ],
+            'cnf-password' => [
+                'required',
+                'min:5',             // must be at least 10 characters in length
+                'regex:/[a-z]/',      // must contain at least one lowercase letter
+                'regex:/[A-Z]/',      // must contain at least one uppercase letter
+                'regex:/[0-9]/',      // must contain at least one digit
+                'regex:/[@$!%*#?&]/', // must contain a special character
+            ],
         ]);
        
         if ($validated->fails()) {    
@@ -64,7 +78,7 @@ class MemberAuthController extends Controller
    {
     //    Auth::logout();
        Session::flush();
-       return response()->json(['message' => 'Successfully logged out']);
+       return redirect('login');
    }
 
    public function refresh()
@@ -161,9 +175,9 @@ class MemberAuthController extends Controller
                 'password' => 'required'
             ]);
            
-            if ($validated->fails()) {    
-                return redirect('login')->withErrors($validated->messages());
-            }
+            // if ($validated->fails()) {    
+            //     return redirect('login')->withErrors($validated->messages());
+            // }
             
            $credentials = request(['email', 'password']);
            if ($token = auth()->attempt($credentials)) {

@@ -12,56 +12,58 @@
 </head>
 
 <body
-    style="background-size: cover ;  background-image: url(https://cdn.pixabay.com/photo/2017/10/31/19/05/web-design-2906159__480.jpg)">
+    style="background-size: cover ;  background-image: url(https://img.freepik.com/premium-photo/abstract-smooth-dark-blue-with-black-vignette-studio-well-use-as-background-business-report-digital-website-template-backdrop_1258-53251.jpg)">
     <div class="container">
+        <img class="mt-2" style="height:50px;width:200px"
+            src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Trello_logo.svg/1280px-Trello_logo.svg.png" />
         <div class="row">
-            <div class="col-md-4 col-md-offset-4" style="margin-top:25px; margin-left:330px">
+            <div class="col-md-4 col-md-offset-4" style="margin-top:10px; margin-left:330px">
 
                 <div class="card" style="width: 31rem;">
                     <div class="card-body">
                         <div id="success-msg"></div>
                         <h6>Member Registration</h6>
                         <hr>
-                        <form>
+                        <form class="ms-2 me-2">
                             <div class="row mt-3">
                                 <div class="form-group col">
                                     <label for="firstName">First Name *</label>
                                     <input type="text" class="form-control" id="first_name" value=""
                                         placeholder="Enter your first name">
-                                    <div id="first_name-span"></div>
+                                    <small id="first_name-span">
+                                    </small>
                                 </div>
                                 <div class="form-group col">
                                     <label for="lastName">Last Name *</label>
                                     <input type="text" class="form-control" id="last_name" value=""
                                         placeholder="Enter your last name">
-                                    <div id="last_name-span"></div>
+                                    <small id="last_name-span"></small>
                                 </div>
                             </div>
                             <div class="form-group mt-3">
                                 <label for="email">Email *</label>
                                 <input type="text" class="form-control" id="email" value=""
                                     placeholder="Enter your email">
-                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with
-                                    anyone else.</small>
-                                <div id="email-span"></div>
+                                <small id="email-span"></small>
                             </div>
                             <div class="form-group mt-3">
                                 <label for="password">Password *</label>
+
                                 <input id="password" type="password" class="form-control" password="password" value=""
                                     placeholder="Enter your password">
-                                <div id="password-span"></div>
+                                <small id="password-span"></small>
                             </div>
                             <div class="form-group mt-3">
                                 <label for="password">Confirm Password *</label>
                                 <input id="cnf-password" type="password" class="form-control" password="password"
                                     value="" placeholder="Enter your password">
-                                <div id="cnf-password-span"></div>
+                                <small id="cnf-password-span"></small>
                             </div>
-                            <div class="form-group mt-2">
+                            <div class="form-group mt-4">
                                 <button id="register" class="btn btn-block btn-primary form-control"
                                     type="submit">Register</button>
                             </div>
-                            <a href="login" class="mt-2 btn btn-primary form-control">Login</a>
+                            <a href="login" class="mt-3 btn btn-primary form-control">Login</a>
                         </form>
                     </div>
                 </div>
