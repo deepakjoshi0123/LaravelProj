@@ -7,6 +7,9 @@ use App\Services\ProjectService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Member;
+use App\Models\Proj_Mem;
+
 class ProjectController extends Controller
 { 
     protected $projectService;
@@ -32,13 +35,7 @@ class ProjectController extends Controller
         return response()->json(($this->projectService->createProject($req->all())));
         
     }
-    public function addMemberToProject(Request $req){
-        $validated = $req->validate([ 
-            'project_id' => 'required', 
-            'member_id' => 'required'
-        ]);
-        return response()->json(($this->projectService->addMemberToProject($req->all())));
-    }
+   
     public function getMembers(Request $req){ 
         $validated = $req->validate([ 
             'project_id' => 'required'
@@ -51,5 +48,34 @@ class ProjectController extends Controller
             return view('dashboard');
         }
         return redirect('login');        
+    }
+
+    public function shareProject(Request $req){
+        $validated = Validator::make($req->all(), [
+            'email' => 'required|email',
+        ]);
+        if ($validated->fails()) {    
+            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+        }
+        
+        $email = Member::where('email',$req['email'])->get(['id']);
+        if($email->count()===0){
+            return response()->json(['No email address found in our database'], Response::HTTP_BAD_REQUEST);
+        }
+        
+        $alreadyShared = Proj_Mem::where([
+        ['member_id',$email[0]->id],
+        ['project_id',$req['project_id']]    
+        ])->get();
+    
+        if($alreadyShared->count()!==0){
+            return response()->json(['project already shared to this user'], Response::HTTP_BAD_REQUEST);
+        }
+
+        (new Proj_Mem())->fill([
+            'project_id' => $req['project_id'],
+            'member_id' => $email[0]->id,
+          ])->save() ;
+
     }
 }

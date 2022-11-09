@@ -1,6 +1,6 @@
 <div class="div" style="width:80%">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" style="background-color: #b3d7ef;">
+    <nav class="navbar navbar-expand-lg" style="background-color: #a1d0ef;">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Toggle button -->
@@ -15,31 +15,22 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" style="margin-right:20px">
-                        <div class="nav-link link-primary font-weight-bolder" href="#">Project Name</div>
+                        <h5 id="project-title-nav" class="font-monospace" href="#">
+                        </h5>
                     </li>
-                    <li class="nav-item">
-                        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="40"
-                            alt="Black and White Portrait of a Man" loading="lazy" />
-                    </li>
-                    <li class="nav-item">
-                        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="40"
-                            style="margin-left:4px" alt="Black and White Portrait of a Man" loading="lazy" />
-                    </li>
-                    <button style="margin-left:10px" type="button" class="btn btn-primary">Share
-                        <i class="far fa-share-square"></i>
-                    </button>
-                    <button disabled id="add-task" style="margin-left:10px" type="button" class="btn btn-primary">Add
-                        Task
-                        <i class="fas fa-tasks"></i>
-                    </button>
+                    <i id="share-project-button" class="far fa-share-square fa-2x ms-3" style="color: black"
+                        data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Share Project"></i>
+
+                    <i disabled id="add-task" class="fas fa-ad fa-2x ms-3" style="color: black"
+                        data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Add Task"></i>
+
                 </ul>
                 <div class="dropdown">
-                    <button class="btn btn-primary  dropdown-toggle d-flex align-items-center hidden-arrow"
-                        id="navbarDropdownMenuAvatar-filter-task" role="button" data-mdb-toggle="dropdown"
-                        aria-expanded="false" disabled style="margin-left:5px" type="button">
-                        Filters
-                        <i class="fas fa-filter"></i>
-                    </button>
+
+                    <i id="navbarDropdownMenuAvatar-filter-task" role="button" data-mdb-toggle="dropdown"
+                        aria-expanded="false" style="margin-left:5px" type="button"
+                        class="dropdown-toggle d-flex align-items-center hidden-arrow fas fa-filter fa-2x"></i>
+
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar-filter-task">
                         <li>
                             <h5 class="ms-2">Members</h5>
@@ -56,7 +47,7 @@
             </div>
 
     </nav>
-    <div class="div" style="width: 1010px; height: 500px; overflow-y: scroll; scrollbar-width: none;">
+    <div class="div" style="width: 1024px; height: 480px; overflow-y: scroll; scrollbar-width: none;">
         <ul class="list-group list-group-light" id="task-listing">
         </ul>
 
@@ -121,6 +112,6 @@
             },
             error: function(err){}
         })
-       
+    
     })
 </script>

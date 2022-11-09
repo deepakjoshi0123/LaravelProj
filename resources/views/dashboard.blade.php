@@ -15,6 +15,7 @@
     <!-- Modal -->
     <x-task-modal />
     <x-project-Modal />
+    <x-share-proj />
   </div>
 </body>
 
@@ -45,7 +46,7 @@
 
       const token = localStorage.getItem('jwt-token');
         var ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
-        console.log(ttl/60)
+        // console.log(ttl/60)
         if(ttl/60<1 && ttl/60>0){
           options.refreshRequest = true
           // console.log('inside --- > refresh block')
@@ -54,7 +55,7 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}` },
             type:'get',
             success:  function (res) {
-               console.log('going to refresh')
+              //  console.log('going to refresh')
                localStorage.setItem('jwt-token',res) 
                options['headers']['Authorization']=`Bearer ${localStorage.getItem('jwt-token')}`
                $.ajax(options) 
@@ -71,6 +72,7 @@
    
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
     localStorage.setItem("proj_old_id",999999)
+    localStorage.setItem("status","open");
 $.ajax({
     url:'api/projects',
     data:{"member_id":"2"},
@@ -80,25 +82,28 @@ $.ajax({
     type:'get',
     success:  function (response) {
       //check here for response if 
-      $('#side-bar').append(`<div style="background-color:#b3d7ef" class="btn"><h5 class="mt-2 md-1">Projects</h5></div>`)
+      $('#side-bar').append(`<div style="background-color:#a1d0ef;height:52px"><h4 style="color:black" class="font-monospace ms-5 mt-3 ">Projects</h4></div>`)
         $.each(response,function(key,item){
             
             $('#side-bar').append(
-                `<div  id="project-`+item.id+`" data-project-id=`+item.id+` 
-                        style="background-color: #e9f1f7;border-radius: 10px 10px;"
-                        class=" project-item list-group-item list-group-item-action py-2 ripple ">
-                        <i  class="me-2 fab fa-medapps"></i><span>`+item.project_name+`</span>
+                `<div onMouseOver="this.style.color='blue'"
+   onMouseOut="this.style.color='black'" id="project-`+item.id+`" data-project-id=`+item.id+` 
+                        style="background-color: #e9f1f7;"
+                        class="font-monospace project-item list-group-item list-group-item-action py-2 ripple 
+                        data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="See Tasks"
+                        ">
+                        <i  class="me-2 fab fa-medapps"></i><span id="project-title`+item.id+`">`+item.project_name+`</span>
                   </div>`
             )
         });
     },
     error: function(x,xs,xt){
-       console.log(x);
-
-    } 
+          console.log(x);
+        } 
     }); //prettier 
         $(document).on('click','.project-item',function(e){
-          var proj_id = $(this).attr('data-project-id') 
+          var proj_id = $(this).attr('data-project-id')
+          $(`#project-title-nav`).text($(`#project-title${proj_id}`).text())
           //break this into another function
          //____________________________________________________________________________________________ 
           if(localStorage.getItem('proj_old_id')!= proj_id){
@@ -107,7 +112,7 @@ $.ajax({
             }
             
           }
-          document.getElementById(`project-${proj_id}`).style.backgroundColor = '#00bfff'
+          document.getElementById(`project-${proj_id}`).style.backgroundColor = '#a1d0ef'
           localStorage.setItem('proj_old_id',proj_id)
          
           localStorage.setItem("project_id", $(this).attr('data-project-id'));
@@ -137,10 +142,10 @@ $.ajax({
             $.each(item,function(key2,item2){
                 $('#task-listing').append(
                   `
-                  <div class="me-2" id="project-task-`+item2.id+`">
+                  <div class="ms-2 me-2" id="project-task-`+item2.id+`">
                   <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
                   <div style="display:flex" >
-                    <div class="card border-primary mb-3 w-200" style="width: 53rem;" data-task-id=`+item2.id+`>
+                    <div class="card border-primary mb-3 w-200" style="width: 51rem;" data-task-id=`+item2.id+`>
                       <div class="card-header">`+item2.title+`
                        
                       </div>

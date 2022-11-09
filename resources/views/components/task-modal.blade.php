@@ -51,8 +51,9 @@
                   <li>
                     <hr class="dropdown-divider">
                   </li>
-                  <li><a class="dropdown-item">UnAssigned</a></li>
+
                   <div id="task-status">
+                    <li><a class="dropdown-item">unassigned</a></li>
 
                   </div>
                 </ul>
@@ -73,7 +74,9 @@
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
   // var assignee = "Unassigned";
-  localStorage.setItem("assignee","UnAssigned");
+  localStorage.setItem("assignee","unassigned");
+  
+   
   $(document).on('click','#add-task',function(e){
     $.ajax({
             url:'api/assignees',
@@ -92,9 +95,9 @@
       });  
 
       function resetModal(){
-        localStorage.setItem("status","");
-        localStorage.setItem("assignee","");
-        localStorage
+        console.log('function clicked')
+        localStorage.setItem("status","open");
+        localStorage.setItem("assignee","unassigned");
         $("#task-title").val("")
         $("#task-desc").val("")
         $("#custom-status").val("")
@@ -134,6 +137,8 @@
           data['id'] = task_id
         }
        
+        console.log(data2)
+        // return
          $.ajax({
             url:'api/addTask',
             data:JSON.stringify(data2),
@@ -240,7 +245,7 @@
       }
       
       $(document).on("click", "#task-status li", function() {
-        // console.log($(this).text())
+        // console.log($(this).text().toLowerCase())
         localStorage.setItem("status",$(this).text());  
       });
       // $("#task-status li").click(function(e) {
@@ -248,7 +253,7 @@
       // })
       
      function getCustomTaskStatus(){
-      localStorage.setItem("status",$("#custom-status").val());
+      localStorage.setItem("status",$("#custom-status").val().toLowerCase());
       }
      
       $('#task-comment').bind('keypress', function(e) {

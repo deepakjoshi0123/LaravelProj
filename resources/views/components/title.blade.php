@@ -6,5 +6,6 @@
     <title>Dashboard</title>
     <link href="{{ asset('css/mdb.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <link rel="shortcut icon" href="/favicon.ico">
 
 </head>

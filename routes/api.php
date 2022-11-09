@@ -38,8 +38,10 @@ Route::post('/changePassword',[MemberAuthController::class,'changePassword']);
 Route::get('/searchTask',[TaskController::class,'searchTask']);
 Route::get('/filterTask',[TaskController::class,'filterTask']);
 Route::post('/createProject',[ProjectController::class,'createProject']);
-Route::post('/addMember',[ProjectController::class,'addMemberToProject']);
+
 Route::get('/projMembers',[ProjectController::class,'getMembers']);
+
+Route::get('/shareProject',[ProjectController::class,'shareProject']);
 
 //task routes
 

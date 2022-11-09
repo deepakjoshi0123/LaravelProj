@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg" style="background-color: #80c4f1;">
     <!-- Container wrapper -->
-    <div class="container-fluid">
+    <div class="container-fluid ">
         <!-- Toggle button -->
         <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
             data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -18,11 +18,12 @@
             <!-- Left links -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#projectModal">
-                        Add Project
-                        <i class="fas fa-puzzle-piece"></i>
+                    <a class="" data-mdb-toggle="modal" data-mdb-target="#projectModal">
+                        <i class="far fa-plus-square fa-2x" style="color: black" data-mdb-toggle="tooltip"
+                            data-mdb-placement="bottom" title="Add Project"></i>
                     </a>
                 </li>
+
                 <form class="d-flex input-group w-auto" style="margin-left:700px">
                     <input id="search-task" type="search" class="form-control rounded" placeholder="Search"
                         aria-label="Search" aria-describedby="search-addon" onChange="searchTask()" disabled />
@@ -38,18 +39,7 @@
         <!-- Right elements -->
         <div class="d-flex align-items-center">
             <!-- Notifications -->
-            <div class="dropdown">
-                <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink"
-                    role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge rounded-pill badge-notification bg-danger">1</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                    <li>
-                        <a class="dropdown-item" href="#">Web sockets Notifications pending</a>
-                    </li>
-                </ul>
-            </div>
+
             <!-- Avatar -->
             <div class="dropdown">
                 <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar"
@@ -121,6 +111,7 @@
     }
     $(document).on('click','#save-project',function(){
         // console.log($('#project-name').val())
+
         $.ajax({
             url:'api/createProject',
             data:{"owner":"3","name":$('#project-name').val()},
@@ -128,10 +119,12 @@
             success:  function (res) {
               
                 $('#side-bar').append(
-                `<div data-project-id=`+res.data.id+` 
-                        style="background-color: #e9f1f7;border-radius: 30px 15px;"
-                        class="project-item list-group-item list-group-item-action py-2 ripple ">
-                        <i class="fab fa-medapps"></i><span>`+res.data.project_name+`</span></div>`
+                    `<div  id="project-`+res.data.id+`" data-project-id=`+res.data.id+` 
+                        style="background-color: #e9f1f7;border-radius: 10px 10px;"
+                        class=" project-item list-group-item list-group-item-action py-2 ripple ">
+                        <i  class="me-2 fab fa-medapps"></i><span id="project-title`+res.data.id+`">`+res.data.project_name+`</span>
+                  </div>`
+
             )
                 $('#project-name').val("")
                 $('#projectModal').modal('toggle')
@@ -141,8 +134,9 @@
             
             error: function(err){
                 if(err.status == 400){
+                  $('#prj-title').html("")
                 if(JSON.parse(err.responseText)['name']){
-                  $('#prj-title').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['name'][0]+`</span>`)
+                  $('#prj-title').append(`<small class="" style="color:red">`+JSON.parse(err.responseText)['name'][0]+`</small>`)
                 }
               }
             }

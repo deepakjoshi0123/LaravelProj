@@ -18,21 +18,20 @@ Class TaskService {
          
            $task = Task::create($request['data']);
         
-            if($member_id){
+            if($member_id != 'unassigned'){
                 (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
             }
                         
             foreach($request->get('comments') as $cmnt){
                 (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request->get('member_id'),'description'=>$cmnt])->save();
-                
-                }
+            }
             return $task;
         }
         else{
             $task = Task::find($request['data.id']);
            
             $task->fill($request['data'])->save();           
-            if($member_id){
+            if($member_id != 'unassigned'){
                 (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
             }
             foreach($request->get('comments') as $cmnt){
