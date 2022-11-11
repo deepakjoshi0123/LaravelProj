@@ -82,8 +82,9 @@ $.ajax({
     type:'get',
     success:  function (response) {
       //check here for response if 
-      $('#side-bar').append(`<div style="background-color:#a1d0ef;height:52px"><h4 style="color:black" class="font-monospace ms-5 mt-3 ">Projects</h4></div>`)
-        $.each(response,function(key,item){
+      $('#side-bar').append(`<div  style="background-color:#a1d0ef;height:51px"><h4 style="color:black" class="font-monospace ms-5 mt-2 ">Projects</h4></div>`)
+      
+      $.each(response,function(key,item){
             
             $('#side-bar').append(
                 `<div onMouseOver="this.style.color='blue'"
@@ -96,6 +97,8 @@ $.ajax({
                   </div>`
             )
         });
+        // console.log(response[0].id)
+      $(`#project-${response[0].id}`).click()
     },
     error: function(x,xs,xt){
           console.log(x);

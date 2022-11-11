@@ -42,6 +42,7 @@
                     success:  function (response) {
                         console.log(response)
                         $('#share-project-email').val('') 
+                        $('#shareProjModal').modal('toggle')
                     },
                     error:    function (err) {
                         console.log(err.responseJSON)
