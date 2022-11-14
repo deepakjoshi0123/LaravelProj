@@ -22,9 +22,6 @@ class TaskFactory extends Factory
             'description' => fake()->paragraph(3),
             'status' => 'open',
             'project_id' => \App\Models\Project::get()->random(),  
-            'attachment' =>fake()->paragraph(1),
         ];
-    }
-
-   
+    }   
 }

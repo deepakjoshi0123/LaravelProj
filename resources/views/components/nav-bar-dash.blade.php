@@ -86,10 +86,10 @@
             $.each(item,function(key2,item2){
                 $('#task-listing').append(
                   `
-                  <div id="project-task-`+item2.id+`">
+                  <div class="ms-2 me-2" id="project-task-`+item2.id+`">
                   <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
                   <div style="display:flex" >
-                    <div class="card border-primary mb-3" style="max-width: 70rem;" data-task-id=`+item2.id+`>
+                    <div class="card border-primary mb-3" style="width: 51rem;" data-task-id=`+item2.id+`>
                       <div class="card-header">`+item2.title+`
                        
                       </div>

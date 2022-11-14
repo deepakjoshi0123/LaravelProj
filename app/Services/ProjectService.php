@@ -9,6 +9,7 @@ use Response;
 Class ProjectService{
     
     public function getAllProjects($req){
+        // return auth('api')->user()->id;
         return Member::find($req['member_id'])->projects()->get(['project_name','id']);
     }
 

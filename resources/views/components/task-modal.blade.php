@@ -29,15 +29,14 @@
             <div class="ms-5">
               <h5>Add to Task</h5>
               <div id="modal-members"></div>
-              <h6 class="mt-4">Assign Task</h6>
 
-              <input style="width:60%" class="form-control" list="datalistOptions" name="exampleDataList"
-                placeholder="Type to assign...">
-              <datalist id="datalistOptions">
 
-              </datalist>
+              <select style="width:60%" id="datalistOptions" class="form-select" aria-label="Default select example">
+                <option disabled selected>Assign Task</option>
+              </select>
+
               <h6 class="mt-4">Attachment</h6>
-              <input type="file" />
+              <input id="task-file" type="file" name="file" />
               <h6 class="mt-4">Status</h6>
               <div class="btn-group">
                 <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle "
@@ -78,14 +77,18 @@
   
    
   $(document).on('click','#add-task',function(e){
+    $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
+          $('#task-status').append(`
+          <li><a class="dropdown-item">`+status+`</a></li>
+          `)
+        })
     $.ajax({
             url:'api/assignees',
-            data:{"project_id":"3"},
+            data:{"project_id":localStorage.getItem('project_id')},
             type:'get',
             success:  function (res) {
               $.each(res,function(key,mem){
-                
-                $('#datalistOptions').append(`<option data-assignee-id=`+mem.email+` value="`+mem.id+`">`+mem.first_name+`</option>`) 
+                $('#datalistOptions').append(`<option  value="`+mem.id+`">`+mem.email+`</option>`) 
               })
             },
             error: function(x,xs,xt){}
@@ -102,11 +105,14 @@
         $("#task-desc").val("")
         $("#custom-status").val("")
         $("#task-comment").val("")
+        $("#task-file").val("")
         $("#modal-body").html("")
         $("#task-status").html("")
+        $("#task-status").append(`<li><a class="dropdown-item">unassigned</a></li>`)
         $("#tsk-title").html("")
         $("#tsk-desc").html("")
         $('#datalistOptions').html("")
+        $('#datalistOptions').append(`<option value="unassigned">Assign Task</option>`)
         
         
         $('#modal-members').html("")
@@ -115,20 +121,24 @@
       $(document).on('click','#save-task',function(e){
         $("#tsk-title").html("")
         $("#tsk-desc").html("")
+        taskFile = new FormData()
+        taskFile.append('file',($('#task-file').val()))
+        // console.log(taskFile,$('#task-file').val())
         var data ={
-          
           "title":$("#task-title").val(),
           "description":$("#task-desc").val(),
           "status":localStorage.getItem("status"),
-          "attachment":"www.google.com",
         }
         data2={
+        "attachment":taskFile,
         "member_id":"2",
         "data":data,
         "comments":JSON.parse(localStorage.getItem("comments")),
         "assignee":localStorage.getItem("assignee"),
       }
         
+        // taskFile = new FormData()
+        // taskFile.append
 
         if(editOrAddFlag === "add"){
           data['project_id'] = localStorage.getItem("project_id");
@@ -137,7 +147,8 @@
           data['id'] = task_id
         }
        
-        console.log(data2)
+        // console.log(data2)
+       
         // return
          $.ajax({
             url:'api/addTask',
@@ -146,6 +157,7 @@
             type:'post',
             contentType: "application/json; charset=utf-8",
             success:  function (res) {
+              console.log(res)
               $('#exampleModal').modal('toggle')
               resetModal()
               // console.log(res.status)
@@ -178,6 +190,7 @@
       }
 
       function modalForEditOrAdd(task){
+        console.log('status should be added')
         $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
           $('#task-status').append(`
           <li><a class="dropdown-item">`+status+`</a></li>
@@ -204,32 +217,32 @@
       }
       function editOrAddTask(id){
 
-        $.ajax({
-            url:'api/members',
-            data:{"task_id":"4"},
-            type:'get',
-            success:  function (res) {
-              // console.log(res)
-              $('#modal-members').append(`
-              <div class="mt-3 btn-group dropdown">
-                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
-                  data-mdb-toggle="dropdown" aria-expanded="false">
-                  Members
-                  <i class="fas fa-users ms-2"></i>
-                </button>
-                <ul class="dropdown-menu">
-                </ul>
-              </div>
-              `)
-              $.each(res,function(key,item){
-                $('.dropdown-menu').append(`
-                  <li >`+item.email+`</li>
-              `)
-              })
+        // $.ajax({
+        //     url:'api/members',
+        //     data:{"task_id":id},
+        //     type:'get',
+        //     success:  function (res) {
+        //       // console.log(res)
+        //       $('#modal-members').append(`
+        //       <div class="mt-3 mb-3 btn-group dropdown">
+        //         <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
+        //           data-mdb-toggle="dropdown" aria-expanded="false">
+        //           Members
+        //           <i class="fas fa-users ms-2"></i>
+        //         </button>
+        //         <ul class="dropdown-menu">
+        //         </ul>
+        //       </div>
+        //       `)
+        //       $.each(res,function(key,item){
+        //         $('.dropdown-menu').append(`
+        //           <li >`+item.email+`</li>
+        //       `)
+        //       })
              
-            },
-            error: function(x,xs,xt){}
-          })
+        //     },
+        //     error: function(){}
+        //   })
 
         task_id=id
         $.ajax({
@@ -272,11 +285,24 @@
       });
 
       $(document).on('click','.edit-task',function(e){
+        $.ajax({
+            url:'api/assignees',
+            data:{"project_id":localStorage.getItem('project_id'),"task_id":$(this).attr('data-task-edit-id')},
+            type:'get',
+            success:  function (res) {
+              console.log(res)
+              $.each(res,function(key,mem){
+                $('#datalistOptions').append(`<option value="`+mem.id+`">`+mem.email+`</option>`) 
+              })
+            },
+            error: function(x,xs,xt){}
+          })
+          $('#exampleModal').modal('show')
             editOrAddTask($(this).attr('data-task-edit-id'))
           })
-      $("input[name=exampleDataList]").focusout(function(e){
-          
+      $('#datalistOptions').on('change' ,function(){
             localStorage.setItem("assignee",$(this).val())
+            console.log($(this).val())
       });
       $(document).on('click','.del-task',function(e){
             console.log($(this).attr('data-task-del-id'))

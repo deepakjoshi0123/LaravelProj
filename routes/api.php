@@ -20,11 +20,12 @@ use App\Http\Controllers\MemberAuthController;
 Route::get('/getToken', [MemberAuthController::class,'getToken']);
 Route::get('/refresh', [MemberAuthController::class,'refresh']);
 
+Route::get('/projects',[ProjectController::class,'getProjects']);
+Route::get('/tasks',[TaskController::class,'getTasks']);   
+
 Route::group(['middleware' => ['jwt.verify']
     ], function ($router) {
 
-    Route::get('/projects',[ProjectController::class,'getProjects']);
-    Route::get('/tasks',[TaskController::class,'getTasks']);   
     Route::post('/refresh', [MemberAuthController::class,'refresh']);
     Route::post('/me', [MemberAuthController::class,'me']);
  });
@@ -46,7 +47,6 @@ Route::get('/shareProject',[ProjectController::class,'shareProject']);
 //task routes
 
 Route::get('/assignees',[TaskController::class,'getAssignees']);
-
 
 Route::get('/task',[TaskController::class,'taskDetails']);
 

@@ -3,12 +3,11 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task_Attachment>
  */
-class ProjectFactory extends Factory
+class Task_AttachmentFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,10 +17,8 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
-            'project_name' => fake()->text(10),
-            'owner' => \App\Models\Member::get()->random(),
+            'task_id' => \App\Models\Task::get()->random(),
+            'attachment' => fake()->text(10),
         ];
     }
-
-   
 }

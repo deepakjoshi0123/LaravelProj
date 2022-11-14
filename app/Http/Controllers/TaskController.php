@@ -43,7 +43,6 @@ class TaskController extends Controller
             'id' => 'required',
             'title' => 'required', 
             'description' => 'required', 
-            'attachment' => 'required',
             'status' => 'required',
             'project_id' => 'required',   
         ]);

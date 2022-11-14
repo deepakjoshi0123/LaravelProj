@@ -47,7 +47,7 @@
       const token = localStorage.getItem('jwt-token');
         var ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
         // console.log(ttl/60)
-        if(ttl/60<1 && ttl/60>0){
+        if(ttl/60<10 && ttl/60>0){
           options.refreshRequest = true
           // console.log('inside --- > refresh block')
           $.ajax({
@@ -75,7 +75,7 @@
     localStorage.setItem("status","open");
 $.ajax({
     url:'api/projects',
-    data:{"member_id":"2"},
+    data:{"member_id":"1"},
     headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
   },

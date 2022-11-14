@@ -6,16 +6,20 @@ use App\Models\Project;
 use App\Models\Member;
 use App\Models\Comment;
 use App\Models\Proj_Mem;
+use App\Models\Task_Attachment;
 use Illuminate\Http\Request;
 use Response;
+use DB;
 
 Class TaskService {
     // break this service 
     public function addTask($request){
         $data = $request->get('data');
         $member_id = $request->get('assignee');
-        if($request->has('data.project_id')){
-         
+
+        // return $request->get('attachment');
+
+        if($request->has('data.project_id')){ 
            $task = Task::create($request['data']);
         
             if($member_id != 'unassigned'){
@@ -45,7 +49,7 @@ Class TaskService {
     }
 
     public function members($request){
-        return Task::find($request['task_id'])->getMembers()->get(['id','first_name','last_name','email']);
+        return Task::find($request['task_id'])->members()->get(['id','first_name','last_name','email']);
     }
 
     public function assignTask($request){
@@ -78,7 +82,7 @@ Class TaskService {
     }
         
     public function taskDetails($request){
-        $task = Task::where('id',$request['id'])->get(['id','title','description','attachment','status']);
+        $task = Task::where('id',$request['id'])->get(['id','title','description','status']);
         $comment = Comment::with('getMember')->where('task_id',$request['id'])->get();
         $task[0]->comments=$comment;
         return $task;
@@ -86,7 +90,7 @@ Class TaskService {
    
     public function getTasks($request){
        
-        $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status','attachment']);//get(['id',etc..]) was giving error when
+        $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status']);//get(['id',etc..]) was giving error when
         $res=array();
         for($i=0;$i<count($project);$i++){
             $res[$project[$i]['status']] =  array();
@@ -98,18 +102,23 @@ Class TaskService {
     }
 
     public function getAssignees($request){    
-        if($request->has('project_id')){
+        if(!$request->has('task_id')){
             $id = $request->all()['project_id'];
             return Project::find($id)->members()->get(['email','id','first_name']);;
         }
         else{
+            // need to find those member who are included in this project but included in the task
             $id = $request->get('task_id');//taking out task_id
             $project_id = $request->get('project_id');//taking out project_id
             $memToBeEliminated = Task_Mem::where('task_id',$id)->get(['member_id']);
-            $membersRes = Task::find($id)->getMembers()->whereNotIn('member_id',$memToBeEliminated)->get();
-            return $membersRes;
-            
+            $membersRes = DB::table('proj__mems')
+            ->join('members','proj__mems.member_id','=','members.id')
+            ->where('project_id',$project_id)
+            ->whereNotIn('member_id',$memToBeEliminated)
+            ->get(['email','first_name','last_name','members.id as id']);
+            return $membersRes; 
         }
+
     } 
     public function searchTask($request){
         $project = Task::where([
@@ -129,12 +138,41 @@ Class TaskService {
         }
         return $res;
     } 
-    public function filterTask($request){
-        dd($request['filters.members']);
-        $member_id = $request['filters.member'][0];
-        $tasks = Task::with(['getMembers' => function($q) use($member_id){
-            $q->where('id',$member_id);
-        }])->get();
-        return $tasks;
+
+    public function filterArray($arr){
+        $res = array();
+
+        for($i=0;$i<count($arr);$i++){
+            if(!$arr[$i] == null)
+            array_push($res,$arr[$i]);
+        }
+        
+        return $res;
     }
+
+    public function filterTask($request){
+
+       
+        $members = $this->filterArray($request['filters']['members']);
+        $status  = $this->filterArray($request['filters']['status']);
+        
+        DB::connection()->enableQueryLog();
+        $tasks = DB::table('task__mems')
+        ->join('members','task__mems.member_id','=','members.id')
+        ->join('tasks','task__mems.task_id','=','tasks.id')
+        ->whereIn('members.id',$members)
+        ->whereIn('status',$status)
+        ->where('project_id',$request['project_id'])
+        ->get(['tasks.id','title','description','status']);
+       
+        $resToSend=array();
+        for($i=0;$i<count($tasks);$i++){
+            $resToSend[$tasks[$i]->status] =  array();
+         }
+        for($i=0;$i<count($tasks);$i++){
+           array_push($resToSend[$tasks[$i]->status],$tasks[$i]);
+        }
+        return $resToSend;
+    }
+
 }

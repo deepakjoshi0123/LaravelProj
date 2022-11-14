@@ -9,7 +9,7 @@ class Task extends Model
 {
     use HasFactory;
     protected $fillable = ['project_id','title','description','attachment','status'];
-    public function getMembers(){
+    public function members(){
         return $this->belongsToMany(Member::class,Task_Mem::class);
     }
     public function commentMember(){

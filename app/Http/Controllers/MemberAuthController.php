@@ -35,19 +35,11 @@ class MemberAuthController extends Controller
             'is_verfied' => 'required',
             'password' => [
                 'required','same:cnf-password',
-                'min:5',             // must be at least 10 characters in length
-                'regex:/[a-z]/',      // must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
-                'regex:/[@$!%*#?&]/', // must contain a special character
+                'min:6',             
             ],
             'cnf-password' => [
                 'required',
-                'min:5',             // must be at least 10 characters in length
-                'regex:/[a-z]/',      // must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
-                'regex:/[@$!%*#?&]/', // must contain a special character
+                'min:6',             
             ],
         ]);
        
@@ -106,8 +98,15 @@ class MemberAuthController extends Controller
     public function Enter_Email_view(){
         return view('enterEmailView');
     }
-    public function change_password_view(){
-        return view('changePassword');
+    // handle exception
+    public function change_password_view(Request $req , $key){
+        try{
+            $decrypt= Crypt::decryptString($key);
+            return view('changePassword');
+        }
+        catch(\Exception $e){
+            return 'invalid payload or invalid URL';
+        }
     }
     public function sendRestLink(Request $req){
         
