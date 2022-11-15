@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Redirect;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Dirape\Token\Token;
+use Carbon\Carbon;
 use Session;
 
 class MemberAuthController extends Controller
@@ -28,11 +30,11 @@ class MemberAuthController extends Controller
     }
 
     public function register(Request $req){
+
         $validated = Validator::make($req->all(), [
             'email' => 'required|email', 
             'first_name' => 'required|min:3|max:20',
             'last_name' => 'required||min:3|max:20', 
-            'is_verfied' => 'required',
             'password' => [
                 'required','same:cnf-password',
                 'min:6',             
@@ -54,7 +56,12 @@ class MemberAuthController extends Controller
 
         $memberData = $req->all();
         $member = Member::create($memberData);
-        Mail::send('mail.register-mail',$memberData, function ($message) {
+        $member = Member::where('email',$req['email'])->first();
+        $member->verification_token = str_random(32);
+        $member->save();
+
+        // $memberData->save();
+        Mail::send('mail.register-mail',$member->toArray(), function ($message) {
             $message->to('deepakjoshi0123@gmail.com','trello clone')
             ->subject('mailtrap test');
         });
@@ -89,10 +96,13 @@ class MemberAuthController extends Controller
 
    
     public function verifyMember($token){
-        $member = Member::where('email',$token)->first();
+        $member = Member::where([['verification_token',$token],["is_verfied","0"]])->first();
+        if($member == null){
+            return "Invalid request OR invalid token";
+        }
         $member->is_verfied = "1";
         $member->save();
-        return response()->json($member);
+        return "verified successfully";
     }
 
     public function Enter_Email_view(){
@@ -100,20 +110,25 @@ class MemberAuthController extends Controller
     }
     // handle exception
     public function change_password_view(Request $req , $key){
-        try{
-            $decrypt= Crypt::decryptString($key);
+        $member = Member::where([
+            ['reset_token',$key],
+            ['token_expiry','>=',Carbon::now('Asia/Kolkata')]
+        ])->first();
+
+        if($member === null){
+            return "Link expired OR Invalid Req";
+        }
+
             return view('changePassword');
-        }
-        catch(\Exception $e){
-            return 'invalid payload or invalid URL';
-        }
     }
+
     public function sendRestLink(Request $req){
         
         $validated = Validator::make($req->all(), [ 
             'email' => 'required|email', 
         ]);
        
+
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
@@ -121,8 +136,11 @@ class MemberAuthController extends Controller
         if($email->count()===0){
             return response()->json(['email not found in db'], Response::HTTP_BAD_REQUEST);;
         }
-        $encrypted = Crypt::encryptString($req->get('email'));
-        $token = array('email' => $encrypted);
+        $member = Member::where('email',$req['email'])->first();
+        $member->reset_token = str_random(32);
+        $member->token_expiry = Carbon::now('Asia/Kolkata')->addMinutes(5);
+        $member->save();
+        $token = array('token' => $member->reset_token);
         
         Mail::send('mail.password-reset-link',$token, function ($message) {
             $message->to('deepakjoshi0123@gmail.com','trello clone')
@@ -130,6 +148,7 @@ class MemberAuthController extends Controller
         });
     }
        public function changePassword(Request $req){
+        
         $validated = Validator::make($req->all(), [ 
             'token' => 'required', 
             'password' => 'required_with:cnf-password|same:cnf-password',
@@ -140,10 +159,16 @@ class MemberAuthController extends Controller
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
-        $decrypt= Crypt::decryptString($req->get('token'));
-        $member = Member::where('email',$decrypt)->first();
+       
+        $member = Member::where('reset_token',$req->get('token'))->first();
+
         $member->password = $req['password'];
         $member->save();
+
+        if($member == null){
+            return ["Invalid Request OR token expired"];
+        }
+       
         return response()->json($member);
         }
 

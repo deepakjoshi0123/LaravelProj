@@ -27,7 +27,8 @@
           </div>
           <div class="ms-5 mt-4">
             <div class="ms-5">
-              <h5>Add to Task</h5>
+              <h5 id="status-heading" class="mt-3"></h5>
+              <h6 class="mb-3" style="color:blue" id="task-status-label"></h6>
               <div id="modal-members"></div>
 
 
@@ -37,11 +38,11 @@
 
               <h6 class="mt-4">Attachment</h6>
               <input id="task-file" type="file" name="file" />
-              <h6 class="mt-4">Status</h6>
+
               <div class="btn-group">
-                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle "
+                <button style="min-width: 180px;" type="button" class="mt-4 btn btn-primary dropdown-toggle "
                   data-bs-toggle="dropdown" aria-expanded="false">
-                  Action
+                  Choose Status
                 </button>
                 <ul class="dropdown-menu">
                   <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
@@ -113,6 +114,8 @@
         $("#tsk-desc").html("")
         $('#datalistOptions').html("")
         $('#datalistOptions').append(`<option value="unassigned">Assign Task</option>`)
+        $('#task-status-label').text("")
+        $('#status-heading').text("")
         
         
         $('#modal-members').html("")
@@ -191,6 +194,7 @@
 
       function modalForEditOrAdd(task){
         console.log('status should be added')
+       
         $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
           $('#task-status').append(`
           <li><a class="dropdown-item">`+status+`</a></li>
@@ -250,6 +254,9 @@
             data:{"id":id},
             type:'get',
             success:  function (task) {
+              $('#task-status-label').text(task[0].status)
+              $('#status-heading').text("Status")
+              console.log(task[0].status)
               modalForEditOrAdd(task)
             },
             error: function(x,xs,xt){}

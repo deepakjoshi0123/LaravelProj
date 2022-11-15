@@ -97,10 +97,9 @@
         'password':$('#password').val(),
         'first_name':$('#first_name').val(),
         'last_name':$('#last_name').val(),
-        'cnf-password':$('#cnf-password').val(),
-        'is_verfied':0
+        'cnf-password':$('#cnf-password').val()
         }
-        console.log(data)
+        // console.log(data)
         $.ajax({
             url:'api/register',
             data:data,
