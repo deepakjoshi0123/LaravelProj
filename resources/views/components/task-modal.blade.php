@@ -160,19 +160,24 @@
             type:'post',
             contentType: "application/json; charset=utf-8",
             success:  function (res) {
-              if(res.edit){
-              
-              console.log($(`#project-task-${res.id}`).parent().children())
-              if($(`#project-task-${res.id}`).parent().children().length == 2){ 
-                $(`#project-task-${res.id}`).parent().html("")
-              }
-              $(`#project-task-${res.id}`).remove()
+            avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
+            if(!avl_sts.includes(res.status)){
+              // console.log('doesnt contain')
+              avl_sts.push(res.status)
+            localStorage.setItem('Available_Status',JSON.stringify(avl_sts))
+            }
 
+
+              if(res.edit){
+                  if($(`#project-task-${res.id}`).parent().children().length == 2){ 
+                    $(`#project-task-${res.id}`).parent().html("")
+                  }
+                  $(`#project-task-${res.id}`).remove()
               }
               
 
               if($(`#status-${res.status}`).children().length === 0){
-                // localStorage.setItem('Available_Status',JSON.parse(localStorage.getItem('Available_Status')).push(res.status))
+
                 $('#task-list').prepend(`<div id=status-`+res.status+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
               }
               $(`#status-${res.status}`).append(
@@ -181,7 +186,6 @@
                   <div style="display:flex" >
                     <div class="card border-primary mt-1 mb-3 " style="width: 51rem;" data-task-id=`+res.id+`>
                       <div class="card-header">`+res.title+`</div>
-
                       <div class="card-body text-primary">
                         <p class="card-text">`+res.description+`</p>
                       </div>
