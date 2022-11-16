@@ -33,7 +33,6 @@ Class TaskService {
         }
         else{
             $task = Task::find($request['data.id']);
-           
             $task->fill($request['data'])->save();           
             if($member_id != 'unassigned'){
                 (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
@@ -41,11 +40,13 @@ Class TaskService {
             foreach($request->get('comments') as $cmnt){
                 (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request->get('member_id'),'description'=>$cmnt])->save();
             }
+            //send edit flag from here 
+            //check for edit flag in UI if there exists edit flag  then
+            //remove it from task-listing and append it to top of that status
+            $task['edit'] = true;
+           return $task;
         }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
         
-        return array(
-        'success' => true,
-        ); 
     }
 
     public function members($request){
@@ -77,8 +78,9 @@ Class TaskService {
     }
 
     public function delTask($request){
-        Task::find($request['task_id'])->delete();
-        return array('success' => true);
+       $task = Task::find($request['task_id']);
+       $task->delete();
+        return array('status' => $task->status);
     }
         
     public function taskDetails($request){

@@ -46,12 +46,10 @@
                 </div>
                 <!-- Left links -->
             </div>
-
     </nav>
     <div class="div" style="width: 1024px; height: 480px; overflow-y: scroll; scrollbar-width: none;">
-        <ul class="list-group list-group-light" id="task-listing">
-        </ul>
-
+        <div class="list-group list-group-light" id="task-list">
+        </div>
     </div>
     <!-- Navbar -->
 </div>

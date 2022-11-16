@@ -36,7 +36,7 @@
     var tasks = {};
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
     
-    console.log(options.url)
+  
       if(options.url === 'api/refresh' || options.url === '/logout' || options.refreshRequest  ){
         // console.log(originalOptions)
         return ;
@@ -75,7 +75,7 @@
     localStorage.setItem("status","open");
 $.ajax({
     url:'api/projects',
-    data:{"member_id":"1"},
+    data:{"member_id":"5"},
     headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
   },
@@ -136,22 +136,22 @@ $.ajax({
   },
     type:'get',
     success:  function (response) {
-       
-        $('#task-listing').html("")
+        console.log(response)
+        $('#task-list').html("")
         tasks=response
         
         localStorage.setItem("Available_Status",JSON.stringify(Object.keys(response)));
         $.each(response,function(key,item){
+          
+          $('#task-list').append(`<div id="status-`+key+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
-                $('#task-listing').append(
+                $(`#status-${key}`).append(
                   `
                   <div class="ms-2 me-2" id="project-task-`+item2.id+`">
-                  <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
                   <div style="display:flex" >
-                    <div class="card border-primary mb-3 w-200" style="width: 51rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header">`+item2.title+`
-                       
-                      </div>
+                    <div class="card border-primary mt-1 mb-3 " style="width: 51rem;" data-task-id=`+item2.id+`>
+                      <div class="card-header">`+item2.title+`</div>
+
                       <div class="card-body text-primary">
                         <p class="card-text">`+item2.description+`</p>
                       </div>

@@ -99,7 +99,7 @@
       });  
 
       function resetModal(){
-        console.log('function clicked')
+       
         localStorage.setItem("status","open");
         localStorage.setItem("assignee","unassigned");
         $("#task-title").val("")
@@ -160,11 +160,42 @@
             type:'post',
             contentType: "application/json; charset=utf-8",
             success:  function (res) {
-              console.log(res)
-              $('#exampleModal').modal('toggle')
+              if(res.edit){
+              
+              console.log($(`#project-task-${res.id}`).parent().children())
+              if($(`#project-task-${res.id}`).parent().children().length == 2){ 
+                $(`#project-task-${res.id}`).parent().html("")
+              }
+              $(`#project-task-${res.id}`).remove()
+
+              }
+              
+
+              if($(`#status-${res.status}`).children().length === 0){
+                // localStorage.setItem('Available_Status',JSON.parse(localStorage.getItem('Available_Status')).push(res.status))
+                $('#task-list').prepend(`<div id=status-`+res.status+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
+              }
+              $(`#status-${res.status}`).append(
+                `
+                  <div class="ms-2 me-2" id="project-task-`+res.id+`">
+                  <div style="display:flex" >
+                    <div class="card border-primary mt-1 mb-3 " style="width: 51rem;" data-task-id=`+res.id+`>
+                      <div class="card-header">`+res.title+`</div>
+
+                      <div class="card-body text-primary">
+                        <p class="card-text">`+res.description+`</p>
+                      </div>
+                    </div>
+                    <i data-task-edit-id=`+res.id+` class="edit-task far fa-edit fa-sm mt-5 ms-4 me-4">edit</i>
+                        <i data-task-del-id=`+res.id+` class="del-task fas fa-skull-crossbones fa-sm mt-5 ms-3">delete</i>  
+                  </div>
+                  </div>
+                  `
+              )
+            $('#exampleModal').modal('toggle')
               resetModal()
-              // console.log(res.status)
-            },
+           
+          } ,
             error: function(err){
               // console.log(err.status)
               if(err.status == 400){
@@ -180,7 +211,7 @@
       });
       
       function renderComments(cmnt){
-        console.log('render',cmnt.get_member.last_name)
+
         $('#modal-body').append(`
                 <div class="mt-3 ms-4" style="display:flex">
                   <i class="fas fa-user-tie"></i>
@@ -193,7 +224,7 @@
       }
 
       function modalForEditOrAdd(task){
-        console.log('status should be added')
+
        
         $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
           $('#task-status').append(`
@@ -254,9 +285,10 @@
             data:{"id":id},
             type:'get',
             success:  function (task) {
-              $('#task-status-label').text(task[0].status)
-              $('#status-heading').text("Status")
-              console.log(task[0].status)
+
+              $('#status-heading').text('Status')
+              $('#task-status-label').append(`<a tittle="Status of Task" class="badge badge-dark mt-2 mb-2" style="width: 30%"; >`+task[0].status+`</a>`)
+             
               modalForEditOrAdd(task)
             },
             error: function(x,xs,xt){}
@@ -297,7 +329,7 @@
             data:{"project_id":localStorage.getItem('project_id'),"task_id":$(this).attr('data-task-edit-id')},
             type:'get',
             success:  function (res) {
-              console.log(res)
+             
               $.each(res,function(key,mem){
                 $('#datalistOptions').append(`<option value="`+mem.id+`">`+mem.email+`</option>`) 
               })
@@ -309,18 +341,23 @@
           })
       $('#datalistOptions').on('change' ,function(){
             localStorage.setItem("assignee",$(this).val())
-            console.log($(this).val())
+           
       });
       $(document).on('click','.del-task',function(e){
-            console.log($(this).attr('data-task-del-id'))
+           
             var id=$(this).attr('data-task-del-id')
             $.ajax({
             url:'api/delTask',
             data:{"task_id":id},
             type:'delete',
             success:  function (res) {
-              console.log(res)
-              $(`#project-task-${id}`).html("")
+              // console.log($(`#status-${res.status}`).siblings())
+              $(`#project-task-${id}`).remove()
+            
+              if($(`#status-${res.status}`).children().length == 1){
+             
+                $(`#status-${res.status}`).html("")
+              }
             },
             error: function(x,xs,xt){}
            })
