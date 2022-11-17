@@ -15,7 +15,7 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" style="margin-right:20px">
-                        <h5 id="project-title-nav" class="font-monospace" href="#">
+                        <h5 id="project-title-nav" class="" href="#">
                         </h5>
                     </li>
                     <i id="share-project-button" class="far fa-share-square fa-2x ms-3" style="color: black"

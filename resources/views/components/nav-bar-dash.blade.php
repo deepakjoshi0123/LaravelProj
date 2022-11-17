@@ -81,24 +81,25 @@
             type:'get',
             success:  function (response) {
             console.log(response)
-            $('#task-listing').html("")
+            $('#task-list').html("")
             $.each(response,function(key,item){
+          
+          $('#task-list').append(`<div id="status-`+key+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
-                $('#task-listing').append(
+                $(`#status-${key}`).append(
                   `
-                  <div class="ms-2 me-2" id="project-task-`+item2.id+`">
-                  <a class="badge badge-dark mt-2 mb-2" style="width: 10%"; >`+key+`</a>
+                  <div class=" ms-1 " id="project-task-`+item2.id+`">
                   <div style="display:flex" >
-                    <div class="card border-primary mb-3" style="width: 51rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header">`+item2.title+`
-                       
-                      </div>
-                      <div class="card-body text-primary">
+                    <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
+                      <div class="card-header">`+item2.title+` 
+                        
+                        <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
+                       </div>
+                      
+                      <div  data-task-edit-id=`+item2.id+` class="edit-task card-body text-primary">
                         <p class="card-text">`+item2.description+`</p>
                       </div>
-                    </div>
-                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm  ms-4 me-4">edit</i>
-                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm  ms-3">delete</i>  
+                    </div>                       
                   </div>
                   </div>
                   `

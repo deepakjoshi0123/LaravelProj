@@ -3,6 +3,9 @@
         <div class="position-sticky">
             <div id="project-heading-title"></div>
             <div class="list-group list-group-flush " id="side-bar">
+                <div style="background-color:#a1d0ef">
+                    <h5 style="color:black" class=" ms-5 mt-3 ">Projects</h5>
+                </div>
             </div>
         </div>
     </nav>

@@ -24,7 +24,8 @@ class TaskController extends Controller
         return response()->json($this->taskService->getTasks($req->all()));
     }
     public function addTask(Request $req){ 
-        $validated = Validator::make($req->all(), [ 
+        // return ['hey res' ];
+        $validated = Validator::make(json_decode($req['data'],true), [ 
             'data.title' => 'required|string|min:3|max:20', 
             'data.description' => 'required|string|min:3|max:200', 
             'comments' => 'nullable', 

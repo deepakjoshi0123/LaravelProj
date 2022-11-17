@@ -84,7 +84,7 @@ $.ajax({
     type:'get',
     success:  function (response) {
       //check here for response if 
-      $('#side-bar').append(`<div  style="background-color:#a1d0ef;height:51px"><h4 style="color:black" class="font-monospace ms-5 mt-2 ">Projects</h4></div>`)
+      $('#side-bar').append(``)
       
       $.each(response,function(key,item){
             
@@ -92,7 +92,7 @@ $.ajax({
                 `<div onMouseOver="this.style.color='blue'"
    onMouseOut="this.style.color='black'" id="project-`+item.id+`" data-project-id=`+item.id+` 
                         style="background-color: #e9f1f7;"
-                        class="font-monospace project-item list-group-item list-group-item-action py-2 ripple 
+                        class="project-item list-group-item list-group-item-action py-2 ripple 
                         data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="See Tasks"
                         ">
                         <i  class="me-2 fab fa-medapps"></i><span id="project-title`+item.id+`">`+item.project_name+`</span>
@@ -138,7 +138,7 @@ $.ajax({
   },
     type:'get',
     success:  function (response) {
-        console.log(response)
+        // console.log(response)
         $('#task-list').html("")
         tasks=response
         

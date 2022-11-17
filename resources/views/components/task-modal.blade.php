@@ -126,15 +126,15 @@
         $("#tsk-title").html("")
         $("#tsk-desc").html("")
         taskFile = new FormData()
-        taskFile.append('file',($('#task-file').val()))
-        // console.log(taskFile,$('#task-file').val())
+        taskFile.append('file',($('#task-file')[0].files[0]))
+        console.log(...taskFile)
+        // return
         var data ={
           "title":$("#task-title").val(),
           "description":$("#task-desc").val(),
           "status":localStorage.getItem("status"),
         }
         data2={
-        "attachment":taskFile,
         "member_id":"2",
         "data":data,
         "comments":JSON.parse(localStorage.getItem("comments")),
@@ -151,17 +151,20 @@
           data['id'] = task_id
           // data['status'] = $('#edit-time-status').text()
         }
-       
-        // console.log(data2)
+       taskFile.append('data',JSON.stringify(data2))
+        // console.log(...taskFile)
+        // return
        
         // return
          $.ajax({
             url:'api/addTask',
-            data:JSON.stringify(data2),
+            data:taskFile,
             dataType:'json',
             type:'post',
-            contentType: "application/json; charset=utf-8",
+            contentType: false,
+            processData: false,
             success:  function (res) {
+              console.log('check this-- > res',...res.file)
             avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
             if(!avl_sts.includes(res.status)){
               // console.log('doesnt contain')
@@ -184,16 +187,18 @@
               }
               $(`#status-${res.status}`).append(
                 `
-                  <div class="ms-2 me-2" id="project-task-`+res.id+`">
+                <div class=" ms-1 " id="project-task-`+res.id+`">
                   <div style="display:flex" >
-                    <div class="card border-primary mt-1 mb-3 " style="width: 51rem;" data-task-id=`+res.id+`>
-                      <div class="card-header">`+res.title+`</div>
-                      <div class="card-body text-primary">
+                    <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+res.id+`>
+                      <div class="card-header">`+res.title+` 
+                        
+                        <i data-task-del-id=`+res.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
+                       </div>
+                      
+                      <div  data-task-edit-id=`+res.id+` class="edit-task card-body text-primary">
                         <p class="card-text">`+res.description+`</p>
                       </div>
-                    </div>
-                    <i data-task-edit-id=`+res.id+` class="edit-task far fa-edit fa-sm mt-5 ms-4 me-4">edit</i>
-                        <i data-task-del-id=`+res.id+` class="del-task fas fa-skull-crossbones fa-sm mt-5 ms-3">delete</i>  
+                    </div>                       
                   </div>
                   </div>
                   `
