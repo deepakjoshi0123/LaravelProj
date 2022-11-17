@@ -1,6 +1,7 @@
 <div>
+  {{--
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous"> --}}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
   </script>
@@ -80,7 +81,7 @@
   $(document).on('click','#add-task',function(e){
     $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
           $('#task-status').append(`
-          <li><a class="dropdown-item">`+status+`</a></li>
+          <span id="edit-time-status" class="dropdown-item">`+status+`</span>
           `)
         })
     $.ajax({
@@ -92,7 +93,7 @@
                 $('#datalistOptions').append(`<option  value="`+mem.id+`">`+mem.email+`</option>`) 
               })
             },
-            error: function(x,xs,xt){}
+            error: function(x){}
           })
           editOrAddFlag="add"
           $('#exampleModal').modal('show')   
@@ -148,6 +149,7 @@
         }
         else {
           data['id'] = task_id
+          // data['status'] = $('#edit-time-status').text()
         }
        
         // console.log(data2)

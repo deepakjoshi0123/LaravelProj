@@ -154,16 +154,23 @@ Class TaskService {
 
     public function filterTask($request){
 
-       
+
         $members = $this->filterArray($request['filters']['members']);
         $status  = $this->filterArray($request['filters']['status']);
         
-        DB::connection()->enableQueryLog();
         $tasks = DB::table('task__mems')
         ->join('members','task__mems.member_id','=','members.id')
         ->join('tasks','task__mems.task_id','=','tasks.id')
-        ->whereIn('members.id',$members)
-        ->whereIn('status',$status)
+        ->where(function ($query) use ($members) {
+            if(sizeof($members)!==0){
+                return $query->whereIn('members.id', $members);
+            }
+        })
+        ->where(function ($query) use ($status) {
+            if(sizeof($status)!==0){
+                return $query->whereIn('status', $status);
+            }
+        })
         ->where('project_id',$request['project_id'])
         ->get(['tasks.id','title','description','status']);
        

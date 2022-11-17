@@ -16,6 +16,8 @@
     <x-task-modal />
     <x-project-Modal />
     <x-share-proj />
+    <x-filter-modal />
+
   </div>
 </body>
 
@@ -121,7 +123,7 @@ $.ajax({
           localStorage.setItem("project_id", $(this).attr('data-project-id'));
           //___________________________________________________________________________________________ 
           document.getElementById("add-task").disabled = false;
-          document.getElementById("navbarDropdownMenuAvatar-filter-task").disabled = false;
+          // document.getElementById("navbarDropdownMenuAvatar-filter-task").disabled = false;
           
 
           $("#search-task").prop('disabled', false);
@@ -147,17 +149,18 @@ $.ajax({
             $.each(item,function(key2,item2){
                 $(`#status-${key}`).append(
                   `
-                  <div class="ms-2 me-2" id="project-task-`+item2.id+`">
+                  <div class=" ms-1 " id="project-task-`+item2.id+`">
                   <div style="display:flex" >
-                    <div class="card border-primary mt-1 mb-3 " style="width: 51rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header">`+item2.title+`</div>
-
-                      <div class="card-body text-primary">
+                    <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
+                      <div class="card-header">`+item2.title+` 
+                        
+                        <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
+                       </div>
+                      
+                      <div  data-task-edit-id=`+item2.id+` class="edit-task card-body text-primary">
                         <p class="card-text">`+item2.description+`</p>
                       </div>
-                    </div>
-                    <i data-task-edit-id=`+item2.id+` class="edit-task far fa-edit fa-sm mt-5 ms-4 me-4">edit</i>
-                        <i data-task-del-id=`+item2.id+` class="del-task fas fa-skull-crossbones fa-sm mt-5 ms-3">delete</i>  
+                    </div>                       
                   </div>
                   </div>
                   `
