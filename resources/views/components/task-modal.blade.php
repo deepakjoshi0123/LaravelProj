@@ -38,7 +38,7 @@
               </select>
 
               <h6 class="mt-4">Attachment</h6>
-              <input id="task-file" type="file" name="file" />
+              <input id="task-file" type="file" name="files[]" multiple="multiple" />
 
               <div class="btn-group">
                 <button style="min-width: 180px;" type="button" class="mt-4 btn btn-primary dropdown-toggle "
@@ -127,7 +127,11 @@
         $("#tsk-desc").html("")
         taskFile = new FormData()
         taskFile.append('file',($('#task-file')[0].files[0]))
-        console.log(...taskFile)
+        // console.log($(this))
+        for (var i = 0; i < $('#task-file').get(0).files.length; ++i) {
+             taskFile.append('files[]', $('#task-file').get(0).files[i]);
+        }
+        // console.log(...taskFile)
         // return
         var data ={
           "title":$("#task-title").val(),
@@ -164,7 +168,7 @@
             contentType: false,
             processData: false,
             success:  function (res) {
-              console.log('check this-- > res',...res.file)
+              console.log('check this-- > res',...res)
             avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
             if(!avl_sts.includes(res.status)){
               // console.log('doesnt contain')
