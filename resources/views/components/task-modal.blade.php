@@ -265,10 +265,12 @@
             </div>
               `)
         $.each(task[0].attachments,function(key,attch){
-          console.log()
+          console.log(attch.attachment)
           $('#modal-attachments').append(
-            `<iframe height="200" width="400" src={{`+attch+`}}" class="ms-4"></iframe>`
-
+          `<iframe class="ms-4" height="200"  width="400" src={{`+attch+`}}" class="ms-4">
+            </iframe>
+            <a class="ms-4" href="http://localhost:8000/downloadTaskAttachment/${attch.attachment}" target="_blank" >Download</a>
+            `
           )
         })
         }

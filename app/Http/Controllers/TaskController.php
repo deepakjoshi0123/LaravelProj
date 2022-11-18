@@ -69,9 +69,7 @@ class TaskController extends Controller
         return response()->json(($this->taskService->filterTask($req->all())));
     }
     public function downloadTaskAttachment(Request $req,$file_name){
-        // return "hey";
-        return $file_name;
-          return response()->download('media/1668712185projectigi.pdf');
-        // return $this->downloadTaskAttachment($req,$file_name);
+        // return 'media/'.$file_name;
+        return response()->download('media/'.$file_name);
     }
 }

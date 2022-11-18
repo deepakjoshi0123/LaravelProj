@@ -207,10 +207,4 @@ Class TaskService {
         }
         return $resToSend;
     }
-
-    public function downloadTaskAttachment(Request $req,$file_name){
-        return 'download me';
-              
-    }
-
 }
