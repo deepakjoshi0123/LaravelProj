@@ -72,4 +72,7 @@ class TaskController extends Controller
         // return 'media/'.$file_name;
         return response()->download('media/'.$file_name);
     }
+    public function viewTaskAttachment(Request $req,$file_name){
+        return response()->file('media/'.$file_name);
+    }
 }

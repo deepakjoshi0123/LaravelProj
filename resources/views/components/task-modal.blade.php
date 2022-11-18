@@ -267,7 +267,7 @@
         $.each(task[0].attachments,function(key,attch){
           console.log(attch.attachment)
           $('#modal-attachments').append(
-          `<iframe class="ms-4" height="200"  width="400" src={{`+attch+`}}" class="ms-4">
+          `<iframe class="ms-4" height="100"  width="200" src=viewTaskAttachment/${attch.attachment}" class="ms-4">
             </iframe>
             <a class="ms-4" href="http://localhost:8000/downloadTaskAttachment/${attch.attachment}" target="_blank" >Download</a>
             `
