@@ -13,40 +13,62 @@ use DB;
 
 Class TaskService {
     // break this service 
-    public function addTask($request){
-        $data = $request->get('data');
-        $member_id = $request->get('assignee');
-
-        // return $request->get('attachment');
-
-        if($request->has('data.project_id')){ 
-           $task = Task::create($request['data']);
+    public function addTask($req){
+       
+        $request = json_decode($req['data'],true);
+        $data = $request['data'];
         
+        $member_id = $request['assignee'];
+
+               
+        if(array_key_exists('project_id',$data)){ 
+           $task = Task::create($data);
             if($member_id != 'unassigned'){
                 (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
             }
                         
-            foreach($request->get('comments') as $cmnt){
-                (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request->get('member_id'),'description'=>$cmnt])->save();
+            //replace member_id with member_if fetched from token
+            if(count($request['comments'])>0){
+                foreach($request['comments'] as $cmnt){
+                    (new Comment())->fill(['task_id'=>$task->id,'member_id'=>'1','description'=>$cmnt])->save();
+                }
             }
+            if(isset($_FILES['files'])){
+                $no_of_files = count($_FILES['files']['name']);
+                
+                for($i = 0 ;$i < $no_of_files ; $i++){  
+                    $location = 'media/'.time().$_FILES['files']['name'][$i];
+                    move_uploaded_file($_FILES['files']['tmp_name'][$i],$location);    
+                    Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$_FILES['files']['name'][$i] ]);
+                }
+              }
             return $task;
         }
         else{
-            $task = Task::find($request['data.id']);
+            $task = Task::find($data['id']);
             $task->fill($request['data'])->save();           
             if($member_id != 'unassigned'){
                 (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
             }
-            foreach($request->get('comments') as $cmnt){
-                (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request->get('member_id'),'description'=>$cmnt])->save();
+            if(count($request['comments'])>0){
+            
+            foreach($request['comments'] as $cmnt){
+                (new Comment())->fill(['task_id'=>$task->id,'member_id'=>'1','description'=>$cmnt])->save();
             }
-            //send edit flag from here 
-            //check for edit flag in UI if there exists edit flag  then
-            //remove it from task-listing and append it to top of that status
+        }
             $task['edit'] = true;
+            if(isset($_FILES['files'])){
+                $no_of_files = count($_FILES['files']['name']);
+                
+                for($i = 0 ;$i < $no_of_files ; $i++){  
+                    $location = 'media/'.time().$_FILES['files']['name'][$i];
+                    move_uploaded_file($_FILES['files']['tmp_name'][$i],$location);    
+                    Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$_FILES['files']['name'][$i] ]);
+                }
+              }
            return $task;
         }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-        
+
     }
 
     public function members($request){
@@ -86,7 +108,9 @@ Class TaskService {
     public function taskDetails($request){
         $task = Task::where('id',$request['id'])->get(['id','title','description','status']);
         $comment = Comment::with('getMember')->where('task_id',$request['id'])->get();
+        $task_attachments = Task_Attachment::where('task_id',$request['id'])->get(['attachment']);
         $task[0]->comments=$comment;
+        $task[0]->attachments =$task_attachments;
         return $task;
     }
    
@@ -182,6 +206,11 @@ Class TaskService {
            array_push($resToSend[$tasks[$i]->status],$tasks[$i]);
         }
         return $resToSend;
+    }
+
+    public function downloadTaskAttachment(Request $req,$file_name){
+        return 'download me';
+              
     }
 
 }

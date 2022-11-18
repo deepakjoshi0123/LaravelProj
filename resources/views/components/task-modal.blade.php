@@ -22,7 +22,11 @@
                 <textarea class="form-control ms-4  mt-3" id="task-desc" rows="3"></textarea>
                 <span id="tsk-desc"></span>
               </div>
-              <input id="task-comment" class="ms-4 mb-3 mt-5 form-control" placeholder="Add Comment ..." />
+              <div id="attachment-on-edit">
+
+              </div>
+              <h6 class="ms-4 mt-4">Activity</h6>
+              <input id="task-comment" class="ms-4 mb-3 mt-3 form-control" placeholder="Add Comment ..." />
               <div id="modal-body"></div>
             </div>
           </div>
@@ -117,10 +121,11 @@
         $('#datalistOptions').append(`<option value="unassigned">Assign Task</option>`)
         $('#task-status-label').text("")
         $('#status-heading').text("")
+        $('#attachment-on-edit').html("")
         
         
         $('#modal-members').html("")
-        // localStorage.setItem("comments",[])
+        localStorage.setItem("comments",JSON.stringify([]))
       }
       $(document).on('click','#save-task',function(e){
         $("#tsk-title").html("")
@@ -160,6 +165,7 @@
         // return
        
         // return
+        console.log('going to send --- ajax req')
          $.ajax({
             url:'api/addTask',
             data:taskFile,
@@ -168,7 +174,7 @@
             contentType: false,
             processData: false,
             success:  function (res) {
-              console.log('check this-- > res',...res)
+              console.log('check this-- > res',res)
             avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
             if(!avl_sts.includes(res.status)){
               // console.log('doesnt contain')
@@ -228,7 +234,7 @@
       function renderComments(cmnt){
 
         $('#modal-body').append(`
-                <div class="mt-3 ms-4" style="display:flex">
+                <div class="mt-2 ms-4" style="display:flex">
                   <i class="fas fa-user-tie"></i>
                   <div class="ms-4 " id="modal-desc">`+ cmnt.get_member.first_name+` `+cmnt.get_member.last_name+`</div>
                     <div class="ms-4 " id="modal-desc">`+ cmnt.get_member.updated_at +`</div>
@@ -252,15 +258,22 @@
         editOrAddFlag="edit"
         $("#task-title").val(task[0].title)
         $("#task-desc").val(task[0].description)
-        $('#modal-body').append(`
+        if(task[0].attachments.length>0){
+          $('#attachment-on-edit').append(`
             <div id="modal-attachments">
-              <h6 class="modal-attach ms-4 mt-2" >Attachments</h6>
-              <div class="ms-4 mt-2">attachments feature pending ...</div>
-              <div class="ms-4 mt-2 ">attachments feature pending ...</div>
+              <h6  class="modal-attach ms-4 mt-3" >Attachments</h6>
             </div>
               `)
-        $('#modal-body').append(`<div  class="ms-4 overflow-auto" id ="modal-comments"> Comments </div>`)
-              $.each(task[0].comments,function(key,cmnt){
+        $.each(task[0].attachments,function(key,attch){
+          console.log()
+          $('#modal-attachments').append(
+            `<iframe height="200" width="400" src={{`+attch+`}}" class="ms-4"></iframe>`
+
+          )
+        })
+        }
+       
+        $.each(task[0].comments,function(key,cmnt){
                 renderComments(cmnt)
               }) 
         $('#exampleModal').modal('show')
@@ -300,7 +313,7 @@
             data:{"id":id},
             type:'get',
             success:  function (task) {
-
+              console.log(task)
               $('#status-heading').text('Status')
               $('#task-status-label').append(`<a tittle="Status of Task" class="badge badge-dark mt-2 mb-2" style="width: 30%"; >`+task[0].status+`</a>`)
              

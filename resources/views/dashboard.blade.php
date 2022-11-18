@@ -152,11 +152,11 @@ $.ajax({
                   <div class=" ms-1 " id="project-task-`+item2.id+`">
                   <div style="display:flex" >
                     <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header">`+item2.title+` 
-                        
-                        <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
+                      <div class="card-header d-flex justify-content-between">
+                      <div >`+item2.title+` 
                        </div>
-                      
+                       <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm mt-2 me-2"></i>
+                      </div>
                       <div  data-task-edit-id=`+item2.id+` class="edit-task card-body text-primary">
                         <p class="card-text">`+item2.description+`</p>
                       </div>

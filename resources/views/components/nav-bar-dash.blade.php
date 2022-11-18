@@ -9,9 +9,9 @@
         </button>
 
         <!-- Collapsible wrapper -->
-        <div class="collapse navbar-collapse mt-1" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse " id="navbarSupportedContent">
             <!-- Navbar brand -->
-            <a class="navbar-brand mt-2 mt-lg-0" href="#">
+            <a class="navbar-brand mt-1 mt-lg-0" href="#">
                 <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Trello_logo.svg/1280px-Trello_logo.svg.png"
                     height="18" alt="MDB Logo" loading="lazy" />
             </a>
@@ -24,11 +24,12 @@
                     </a>
                 </li>
 
-                <form class="d-flex input-group w-auto" style="margin-left:700px">
-                    <input id="search-task" type="search" class="form-control rounded" placeholder="Search"
-                        aria-label="Search" aria-describedby="search-addon" onChange="searchTask()" disabled />
+                <form class="d-flex input-group w-auto" style="margin-left:845px">
+                    <input style="width:250px" id="search-task" type="search" class="form-control rounded"
+                        placeholder="Search" aria-label="Search" aria-describedby="search-addon" onChange="searchTask()"
+                        disabled />
                     <span class="input-group-text border-0" id="search-addon">
-                        <i class="fas fa-search"></i>
+                        {{-- <i class="fas fa-search"></i> --}}
                     </span>
                 </form>
             </ul>
@@ -48,7 +49,6 @@
                         alt="Black and White Portrait of a Man" loading="lazy" />
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-
                     <li>
                         <a id="logout" class="dropdown-item">Logout</a>
                     </li>

@@ -26,7 +26,7 @@ Route::get('/register',[MemberAuthController::class,'register_view']);
 Route::get('/login', [MemberAuthController::class,'login_view'])->name('login');
 
 Route::get('/dashboard',[ProjectController::class,'dashboard'])->name('dashboard');
-
+Route::get('/downloadTaskAttachment/{file_ame}',[TaskController::class,'downloadTaskAttachment']);
 
 Route::group(['middleware' => ['jwt.verify']
     ], function ($router) {

@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Proj_Mem::factory(100)->create();
         \App\Models\Task::factory(40)->create();
         \App\Models\Task_Mem::factory(100)->create();
-        \App\Models\Task_Attachment::factory(20)->create();
+        // \App\Models\Task_Attachment::factory(20)->create();
         \App\Models\Status::factory(20)->create();
         \App\Models\Comment::factory(100)->create();
 
