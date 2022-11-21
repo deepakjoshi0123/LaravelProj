@@ -1,4 +1,4 @@
-<div class="div" style="width:20% ">
+<div class="div" style="width:20% ;overflow-y: scroll;">
     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
         <div class="position-sticky">
             <div id="project-heading-title"></div>

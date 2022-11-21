@@ -24,7 +24,7 @@
                     </a>
                 </li>
 
-                <form class="d-flex input-group w-auto" style="margin-left:845px">
+                <form class="d-flex input-group w-auto" style="margin-left:830px">
                     <input style="width:250px" id="search-task" type="search" class="form-control rounded"
                         placeholder="Search" aria-label="Search" aria-describedby="search-addon" onChange="searchTask()"
                         disabled />

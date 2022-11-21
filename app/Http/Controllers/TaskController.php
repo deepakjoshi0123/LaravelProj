@@ -27,7 +27,7 @@ class TaskController extends Controller
     public function addTask(Request $req){ 
               
         $validated = Validator::make(json_decode($req['data'],true), [ 
-            'data.title' => 'required|string|min:3|max:20', 
+            'data.title' => 'required|string|min:3|max:40|regex:/^([A-Za-z\d\.-]+)$/', 
             'data.description' => 'required|string|min:3|max:200', 
             'comments' => 'nullable', 
             'data.status' => 'nullable|string',    

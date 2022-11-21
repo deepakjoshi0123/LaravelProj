@@ -57,10 +57,10 @@
                     <hr class="dropdown-divider">
                   </li>
 
-                  <div id="task-status">
-                    <li><a class="dropdown-item">unassigned</a></li>
+                  <li id="task-status">
 
-                  </div>
+
+                  </li>
                 </ul>
               </div>
             </div>
@@ -85,7 +85,7 @@
   $(document).on('click','#add-task',function(e){
     $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
           $('#task-status').append(`
-          <span id="edit-time-status" class="dropdown-item">`+status+`</span>
+          <li id="edit-time-status" class="dropdown-item">`+status+`</li>
           `)
         })
     $.ajax({
@@ -107,6 +107,7 @@
        
         localStorage.setItem("status","open");
         localStorage.setItem("assignee","unassigned");
+        localStorage.setItem("statusChangeFlag",false);
         $("#task-title").val("")
         $("#task-desc").val("")
         $("#custom-status").val("")
@@ -114,7 +115,7 @@
         $("#task-file").val("")
         $("#modal-body").html("")
         $("#task-status").html("")
-        $("#task-status").append(`<li><a class="dropdown-item">unassigned</a></li>`)
+
         $("#tsk-title").html("")
         $("#tsk-desc").html("")
         $('#datalistOptions').html("")
@@ -141,7 +142,6 @@
         var data ={
           "title":$("#task-title").val(),
           "description":$("#task-desc").val(),
-          "status":localStorage.getItem("status"),
         }
         data2={
         "member_id":"2",
@@ -155,17 +155,19 @@
 
         if(editOrAddFlag === "add"){
           data['project_id'] = localStorage.getItem("project_id");
+          data['status'] = localStorage.getItem("status")
         }
         else {
           data['id'] = task_id
-          // data['status'] = $('#edit-time-status').text()
+          statusSendFlag = localStorage.getItem("statusChangeFlag")
+
+          if( statusSendFlag === 'true'){
+            data['status'] = localStorage.getItem("status")
+
+          }
+
         }
        taskFile.append('data',JSON.stringify(data2))
-        // console.log(...taskFile)
-        // return
-       
-        // return
-        console.log('going to send --- ajax req')
          $.ajax({
             url:'api/addTask',
             data:taskFile,
@@ -191,11 +193,13 @@
               }
               
 
-              if($(`#status-${res.status}`).children().length === 0){
 
-                $('#task-list').prepend(`<div id=status-`+res.status+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
+
+              if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
+
+                $('#task-list').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
               }
-              $(`#status-${res.status}`).append(
+              $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).append(
                 `
                 <div class=" ms-1 " id="project-task-`+res.id+`">
                   <div style="display:flex" >
@@ -267,7 +271,7 @@
         $.each(task[0].attachments,function(key,attch){
           console.log(attch.attachment)
           $('#modal-attachments').append(
-          `<iframe class="ms-4" height="100"  width="200" src=viewTaskAttachment/${attch.attachment}" class="ms-4">
+          `<iframe seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" class="ms-4" height="100"  width="200" src=viewTaskAttachment/${attch.attachment}" class="ms-4">
             </iframe>
             <a class="ms-4" href="http://localhost:8000/downloadTaskAttachment/${attch.attachment}" target="_blank" >Download</a>
             `
@@ -282,32 +286,31 @@
       }
       function editOrAddTask(id){
 
-        // $.ajax({
-        //     url:'api/members',
-        //     data:{"task_id":id},
-        //     type:'get',
-        //     success:  function (res) {
-        //       // console.log(res)
-        //       $('#modal-members').append(`
-        //       <div class="mt-3 mb-3 btn-group dropdown">
-        //         <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
-        //           data-mdb-toggle="dropdown" aria-expanded="false">
-        //           Members
-        //           <i class="fas fa-users ms-2"></i>
-        //         </button>
-        //         <ul class="dropdown-menu">
-        //         </ul>
-        //       </div>
-        //       `)
-        //       $.each(res,function(key,item){
-        //         $('.dropdown-menu').append(`
-        //           <li >`+item.email+`</li>
-        //       `)
-        //       })
-             
-        //     },
-        //     error: function(){}
-        //   })
+        $.ajax({
+            url:'api/members',
+            data:{"task_id":id},
+            type:'get',
+            success:  function (res) {
+              // console.log(res)
+              $('#modal-members').append(`
+              <div class="mt-3 mb-3 btn-group dropdown">
+                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
+                  data-mdb-toggle="dropdown" aria-expanded="false">
+                  Members
+                  <i class="fas fa-users ms-2"></i>
+                </button>
+                <ul id="task-edit-members" class="dropdown-menu">
+                </ul>
+              </div>
+              `)
+              $.each(res,function(key,item){
+                $('#task-edit-members').append(`
+                  <li class="ms-2 mt-1 me-2 mb-1" >`+item.email+`</li>
+                `)
+              })
+            },
+            error: function(){}
+          })
 
         task_id=id
         $.ajax({
@@ -327,14 +330,16 @@
       }
       
       $(document).on("click", "#task-status li", function() {
+
         // console.log($(this).text().toLowerCase())
+        console.log('yes i am changed')
+        localStorage.setItem("statusChangeFlag",true)
         localStorage.setItem("status",$(this).text());  
       });
-      // $("#task-status li").click(function(e) {
-      //   console.log(e,$(this).text())
-      // })
-      
+           
      function getCustomTaskStatus(){
+      console.log('yes i am changed --custom')
+      localStorage.setItem("statusChangeFlag",true)
       localStorage.setItem("status",$("#custom-status").val().toLowerCase());
       }
      
@@ -384,9 +389,9 @@
               // console.log($(`#status-${res.status}`).siblings())
               $(`#project-task-${id}`).remove()
             
-              if($(`#status-${res.status}`).children().length == 1){
+              if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length == 1){
              
-                $(`#status-${res.status}`).html("")
+                $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).html("")
               }
             },
             error: function(x,xs,xt){}

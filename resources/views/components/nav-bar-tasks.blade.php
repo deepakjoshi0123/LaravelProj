@@ -27,27 +27,17 @@
                 </ul>
                 <div class="dropdown">
 
-                    <i id="navbarDropdownMenuAvatar-filter-task" data-mdb-toggle="dropdown" aria-expanded="false"
+                    <i id="navbarDropdownMenuAvatar-filter-task" data-mdb-toggle="tooltip" aria-expanded="false"
                         style="margin-left:5px;color: black"
                         class="dropdown-toggle d-flex align-items-center hidden-arrow fas fa-filter fa-2x"
                         title="Filter Tasks"></i>
 
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar-filter-task">
-                        <li>
-                            <h5 class="ms-2">Members</h5>
-                            <div id="members-list-filter"></div>
-                        </li>
-                        <li>
-                            <h5 class="ms-2">Status</h5>
-                            <div id="status-list-filter"></div>
-                        </li>
-                        <button id="save-filters" type="button" class="ms-2 btn btn-primary">Save</button>
-                    </ul>
                 </div>
                 <!-- Left links -->
             </div>
     </nav>
-    <div class="div" style="width: 1024px; height: 480px; overflow-y: scroll; scrollbar-width: none;">
+    <div class="div"
+        style="background-color:#e9f1f7; width: 1010px; height: 480px; overflow-y: scroll; scrollbar-width: none;">
         <div class="list-group list-group-light" id="task-list">
         </div>
     </div>

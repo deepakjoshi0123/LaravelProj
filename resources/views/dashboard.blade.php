@@ -117,7 +117,7 @@ $.ajax({
             }
             
           }
-          document.getElementById(`project-${proj_id}`).style.backgroundColor = '#a1d0ef'
+          document.getElementById(`project-${proj_id}`).style.backgroundColor = 'white'
           localStorage.setItem('proj_old_id',proj_id)
          
           localStorage.setItem("project_id", $(this).attr('data-project-id'));
@@ -145,15 +145,15 @@ $.ajax({
         localStorage.setItem("Available_Status",JSON.stringify(Object.keys(response)));
         $.each(response,function(key,item){
           
-          $('#task-list').append(`<div id="status-`+key+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
+          $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
-                $(`#status-${key}`).append(
+                $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
                   `
                   <div class=" ms-1 " id="project-task-`+item2.id+`">
                   <div style="display:flex" >
                     <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
                       <div class="card-header d-flex justify-content-between">
-                      <div >`+item2.title+` 
+                      <div class="">`+item2.title+` 
                        </div>
                        <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm mt-2 me-2"></i>
                       </div>

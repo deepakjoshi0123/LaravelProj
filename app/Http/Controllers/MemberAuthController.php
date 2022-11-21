@@ -32,9 +32,9 @@ class MemberAuthController extends Controller
     public function register(Request $req){
 
         $validated = Validator::make($req->all(), [
-            'email' => 'required|email', 
-            'first_name' => 'required|min:3|max:20',
-            'last_name' => 'required||min:3|max:20', 
+            'email' => 'required|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/', 
+            'first_name' => 'required|min:3|max:20|regex:/^([A-Za-z\d\.-]+)$/',
+            'last_name' => 'required||min:3|max:20|regex:/^([A-Za-z\d\.-]+)$/', 
             'password' => [
                 'required','same:cnf-password',
                 'min:6',             
@@ -125,10 +125,9 @@ class MemberAuthController extends Controller
     public function sendRestLink(Request $req){
         
         $validated = Validator::make($req->all(), [ 
-            'email' => 'required|email', 
+            'email' => 'required|email|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/', 
         ]);
        
-
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
@@ -175,10 +174,10 @@ class MemberAuthController extends Controller
 
         public function login(Request $req){
             $validated = Validator::make($req->all(), [ 
-                'email' => 'required|email', 
+                'email' => 'required|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/', 
                 'password' => 'required'
             ]);
-           
+
             if ($validated->fails()) {    
                 return redirect('login')->withErrors($validated->messages());
             }
