@@ -8,64 +8,69 @@
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div style="display: flex ">
-          <div style="width: 80%">
-            <div class="modal-header ">
-              <h4 class="ms-4 " id="modal-title">Trello Clone</h4>
-            </div>
-            <div>
-              <h6 class="ms-4 mt-1" id="modal-title">Ttile</h6>
-              <input id="task-title" class="form-control ms-4 mt-3" />
-              <span id="tsk-title"></span>
-              <h6 class="modal-desc ms-4 mt-3" id="modal-desc">Descriptiom</h6>
-              <div id="task-modal-desc">
-                <textarea class="form-control ms-4  mt-3" id="task-desc" rows="3"></textarea>
-                <span id="tsk-desc"></span>
+        <div id="append-comment-body">
+          <div style="display: flex ">
+            <div style="width: 80%">
+              <div class="modal-header ">
+                <h4 class="ms-4 " id="modal-title">Trello Clone</h4>
               </div>
-              <div id="attachment-on-edit">
+              <div>
+                <h6 class="ms-4 mt-1" id="modal-title">Ttile</h6>
+                <input id="task-title" class="form-control ms-4 mt-3" />
+                <span id="tsk-title"></span>
+                <h6 class="modal-desc ms-4 mt-3" id="modal-desc">Descriptiom</h6>
+                <div id="task-modal-desc">
+                  <textarea class="form-control ms-4  mt-3" id="task-desc" rows="3"></textarea>
+                  <span id="tsk-desc"></span>
+                </div>
+                <div id="attachment-on-edit">
+
+                </div>
+                <h6 class="ms-4 mt-4">Activity</h6>
+                <input id="task-comment" class="ms-4 mb-3 mt-3 form-control" placeholder="Add Comment ..." />
 
               </div>
-              <h6 class="ms-4 mt-4">Activity</h6>
-              <input id="task-comment" class="ms-4 mb-3 mt-3 form-control" placeholder="Add Comment ..." />
-              <div id="modal-body"></div>
+            </div>
+
+            <div class="ms-5 mt-4">
+              <div class="ms-5">
+                <h5 id="status-heading" class="mt-3"></h5>
+                <h6 class="mb-3" style="color:blue" id="task-status-label"></h6>
+                <div id="modal-members"></div>
+
+
+                <select style="width:60%" id="datalistOptions" class="form-select" aria-label="Default select example">
+                  <option disabled selected>Assign Task</option>
+                </select>
+
+                <h6 class="mt-4">Attachment</h6>
+                <input id="task-file" type="file" name="files[]" multiple="multiple" />
+
+                <div class="btn-group">
+                  <button style="min-width: 180px;" type="button" class="mt-4 btn btn-primary dropdown-toggle "
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Choose Status
+                  </button>
+                  <ul class="dropdown-menu">
+                    <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
+                      placeholder="Custom Status ..." />
+
+                    <li>
+                      <hr class="dropdown-divider">
+                    </li>
+
+                    <li id="task-status">
+
+
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="ms-5 mt-4">
-            <div class="ms-5">
-              <h5 id="status-heading" class="mt-3"></h5>
-              <h6 class="mb-3" style="color:blue" id="task-status-label"></h6>
-              <div id="modal-members"></div>
 
-
-              <select style="width:60%" id="datalistOptions" class="form-select" aria-label="Default select example">
-                <option disabled selected>Assign Task</option>
-              </select>
-
-              <h6 class="mt-4">Attachment</h6>
-              <input id="task-file" type="file" name="files[]" multiple="multiple" />
-
-              <div class="btn-group">
-                <button style="min-width: 180px;" type="button" class="mt-4 btn btn-primary dropdown-toggle "
-                  data-bs-toggle="dropdown" aria-expanded="false">
-                  Choose Status
-                </button>
-                <ul class="dropdown-menu">
-                  <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
-                    placeholder="Custom Status ..." />
-
-                  <li>
-                    <hr class="dropdown-divider">
-                  </li>
-
-                  <li id="task-status">
-
-
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
         </div>
+
         <div class="modal-footer me-5">
           <button onClick="resetModal()" type="button" class="btn btn-secondary"
             data-mdb-dismiss="modal">Cancel</button>
@@ -113,7 +118,7 @@
         $("#custom-status").val("")
         $("#task-comment").val("")
         $("#task-file").val("")
-        $("#modal-body").html("")
+        $("#comment-body").remove()
         $("#task-status").html("")
 
         $("#tsk-title").html("")
@@ -176,7 +181,7 @@
             contentType: false,
             processData: false,
             success:  function (res) {
-              console.log('check this-- > res',res)
+              // console.log('check this-- > res',res)
             avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
             if(!avl_sts.includes(res.status)){
               // console.log('doesnt contain')
@@ -204,7 +209,7 @@
                 <div class=" ms-1 " id="project-task-`+res.id+`">
                   <div style="display:flex" >
                     <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+res.id+`>
-                      <div class="card-header">`+res.title+` 
+                      <div class="card-header d-flex justify-content-between">`+res.title+` 
                         
                         <i data-task-del-id=`+res.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
                        </div>
@@ -237,11 +242,11 @@
       
       function renderComments(cmnt){
 
-        $('#modal-body').append(`
+        $('#comment-body').append(`
                 <div class="mt-2 ms-4" style="display:flex">
                   <i class="fas fa-user-tie"></i>
                   <div class="ms-4 " id="modal-desc">`+ cmnt.get_member.first_name+` `+cmnt.get_member.last_name+`</div>
-                    <div class="ms-4 " id="modal-desc">`+ cmnt.get_member.updated_at +`</div>
+                    <div class="ms-4 " id="modal-desc">`+ new Date(cmnt.updated_at).toLocaleString() +`</div>
                   </div> 
                   <div class="ms-5 fs-6 text-muted" id="modal-desc">`+ cmnt.description +`</div>
                 </div>
@@ -268,17 +273,39 @@
               <h6  class="modal-attach ms-4 mt-3" >Attachments</h6>
             </div>
               `)
+        var srt=0;end=2
+        for(i=0;i<=task[0].attachments.length/2;i++){
+          console.log(srt,end)
+          $('#modal-attachments').append(
+          `<div id=mdl-atch-${srt} class="row mt-3"></div>`)
+          for(j=srt;j<end;j++){
+          if(!task[0].attachments[j])
+            return
+            $(`#mdl-atch-${srt}`).append(`
+            <div class="col-4 ms-5" style="display: flex ">
+             <iframe seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" class="ms-4" height="60"  width="150" src=viewTaskAttachment/${task[0].attachments[j].attachment}" class="ms-4">
+            </iframe>
+            <a class="" href="http://localhost:8000/downloadTaskAttachment/${task[0].attachments[j].attachment}" target="_blank" >
+              <i class="fas fa-file-download"></i>
+              </a>
+          </div>
+            `)
+          }
+         
+          srt=srt+2;
+          end=end+2
+        }
         $.each(task[0].attachments,function(key,attch){
           console.log(attch.attachment)
-          $('#modal-attachments').append(
-          `<iframe seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" class="ms-4" height="100"  width="200" src=viewTaskAttachment/${attch.attachment}" class="ms-4">
-            </iframe>
-            <a class="ms-4" href="http://localhost:8000/downloadTaskAttachment/${attch.attachment}" target="_blank" >Download</a>
-            `
-          )
+         
         })
         }
-       
+        if(task[0].comments.length>0){
+          $(`#append-comment-body`).append(`
+        <div style="height: 150px; overflow-y: auto;" id="comment-body"></div>
+        `)
+        }
+        console.log(task[0].comments)
         $.each(task[0].comments,function(key,cmnt){
                 renderComments(cmnt)
               }) 
@@ -318,7 +345,7 @@
             data:{"id":id},
             type:'get',
             success:  function (task) {
-              console.log(task)
+              // console.log(task)
               $('#status-heading').text('Status')
               $('#task-status-label').append(`<a tittle="Status of Task" class="badge badge-dark mt-2 mb-2" style="width: 30%"; >`+task[0].status+`</a>`)
              
@@ -332,13 +359,13 @@
       $(document).on("click", "#task-status li", function() {
 
         // console.log($(this).text().toLowerCase())
-        console.log('yes i am changed')
+        // console.log('yes i am changed')
         localStorage.setItem("statusChangeFlag",true)
         localStorage.setItem("status",$(this).text());  
       });
            
      function getCustomTaskStatus(){
-      console.log('yes i am changed --custom')
+      // console.log('yes i am changed --custom')
       localStorage.setItem("statusChangeFlag",true)
       localStorage.setItem("status",$("#custom-status").val().toLowerCase());
       }
@@ -349,9 +376,17 @@
               cmnts = JSON.parse(localStorage.getItem("comments")) 
               cmnts.push($("#task-comment").val())
               localStorage.setItem("comments",JSON.stringify(cmnts));
-              cmnt = {"description":$("#task-comment").val(),"get_member":{"first_name":"Missouri ","last_name":"Jacobs","updated_at":"9:00 AM"}}
-              // console.log(cmnt)
+              cmnt = {"description":$("#task-comment").val(),"get_member":{"first_name":"Missouri ","last_name":"Jacobs"},"updated_at":new Date()}
+              
+              
+              if($('#comment-body').length==0){
+                $(`#append-comment-body`).append(`
+                  <div style="height: 150px; overflow-y: auto;" id="comment-body"></div>
+                `)
+              }
+              // console.log()
               renderComments(cmnt)
+
             }
         $("#task-comment").val("")
               

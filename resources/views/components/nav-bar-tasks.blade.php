@@ -37,7 +37,7 @@
             </div>
     </nav>
     <div class="div"
-        style="background-color:#e9f1f7; width: 1010px; height: 480px; overflow-y: scroll; scrollbar-width: none;">
+        style="background-color:#e9f1f7; width: 1023px; height: 500px; overflow-y: scroll; scrollbar-width: none;">
         <div class="list-group list-group-light" id="task-list">
         </div>
     </div>

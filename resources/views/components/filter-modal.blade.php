@@ -97,9 +97,9 @@
             $('#task-list').html("")
             $.each(response,function(key,item){
           
-          $('#task-list').append(`<div id="status-`+key+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
+          $('#task-list').append(`<div id="status-`+key+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key.replaceAll(' ','').replaceAll("'",'')+`</div></div>`)
             $.each(item,function(key2,item2){
-                $(`#status-${key}`).append(
+                $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
                   `
                   <div class=" ms-1 " id="project-task-`+item2.id+`">
                   <div style="display:flex" >

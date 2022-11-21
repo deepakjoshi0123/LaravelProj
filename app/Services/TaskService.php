@@ -37,6 +37,7 @@ Class TaskService {
                 $no_of_files = count($_FILES['files']['name']);
                 
                 for($i = 0 ;$i < $no_of_files ; $i++){  
+
                     $location = 'media/'.time().$_FILES['files']['name'][$i];
                     move_uploaded_file($_FILES['files']['tmp_name'][$i],$location);    
                     Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$_FILES['files']['name'][$i] ]);
@@ -61,6 +62,7 @@ Class TaskService {
                 $no_of_files = count($_FILES['files']['name']);
                 
                 for($i = 0 ;$i < $no_of_files ; $i++){  
+                    // return $_FILES['files']['name'][$i];//remove spaces before adding the file
                     $location = 'media/'.time().$_FILES['files']['name'][$i];
                     move_uploaded_file($_FILES['files']['tmp_name'][$i],$location);    
                     Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$_FILES['files']['name'][$i] ]);
@@ -179,6 +181,7 @@ Class TaskService {
     public function filterTask($request){
 
 
+        
         $members = $this->filterArray($request['filters']['members']);
         $status  = $this->filterArray($request['filters']['status']);
         

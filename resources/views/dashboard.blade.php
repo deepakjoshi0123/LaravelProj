@@ -115,7 +115,6 @@ $.ajax({
             if(document.getElementById(`project-${localStorage.getItem('proj_old_id')}`) != null){
               document.getElementById(`project-${localStorage.getItem('proj_old_id')}`).style.backgroundColor = '#e9f1f7'
             }
-            
           }
           document.getElementById(`project-${proj_id}`).style.backgroundColor = 'white'
           localStorage.setItem('proj_old_id',proj_id)
