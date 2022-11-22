@@ -15,13 +15,13 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" style="margin-right:20px">
-                        <h5 id="project-title-nav" class="" href="#">
-                        </h5>
+                        <h6 id="project-title-nav" class="mt-1 ms-3" href="#">
+                        </h6>
                     </li>
-                    <i id="share-project-button" class="far fa-share-square fa-2x ms-3" style="color: black"
+                    <i id="share-project-button" class="far fa-share-square fa-lg ms-3 mt-1" style="color: black"
                         data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Share Project"></i>
 
-                    <i id="add-task" class="fas fa-ad fa-2x ms-3" style="color: black" data-mdb-toggle="tooltip"
+                    <i id="add-task" class="fas fa-ad fa-lg ms-3 mt-1" style="color: black" data-mdb-toggle="tooltip"
                         data-mdb-placement="bottom" title="Add Task"></i>
 
                 </ul>
@@ -29,7 +29,7 @@
 
                     <i id="navbarDropdownMenuAvatar-filter-task" data-mdb-toggle="tooltip" aria-expanded="false"
                         style="margin-left:5px;color: black"
-                        class="dropdown-toggle d-flex align-items-center hidden-arrow fas fa-filter fa-2x"
+                        class="dropdown-toggle d-flex align-items-center hidden-arrow fas fa-filter fa-lg mt-1"
                         title="Filter Tasks"></i>
 
                 </div>

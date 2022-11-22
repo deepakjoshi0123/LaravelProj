@@ -82,12 +82,13 @@
         for (const status of $('#mySelect3').val() ) 
             { filters.status.push(status) }
         for (const member of $('#mySelect2').val() ) 
-            { filters.status.push(member) }
+            { filters.members.push(member) }
        
         $('#mySelect3').html("")
         $('#mySelect2').html("")
         data={"project_id":localStorage.getItem("project_id"),'filters':filters}
-        
+        // console.log('data->',data)
+        // return
         $.ajax({
             url:'api/filterTask',
             data:data,
@@ -104,7 +105,7 @@
                   <div class=" ms-1 " id="project-task-`+item2.id+`">
                   <div style="display:flex" >
                     <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header">`+item2.title+` 
+                      <div class="card-header d-flex justify-content-between">`+item2.title+` 
                         
                         <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
                        </div>

@@ -19,7 +19,7 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="" data-mdb-toggle="modal" data-mdb-target="#projectModal">
-                        <i class="far fa-plus-square fa-2x" style="color: black" data-mdb-toggle="tooltip"
+                        <i class="far fa-plus-square fa-lg" style="color: black" data-mdb-toggle="tooltip"
                             data-mdb-placement="bottom" title="Add Project"></i>
                     </a>
                 </li>
@@ -91,7 +91,7 @@
                   <div class=" ms-1 " id="project-task-`+item2.id+`">
                   <div style="display:flex" >
                     <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header">`+item2.title+` 
+                      <div class="card-header d-flex justify-content-between">`+item2.title+` 
                         
                         <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
                        </div>

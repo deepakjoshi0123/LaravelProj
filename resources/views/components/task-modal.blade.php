@@ -32,16 +32,18 @@
               </div>
             </div>
 
+
             <div class="ms-5 mt-4">
-              <div class="ms-5">
-                <h5 id="status-heading" class="mt-3"></h5>
+
+              <div class="ms-5 mt-5">
+                <select style="width:60%" id="datalistOptions" class="form-select" aria-label="Default select example">
+                  <option disabled selected>Assign Task</option>
+                </select>
+
                 <h6 class="mb-3" style="color:blue" id="task-status-label"></h6>
                 <div id="modal-members"></div>
 
 
-                <select style="width:60%" id="datalistOptions" class="form-select" aria-label="Default select example">
-                  <option disabled selected>Assign Task</option>
-                </select>
 
                 <h6 class="mt-4">Attachment</h6>
                 <input id="task-file" type="file" name="files[]" multiple="multiple" />
@@ -230,10 +232,10 @@
               // console.log(err.status)
               if(err.status == 400){
                 if(JSON.parse(err.responseText)['data.title']){
-                  $('#tsk-title').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['data.title'][0].replace('data.','')+`</span>`)
+                  $('#tsk-title').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.title'][0].replace('data.','')+`</small>`)
                 }
                 if(JSON.parse(err.responseText)['data.description']){
-                  $('#tsk-desc').append(`<span class="ms-5" style="color:red">`+JSON.parse(err.responseText)['data.description'][0].replace('data.','')+`</span>`)
+                  $('#tsk-desc').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.description'][0].replace('data.','')+`</small>`)
                 }
               }
             }
@@ -315,7 +317,7 @@
 
         $.ajax({
             url:'api/members',
-            data:{"task_id":id},
+            data:{"task_id":id,"project_id":localStorage.getItem('project_id')},
             type:'get',
             success:  function (res) {
               // console.log(res)

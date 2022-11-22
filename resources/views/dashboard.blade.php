@@ -77,7 +77,7 @@
     localStorage.setItem("status","open");
 $.ajax({
     url:'api/projects',
-    data:{"member_id":"5"},
+    data:{"member_id":"3"},
     headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
   },
