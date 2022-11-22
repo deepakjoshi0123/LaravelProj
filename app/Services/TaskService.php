@@ -125,6 +125,8 @@ Class TaskService {
     }
    
     public function getTasks($request){
+
+        // return 1/0;
        
         $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status']);//get(['id',etc..]) was giving error when
         $res=array();

@@ -101,22 +101,7 @@
           $('#task-list').append(`<div id="status-`+key+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key.replaceAll(' ','').replaceAll("'",'')+`</div></div>`)
             $.each(item,function(key2,item2){
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
-                  `
-                  <div class=" ms-1 " id="project-task-`+item2.id+`">
-                  <div style="display:flex" >
-                    <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header d-flex justify-content-between">`+item2.title+` 
-                        
-                        <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
-                       </div>
-                      
-                      <div  data-task-edit-id=`+item2.id+` class="edit-task card-body text-primary">
-                        <p class="card-text">`+item2.description+`</p>
-                      </div>
-                    </div>                       
-                  </div>
-                  </div>
-                  `
+                    `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`
                  )
             })            
         });

@@ -19,7 +19,7 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="" data-mdb-toggle="modal" data-mdb-target="#projectModal">
-                        <i class="far fa-plus-square fa-lg" style="color: black" data-mdb-toggle="tooltip"
+                        <i class="far fa-plus-square fa-lg mt-2" style="color: black" data-mdb-toggle="tooltip"
                             data-mdb-placement="bottom" title="Add Project"></i>
                     </a>
                 </li>
@@ -28,8 +28,8 @@
                     <input style="width:250px" id="search-task" type="search" class="form-control rounded"
                         placeholder="Search" aria-label="Search" aria-describedby="search-addon" onChange="searchTask()"
                         disabled />
-                    <span class="input-group-text border-0" id="search-addon">
-                        {{-- <i class="fas fa-search"></i> --}}
+
+                    {{-- <i class="fas fa-search"></i> --}}
                     </span>
                 </form>
             </ul>
@@ -87,22 +87,7 @@
           $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
-                  `
-                  <div class=" ms-1 " id="project-task-`+item2.id+`">
-                  <div style="display:flex" >
-                    <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+item2.id+`>
-                      <div class="card-header d-flex justify-content-between">`+item2.title+` 
-                        
-                        <i data-task-del-id=`+item2.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
-                       </div>
-                      
-                      <div  data-task-edit-id=`+item2.id+` class="edit-task card-body text-primary">
-                        <p class="card-text">`+item2.description+`</p>
-                      </div>
-                    </div>                       
-                  </div>
-                  </div>
-                  `
+                    `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`
                  )
             })            
         });
@@ -125,14 +110,12 @@
                         class=" project-item list-group-item list-group-item-action py-2 ripple ">
                         <i  class="me-2 fab fa-medapps"></i><span id="project-title`+res.data.id+`">`+res.data.project_name+`</span>
                   </div>`
-
             )
                 $('#project-name').val("")
                 $('#projectModal').modal('toggle')
                 $('#prj-title').html("")
             
             },
-            
             error: function(err){
                 if(err.status == 400){
                   $('#prj-title').html("")

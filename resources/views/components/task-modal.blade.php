@@ -190,39 +190,17 @@
               avl_sts.push(res.status)
             localStorage.setItem('Available_Status',JSON.stringify(avl_sts))
             }
-
-
-              if(res.edit){
+          if(res.edit){
                   if($(`#project-task-${res.id}`).parent().children().length == 2){ 
                     $(`#project-task-${res.id}`).parent().html("")
                   }
                   $(`#project-task-${res.id}`).remove()
-              }
-              
-
-
-
+              } 
               if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
-
                 $('#task-list').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
               }
               $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).append(
-                `
-                <div class=" ms-1 " id="project-task-`+res.id+`">
-                  <div style="display:flex" >
-                    <div class="card border-primary mt-1 mb-1 " style="width: 62.3rem;" data-task-id=`+res.id+`>
-                      <div class="card-header d-flex justify-content-between">`+res.title+` 
-                        
-                        <i data-task-del-id=`+res.id+` class="del-task fa fa-times fa-sm ms-5 "></i>
-                       </div>
-                      
-                      <div  data-task-edit-id=`+res.id+` class="edit-task card-body text-primary">
-                        <p class="card-text">`+res.description+`</p>
-                      </div>
-                    </div>                       
-                  </div>
-                  </div>
-                  `
+                `<x-task-list id=${res.id} title=${res.title} description=${res.description}/>`
               )
             $('#exampleModal').modal('toggle')
               resetModal()
@@ -282,7 +260,7 @@
           `<div id=mdl-atch-${srt} class="row mt-3"></div>`)
           for(j=srt;j<end;j++){
           if(!task[0].attachments[j])
-            return
+            continue
             $(`#mdl-atch-${srt}`).append(`
             <div class="col-4 ms-5" style="display: flex ">
              <iframe seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" class="ms-4" height="60"  width="150" src=viewTaskAttachment/${task[0].attachments[j].attachment}" class="ms-4">
@@ -302,11 +280,14 @@
          
         })
         }
+        // if task has attachments it's comments are not rendering 
         if(task[0].comments.length>0){
           $(`#append-comment-body`).append(`
         <div style="height: 150px; overflow-y: auto;" id="comment-body"></div>
         `)
         }
+
+
         console.log(task[0].comments)
         $.each(task[0].comments,function(key,cmnt){
                 renderComments(cmnt)
