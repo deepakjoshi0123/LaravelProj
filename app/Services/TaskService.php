@@ -195,8 +195,8 @@ Class TaskService {
         $status  = $this->filterArray($request['filters']['status']);
         
         $tasks = DB::table('tasks')
-        ->join('task__mems','task__mems.task_id','=','tasks.id')
-        ->join('members','task__mems.member_id','=','members.id')
+        ->leftjoin('task__mems','task__mems.task_id','=','tasks.id')
+        ->leftjoin('members','task__mems.member_id','=','members.id')
         ->where(function ($query) use ($members) {
             if(sizeof($members)!==0){
                 return $query->whereIn('members.id', $members);
