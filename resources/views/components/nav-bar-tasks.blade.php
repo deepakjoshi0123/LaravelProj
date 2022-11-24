@@ -1,6 +1,6 @@
 <div class="div" style="width:80%">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" style="background-color: #a1d0ef;">
+    <nav class="navbar navbar-expand-lg" style="background-color: #a1d0ef;padding:0.2rem">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Toggle button -->
@@ -18,26 +18,31 @@
                         <h6 id="project-title-nav" class="mt-1 ms-3" href="#">
                         </h6>
                     </li>
-                    <i id="share-project-button" class="far fa-share-square fa-lg ms-3 mt-1" style="color: black"
-                        data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Share Project"></i>
+                    <i id="share-project-button" class="far fa-share-square fa-lg ms-3 mt-1"
+                        style="color: black;cursor: pointer" data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                        title="Share Project" onMouseOver="this.style.color='DodgerBlue'"
+                        onMouseOut="this.style.color='black'"></i>
 
-                    <i id="add-task" class="fas fa-ad fa-lg ms-3 mt-1" style="color: black" data-mdb-toggle="tooltip"
-                        data-mdb-placement="bottom" title="Add Task"></i>
+
+                    <i id="add-task" class="fas fa-plus fa-lg ms-3 mt-1" style="color: black;cursor: pointer"
+                        data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Add Task"
+                        onMouseOver="this.style.color='DodgerBlue'" onMouseOut="this.style.color='black'"></i>
 
                 </ul>
                 <div class="dropdown">
 
                     <i id="navbarDropdownMenuAvatar-filter-task" data-mdb-toggle="tooltip" aria-expanded="false"
-                        style="margin-left:5px;color: black"
+                        style="margin-left:5px;color: black;cursor: pointer"
                         class="dropdown-toggle d-flex align-items-center hidden-arrow fas fa-filter fa-lg mt-1"
-                        title="Filter Tasks"></i>
+                        title="Filter Tasks" onMouseOver="this.style.color='DodgerBlue'"
+                        onMouseOut="this.style.color='black'"></i>
 
                 </div>
                 <!-- Left links -->
             </div>
     </nav>
     <div class="div"
-        style="background-color:#e9f1f7; width: 1023px; height: 500px; overflow-y: scroll; scrollbar-width: none;">
+        style="padding:0.5rem; background-color:#e9f1f7; width: 1023px; height: 500px; overflow-y: scroll; scrollbar-width: none;">
         <div class="list-group list-group-light" id="task-list">
         </div>
     </div>

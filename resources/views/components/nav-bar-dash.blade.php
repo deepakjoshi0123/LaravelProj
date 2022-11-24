@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg" style="background-color: #80c4f1;">
+<nav class="navbar navbar-expand-lg" style="background-color: #80c4f1;padding:0.2rem">
     <!-- Container wrapper -->
     <div class="container-fluid ">
         <!-- Toggle button -->
@@ -16,43 +16,39 @@
                     height="18" alt="MDB Logo" loading="lazy" />
             </a>
             <!-- Left links -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="" data-mdb-toggle="modal" data-mdb-target="#projectModal">
-                        <i class="far fa-plus-square fa-lg mt-2" style="color: black" data-mdb-toggle="tooltip"
-                            data-mdb-placement="bottom" title="Add Project"></i>
-                    </a>
-                </li>
+            <div class="d-flex justify-content-between">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                <form class="d-flex input-group w-auto" style="margin-left:830px">
-                    <input style="width:250px" id="search-task" type="search" class="form-control rounded"
-                        placeholder="Search" aria-label="Search" aria-describedby="search-addon" onChange="searchTask()"
-                        disabled />
+                    <form class="d-flex input-group w-auto" style="margin-left:880px">
+                        <input style="width:250px" id="search-task" type="search" class="form-control rounded"
+                            placeholder="Search" aria-label="Search" aria-describedby="search-addon"
+                            onChange="searchTask()" disabled />
 
-                    {{-- <i class="fas fa-search"></i> --}}
-                    </span>
-                </form>
-            </ul>
-            <!-- Left links -->
-        </div>
-        <!-- Collapsible wrapper -->
-
-        <!-- Right elements -->
-        <div class="d-flex align-items-center">
-            <!-- Notifications -->
-
-            <!-- Avatar -->
-            <div class="dropdown">
-                <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar"
-                    role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                    <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25"
-                        alt="Black and White Portrait of a Man" loading="lazy" />
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                    <li>
-                        <a id="logout" class="dropdown-item">Logout</a>
-                    </li>
+                        {{-- <i class="fas fa-search"></i> --}}
+                        </span>
+                    </form>
                 </ul>
+                <!-- Left links -->
+            </div>
+            <!-- Collapsible wrapper -->
+
+            <!-- Right elements -->
+            <div>
+                <!-- Notifications -->
+
+                <!-- Avatar -->
+                <div class="dropdown">
+                    <a class="dropdown-toggle d-flex align-items-center hidden-arrow ms-3" href="#"
+                        id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25"
+                            alt="Black and White Portrait of a Man" loading="lazy" />
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                        <li>
+                            <a id="logout" class="dropdown-item">Logout</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <!-- Right elements -->
@@ -99,38 +95,6 @@
             error: function(res){}
         })
     }
-    $(document).on('click','#save-project',function(){
-        // console.log($('#project-name').val())
-
-        $.ajax({
-            url:'api/createProject',
-            data:{"owner":"3","name":$('#project-name').val()},
-            type:'post',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            success:  function (res) {
-              
-                $('#side-bar').append(
-                    `<div  id="project-`+res.data.id+`" data-project-id=`+res.data.id+` 
-                        style="background-color: #e9f1f7;border-radius: 10px 10px;"
-                        class=" project-item list-group-item list-group-item-action py-2 ripple ">
-                        <i  class="me-2 fab fa-medapps"></i><span id="project-title`+res.data.id+`">`+res.data.project_name+`</span>
-                  </div>`
-            )
-                $('#project-name').val("")
-                $('#projectModal').modal('toggle')
-                $('#prj-title').html("")
-            
-            },
-            error: function(err){
-                if(err.status == 400){
-                  $('#prj-title').html("")
-                if(JSON.parse(err.responseText)['name']){
-                  $('#prj-title').append(`<small class="" style="color:red">`+JSON.parse(err.responseText)['name'][0]+`</small>`)
-                }
-              }
-            }
-          })    
-    })
+    
 </script>
 <!-- Navbar -->

@@ -7,7 +7,7 @@
   </script>
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+      <div class="modal-content" style="max-height:550px; overflow-y: scroll">
         <div id="append-comment-body">
           <div style="display: flex ">
             <div style="width: 80%">
@@ -26,9 +26,6 @@
                 <div id="attachment-on-edit">
 
                 </div>
-                <h6 class="ms-4 mt-4">Activity</h6>
-                <input id="task-comment" class="ms-4 mb-3 mt-3 form-control" placeholder="Add Comment ..." />
-
               </div>
             </div>
 
@@ -69,8 +66,11 @@
                 </div>
               </div>
             </div>
-          </div>
 
+          </div>
+          <h6 class="ms-4 mt-4">Activity</h6>
+          <input style="width:94%" id="task-comment" class="ms-4 mb-3 mt-3 form-control"
+            placeholder="Add Comment ..." />
         </div>
 
         <div class="modal-footer me-5">
@@ -234,13 +234,16 @@
       function renderComments(cmnt){
 
         $('#comment-body').append(`
-                <div class="mt-2 ms-4" style="display:flex">
-                  <i class="fas fa-user-tie"></i>
-                  <div class="ms-4 " id="modal-desc">`+ cmnt.get_member.first_name+` `+cmnt.get_member.last_name+`</div>
-                    <div class="ms-4 " id="modal-desc">`+ new Date(cmnt.updated_at).toLocaleString() +`</div>
-                  </div> 
-                  <div class="ms-5 fs-6 text-muted" id="modal-desc">`+ cmnt.description +`</div>
-                </div>
+              <div class="mt-1 ms-4 me-4" style="background-color:#e9f1f7;border-radius:0.5rem">
+                <div class="mt-1 ms-1 d-flex justify-content-between-start " >
+                  <i class="fas fa-user-tie mt-1"></i>
+                  <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ cmnt.get_member.first_name+` `+cmnt.get_member.last_name+`</small>
+                  <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ new Date(cmnt.updated_at).toLocaleString() +`</small>
+                  </div>
+                  <div style="font-size:10px" class="ms-5 fs-6 " id="modal-desc">`+ cmnt.description +`</div>
+                </div> 
+              </div>
+
                 `)
       }
 
@@ -292,9 +295,17 @@
         })
         }
         // if task has attachments it's comments are not rendering 
+       
+        // $(`#append-comment-body`).append(`
+        // <input id="task-comment" class="ms-4 mb-3 mt-3 form-control" placeholder="Add Comment ..." />
+       
+        // `)
+
+
         if(task[0].comments.length>0){
           $(`#append-comment-body`).append(`
         <div style="height: 150px; overflow-y: auto;" id="comment-body"></div>
+       
         `)
         }
 

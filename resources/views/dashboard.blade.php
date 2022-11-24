@@ -76,7 +76,7 @@ $.ajax({
             $('#side-bar').append(
                 `<div onMouseOver="this.style.color='blue'"
    onMouseOut="this.style.color='black'" id="project-`+item.id+`" data-project-id=`+item.id+` 
-                        style="background-color: #e9f1f7;"
+                        style="background-color: #e9f1f7;cursor: pointer"
                         class="project-item list-group-item list-group-item-action py-2 ripple 
                         data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="See Tasks"
                         ">
