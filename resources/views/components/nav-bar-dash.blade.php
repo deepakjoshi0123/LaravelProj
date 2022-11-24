@@ -67,6 +67,8 @@
         $.ajax({
             url:'logout',
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
                 localStorage.clear();
                 window.location.href = "http://localhost:8000/login";
@@ -79,6 +81,8 @@
             url:'api/searchTask',
             data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id')},
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
             console.log(response)
             $('#task-list').html("")
@@ -102,6 +106,8 @@
             url:'api/createProject',
             data:{"owner":"3","name":$('#project-name').val()},
             type:'post',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
               
                 $('#side-bar').append(

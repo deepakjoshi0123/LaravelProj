@@ -12,68 +12,48 @@ use Response;
 use DB;
 
 Class TaskService {
-    // break this service 
+
     public function addTask($req){
-       
         $request = json_decode($req['data'],true);
         $data = $request['data'];
-        
         $member_id = $request['assignee'];
-
-               
-        if(array_key_exists('project_id',$data)){ 
            $task = Task::create($data);
             if($member_id != 'unassigned'){
-                (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
+                $this->assignTask($task,$member_id);
             }
-                        
             //replace member_id with member_if fetched from token
             if(count($request['comments'])>0){
-                foreach($request['comments'] as $cmnt){
-                    (new Comment())->fill(['task_id'=>$task->id,'member_id'=>'1','description'=>$cmnt])->save();
-                }
+                $this->addComments($request,$task);
             }
             if(isset($_FILES['files'])){
-                $no_of_files = count($_FILES['files']['name']);
-                
-                for($i = 0 ;$i < $no_of_files ; $i++){  
-
-                    $location = 'media/'.time().$_FILES['files']['name'][$i];
-                    move_uploaded_file($_FILES['files']['tmp_name'][$i],$location);    
-                    Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$_FILES['files']['name'][$i] ]);
-                }
+                $this->addAttachment($request,$task);
               }
-            return $task;
-        }
-        else{
+            return $task;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+    }
+
+    public function updateTask($req){
+        $request = json_decode($req['data'],true);
+        $data = $request['data'];
+        $member_id = $request['assignee'];
             $task = Task::find($data['id']);
             $task->fill($request['data'])->save();           
             if($member_id != 'unassigned'){
-                (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
+                $this->assignTask($task,$member_id);
             }
             if(count($request['comments'])>0){
-            
-            foreach($request['comments'] as $cmnt){
-                (new Comment())->fill(['task_id'=>$task->id,'member_id'=>'1','description'=>$cmnt])->save();
+                $this->addComments($request,$task);
             }
-        }
             $task['edit'] = true;
             if(isset($_FILES['files'])){
-                $no_of_files = count($_FILES['files']['name']);
-                
-                for($i = 0 ;$i < $no_of_files ; $i++){  
-                    // return $_FILES['files']['name'][$i];//remove spaces before adding the file
-                    $location = 'media/'.time().$_FILES['files']['name'][$i];
-                    move_uploaded_file($_FILES['files']['tmp_name'][$i],$location);    
-                    Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$_FILES['files']['name'][$i] ]);
-                }
+                $this->addAttachment($request,$task);
               }
-           return $task;
-        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-
+           return $task;      
     }
     
+    
+
     public function members($request){
+        
        return DB::table('tasks')
             ->join('task__mems','task__mems.task_id','=','tasks.id')
             ->join('members','task__mems.member_id','=','members.id')
@@ -85,30 +65,10 @@ Class TaskService {
         
     }
 
-    public function assignTask($request){
-        (new Task_Mem())->fill($request)->save();
-        return Response::json(array(
-            'success' => true,
-        )); 
-        //send notification only this newly added user query using new update in task model for geeting user email
+    public function assignTask($task,$member_id){
+        (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
     }
-    public function editTask($request){
-        $task = Task::find($request['id']);
-        if(is_null($task)){
-            return Response::json(array(
-                'message' => 'no task exist for the given id',
-              )); 
-        }
-        else{
-            $task = Task::find($request['id']);
-            $task->fill($request)->save();
-             // notify all users assosiated with that task id; try to di it in async way  just like 
-            return array(
-                'success' => true
-              ); 
-        }
-    }
-
+    
     public function delTask($request){
        $task = Task::find($request['task_id']);
        $task->delete();
@@ -127,6 +87,7 @@ Class TaskService {
     public function getTasks($request){
 
         // return 1/0;
+        // abort(404,'user not found');
        
         $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status']);//get(['id',etc..]) was giving error when
         $res=array();
@@ -139,14 +100,13 @@ Class TaskService {
         return $res;
     }
 
-    public function getAssignees($request){    
-        if(!$request->has('task_id')){
+    public function getAddAssignees($request){    
             $id = $request->all()['project_id'];
-            return Project::find($id)->members()->distinct()->get(['email','id','first_name']);;
-        }
-        else{
-            // need to find those member who are included in this project but included in the task
-            $id = $request->get('task_id');//taking out task_id
+            return Project::find($id)->members()->distinct()->get(['email','id','first_name']);
+    }
+
+    public function getEditAssignees($request){  
+        $id = $request->get('task_id');//taking out task_id
             $project_id = $request->get('project_id');//taking out project_id
             $memToBeEliminated = Task_Mem::where('task_id',$id)->distinct()->get(['member_id']);
             
@@ -157,8 +117,8 @@ Class TaskService {
             ->distinct()
             ->get(['email','first_name','last_name','members.id as id']);
             return $membersRes; 
-        }
-    } 
+    }
+    
     public function searchTask($request){
         $project = Task::where([
             ['title','like','%'.$request['text'].'%'],
@@ -185,14 +145,11 @@ Class TaskService {
             if(!$arr[$i] == null)
             array_push($res,$arr[$i]);
         }
-        
         return $res;
     }
 
     public function filterTask($request){
 
-
-        
         $members = $this->filterArray($request['filters']['members']);
         $status  = $this->filterArray($request['filters']['status']);
         
@@ -222,4 +179,21 @@ Class TaskService {
         }
         return $resToSend;
     }
+
+    public function addAttachment($request,$task){
+        $no_of_files = count($_FILES['files']['name']);  
+        for($i = 0 ;$i < $no_of_files ; $i++){  
+            $file_name = preg_replace('/\s+/', '', $_FILES['files']['name'][$i]);
+            // return $_FILES['files']['name'][$i];//remove spaces before adding the file
+            $location = 'media/'.time().$file_name;
+            move_uploaded_file($_FILES['files']['tmp_name'][$i],$location);    
+            Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$file_name ]);
+        }
+    }
+    public function addComments($request,$task){
+        foreach($request['comments'] as $cmnt){
+            (new Comment())->fill(['task_id'=>$task->id,'member_id'=>'1','description'=>$cmnt])->save();
+        }
+    }
 }
+

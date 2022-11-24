@@ -1,34 +1,22 @@
 <!-- Modal -->
 <div>
-
     <div class="modal fade" id="filterModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="exampleModalLabel">Apply filters</h4>
-                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    <button id="filter-modal-close" type="button" class="btn-close" data-mdb-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
-
                     <h5>Members</h5>
-
                     <select style="width:100%" id="mySelect2" class="js-example-basic-multiple" name="states[]"
                         multiple="multiple">
-
                     </select>
                     <h5>Status</h5>
-
                     <select style="width:100%" id="mySelect3" class="js-example-basic-multiple" name="states[]"
                         multiple="multiple">
-
                     </select>
-
-
-
-
-
-
                 </div>
                 <div class="modal-footer">
                     <button id="save-filters" type="button" class="btn btn-primary">Save</button>
@@ -52,13 +40,19 @@
     });
 </script>
 <script type="text/javascript">
+    $(document).on('click','#filter-modal-close',function(){
+        $('#mySelect3').html("")
+        $('#mySelect2').html("")
+  })
     $(document).on('click','#navbarDropdownMenuAvatar-filter-task',function(e){
         $('#filterModal').modal('toggle')
        
         $.ajax({
-            url:'api/assignees',
+            url:'api/add/assignees',
             data:{"project_id":localStorage.getItem('project_id')},
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
                 console.log(res)
                 $.each(res,function(key,mem){   
@@ -93,6 +87,8 @@
             url:'api/filterTask',
             data:data,
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
             // console.log(res)
             $('#task-list').html("")

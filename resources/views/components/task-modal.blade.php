@@ -87,18 +87,70 @@
 <script type="text/javascript">
   // var assignee = "Unassigned";
   localStorage.setItem("assignee","unassigned");
-  
+  function saveTask(data2){
+    // console.log(data2)
+    // return
+    taskFile.append('data',JSON.stringify(data2))
+         $.ajax({
+            url:data2.url,
+            data:taskFile,
+            dataType:'json',
+            type:'post',
+            contentType: false,
+            processData: false,
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success:  function (res) {
+              // console.log('check this-- > res',res)                                                    
+            avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
+            if(!avl_sts.includes(res.status)){
+              // console.log('doesnt contain')
+              avl_sts.push(res.status)
+            localStorage.setItem('Available_Status',JSON.stringify(avl_sts))
+            }
+          if(res.edit){
+                  if($(`#project-task-${res.id}`).parent().children().length == 2){ 
+                    $(`#project-task-${res.id}`).parent().html("")
+                  }
+                  $(`#project-task-${res.id}`).remove()
+              } 
+              if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
+                $('#task-list').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
+              }
+              $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).append(
+                `<x-task-list id=${res.id} title=${res.title} description=${res.description}/>`
+              )
+            $('#exampleModal').modal('toggle')
+              resetModal()
+           
+          } ,
+            error: function(err){
+              // console.log(err.status)
+              if(err.status == 400){
+                if(JSON.parse(err.responseText)['data.title']){
+                  $('#tsk-title').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.title'][0].replace('data.','')+`</small>`)
+                }
+                if(JSON.parse(err.responseText)['data.description']){
+                  $('#tsk-desc').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.description'][0].replace('data.','')+`</small>`)
+                }
+              }
+            }
+          })
+  }
+
    
   $(document).on('click','#add-task',function(e){
-    $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
+     $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
           $('#task-status').append(`
           <li id="edit-time-status" class="dropdown-item">`+status+`</li>
           `)
         })
     $.ajax({
-            url:'api/assignees',
+            url:'api/add/assignees',
             data:{"project_id":localStorage.getItem('project_id')},
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
               $.each(res,function(key,mem){
                 $('#datalistOptions').append(`<option  value="`+mem.id+`">`+mem.email+`</option>`) 
@@ -163,6 +215,8 @@
         if(editOrAddFlag === "add"){
           data['project_id'] = localStorage.getItem("project_id");
           data['status'] = localStorage.getItem("status")
+          data2['url'] = 'api/addTask'
+          saveTask(data2)
         }
         else {
           data['id'] = task_id
@@ -170,56 +224,13 @@
 
           if( statusSendFlag === 'true'){
             data['status'] = localStorage.getItem("status")
-
           }
-
+          data2['url'] = 'api/updateTask'
+          saveTask(data2)
         }
-       taskFile.append('data',JSON.stringify(data2))
-         $.ajax({
-            url:'api/addTask',
-            data:taskFile,
-            dataType:'json',
-            type:'post',
-            contentType: false,
-            processData: false,
-            success:  function (res) {
-              // console.log('check this-- > res',res)
-            avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
-            if(!avl_sts.includes(res.status)){
-              // console.log('doesnt contain')
-              avl_sts.push(res.status)
-            localStorage.setItem('Available_Status',JSON.stringify(avl_sts))
-            }
-          if(res.edit){
-                  if($(`#project-task-${res.id}`).parent().children().length == 2){ 
-                    $(`#project-task-${res.id}`).parent().html("")
-                  }
-                  $(`#project-task-${res.id}`).remove()
-              } 
-              if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
-                $('#task-list').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
-              }
-              $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).append(
-                `<x-task-list id=${res.id} title=${res.title} description=${res.description}/>`
-              )
-            $('#exampleModal').modal('toggle')
-              resetModal()
-           
-          } ,
-            error: function(err){
-              // console.log(err.status)
-              if(err.status == 400){
-                if(JSON.parse(err.responseText)['data.title']){
-                  $('#tsk-title').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.title'][0].replace('data.','')+`</small>`)
-                }
-                if(JSON.parse(err.responseText)['data.description']){
-                  $('#tsk-desc').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.description'][0].replace('data.','')+`</small>`)
-                }
-              }
-            }
-          })
+
       });
-      
+
       function renderComments(cmnt){
 
         $('#comment-body').append(`
@@ -300,6 +311,8 @@
             url:'api/members',
             data:{"task_id":id,"project_id":localStorage.getItem('project_id')},
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
               // console.log(res)
               $('#modal-members').append(`
@@ -327,6 +340,8 @@
             url:'api/task',
             data:{"id":id},
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (task) {
               // console.log(task)
               $('#status-heading').text('Status')
@@ -378,9 +393,11 @@
 
       $(document).on('click','.edit-task',function(e){
         $.ajax({
-            url:'api/assignees',
+            url:'api/edit/assignees',
             data:{"project_id":localStorage.getItem('project_id'),"task_id":$(this).attr('data-task-edit-id')},
             type:'get',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
              
               $.each(res,function(key,mem){
@@ -403,6 +420,8 @@
             url:'api/delTask',
             data:{"task_id":id},
             type:'delete',
+            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
               // console.log($(`#status-${res.status}`).siblings())
               $(`#project-task-${id}`).remove()

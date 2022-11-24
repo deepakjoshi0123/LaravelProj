@@ -40,7 +40,7 @@
       jqXHR.abort();
       const token = localStorage.getItem('jwt-token');
         var ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
-        if(ttl/60<10 && ttl/60>0){
+        if(ttl/60<15 && ttl/60>0){
           options.refreshRequest = true
           $.ajax({
             url:'api/refresh',
@@ -101,8 +101,7 @@ $.ajax({
             }
           }
           document.getElementById(`project-${proj_id}`).style.backgroundColor = 'white'
-          localStorage.setItem('proj_old_id',proj_id)
-         
+          localStorage.setItem('proj_old_id',proj_id) 
           localStorage.setItem("project_id", $(this).attr('data-project-id'));
           //___________________________________________________________________________________________ 
           document.getElementById("add-task").disabled = false;
@@ -121,6 +120,7 @@ $.ajax({
         tasks=response
         
         localStorage.setItem("Available_Status",JSON.stringify(Object.keys(response)));
+        //add 3 default status of open closed WIP
         $.each(response,function(key,item){
           
           $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)

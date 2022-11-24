@@ -16,18 +16,40 @@ use App\Http\Controllers\MemberAuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-// this api will be replaced by getToken 
-Route::get('/getToken', [MemberAuthController::class,'getToken']);
-Route::get('/refresh', [MemberAuthController::class,'refresh']);
 
-Route::get('/projects',[ProjectController::class,'getProjects']);
-Route::get('/tasks',[TaskController::class,'getTasks']);   
+Route::get('/getToken', [MemberAuthController::class,'getToken']);
 
 Route::group(['middleware' => ['jwt.verify']
     ], function ($router) {
-
+        Route::get('/refresh', [MemberAuthController::class,'refresh']);
+    Route::get('/projects',[ProjectController::class,'getProjects']);
+    Route::get('/tasks',[TaskController::class,'getTasks']);   
     Route::post('/refresh', [MemberAuthController::class,'refresh']);
     Route::post('/me', [MemberAuthController::class,'me']);
+    Route::get('/searchTask',[TaskController::class,'searchTask']);
+Route::get('/filterTask',[TaskController::class,'filterTask']);
+Route::post('/createProject',[ProjectController::class,'createProject']);
+
+Route::get('/projMembers',[ProjectController::class,'getMembers']);
+
+Route::get('/shareProject',[ProjectController::class,'shareProject']);
+
+Route::get('/add/assignees',[TaskController::class,'getAddAssignees']);
+
+Route::get('/edit/assignees',[TaskController::class,'getEditAssignees']);
+
+Route::get('/task',[TaskController::class,'taskDetails']);
+
+Route::post('/addTask',[TaskController::class,'addTask']);
+Route::post('/updateTask',[TaskController::class,'updateTask']);
+
+Route::post('/assignTask',[TaskController::class,'assignTask']);
+Route::post('/editTask',[TaskController::class,'editTask']);
+Route::delete('/delTask',[TaskController::class,'delTask']);
+Route::get('/members',[TaskController::class,'members']); // end point and functions should be understable 
+//___________________________________________________________________________________
+
+
  });
 
 
@@ -36,27 +58,8 @@ Route::get('/member/verify/{token}',[MemberAuthController::class,'verifyMember']
 Route::post('/register',[MemberAuthController::class,'register']);
 Route::post('/sendRestLink',[MemberAuthController::class,'sendRestLink']);
 Route::post('/changePassword',[MemberAuthController::class,'changePassword']);
-Route::get('/searchTask',[TaskController::class,'searchTask']);
-Route::get('/filterTask',[TaskController::class,'filterTask']);
-Route::post('/createProject',[ProjectController::class,'createProject']);
-
-Route::get('/projMembers',[ProjectController::class,'getMembers']);
-
-Route::get('/shareProject',[ProjectController::class,'shareProject']);
 
 //task routes
-
-Route::get('/assignees',[TaskController::class,'getAssignees']);
-
-Route::get('/task',[TaskController::class,'taskDetails']);
-
-Route::post('/addTask',[TaskController::class,'addTask']);
-
-Route::post('/assignTask',[TaskController::class,'assignTask']);
-Route::post('/editTask',[TaskController::class,'editTask']);
-Route::delete('/delTask',[TaskController::class,'delTask']);
-Route::get('/members',[TaskController::class,'members']); // end point and functions should be understable 
-//___________________________________________________________________________________
 
 //comments Routes
 Route::get('/comments',[CommentController::class,'getComments']);

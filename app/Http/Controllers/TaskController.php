@@ -37,6 +37,21 @@ class TaskController extends Controller
         }
         return response()->json($this->taskService->addTask($req));
     }
+
+    public function updateTask(Request $req){ 
+              
+        $validated = Validator::make(json_decode($req['data'],true), [ 
+            'data.title' => 'required|string|min:3|max:40|', 
+            'data.description' => 'required|string|min:3|max:200', 
+            'comments' => 'nullable', 
+            'data.status' => 'nullable|string',    
+        ]);
+        if ($validated->fails()) {    
+            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+        }
+        return response()->json($this->taskService->updateTask($req));
+    }
+
     public function assignTask(Request $req){ 
         return $this->taskService->assignTask($req->all());
     }
@@ -59,8 +74,11 @@ class TaskController extends Controller
     public function taskDetails(Request $req){ 
         return response()->json($this->taskService->taskDetails($req->all())) ;
     }
-    public function getAssignees(Request $req){ 
-        return response()->json($this->taskService->getAssignees($req)) ;
+    public function getAddAssignees(Request $req){ 
+        return response()->json($this->taskService->getAddAssignees($req)) ;
+    }
+    public function getEditAssignees(Request $req){ 
+        return response()->json($this->taskService->getEditAssignees($req)) ;
     }
     public function searchTask(Request $req){
         return response()->json(($this->taskService->searchTask($req->all())));

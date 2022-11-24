@@ -4,7 +4,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="exampleModalLabel">Create Project</h4>
-                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                <button id="project-modal-close" type="button" class="btn-close" data-mdb-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <h5> Project Name</h5>
@@ -17,3 +18,8 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(document).on('click','#project-modal-close',function(){
+        $('#project-name').val("")
+  })
+</script>

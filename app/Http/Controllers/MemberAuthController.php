@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Crypt;
 use Dirape\Token\Token;
 use Carbon\Carbon;
@@ -67,7 +68,6 @@ class MemberAuthController extends Controller
         });
         return $member;
     }
-
    
     public function me()
    {   
@@ -94,7 +94,6 @@ class MemberAuthController extends Controller
        ]);
    }
 
-   
     public function verifyMember($token){
         $member = Member::where([['verification_token',$token],["is_verfied","0"]])->first();
         if($member == null){
@@ -114,11 +113,9 @@ class MemberAuthController extends Controller
             ['reset_token',$key],
             ['token_expiry','>=',Carbon::now('Asia/Kolkata')]
         ])->first();
-
         if($member === null){
             return "Link expired OR Invalid Req";
         }
-
             return view('changePassword');
     }
 
@@ -185,8 +182,9 @@ class MemberAuthController extends Controller
            $credentials = request(['email', 'password']);
            if (Auth::attempt($credentials)) {
                     // dd(Auth::check());
+                    
                     $req->session()->put('userid',Auth::id());
-                   
+                    // Auth::logoutOtherDevices(request('password'));
                     return redirect('dashboard');
            }
            return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);

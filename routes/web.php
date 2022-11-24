@@ -6,9 +6,6 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MemberAuthController;
 
-
-
-
 Route::get('/enterEmail',[MemberAuthController::class,'Enter_Email_view']);
 Route::get('/changePassword/{token}',[MemberAuthController::class,'change_password_view']);
 
