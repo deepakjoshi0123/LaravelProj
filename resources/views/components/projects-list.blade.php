@@ -1,12 +1,12 @@
 <div class="div"
-    style="width:20%;height:548px ;overflow-y: scroll; scrollbar-width: thin;scrollbar-color: blue orange;">
+    style="width:20%;height:558px ;overflow-y: scroll; scrollbar-width: thin;scrollbar-color: blue orange;">
     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
         <div class="position-sticky">
             <div id="project-heading-title"></div>
             <div class="list-group list-group-flush " id="side-bar">
                 <div style="background-color:#a1d0ef;" class=" d-flex justify-content-between ">
                     <div class="ms-4" style="pdding:0.2rem">
-                        <h5 class=" ms-5 mt-2  ">Projects</h5>
+                        <h5 class="ms-5 mt-2">Projects</h5>
                     </div>
                     <div class="nav-item mt-1 me-3">
                         <a class="" data-mdb-toggle="modal" data-mdb-target="#projectModal">

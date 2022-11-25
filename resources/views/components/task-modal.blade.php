@@ -7,49 +7,67 @@
   </script>
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content" style="max-height:550px; overflow-y: scroll">
+      <div style="padding:1.5rem" class="modal-content" style="max-height:550px; overflow-y: scroll">
         <div id="append-comment-body">
+          <div class="d-flex justify-content-center mt-2">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Trello_logo.svg/1280px-Trello_logo.svg.png"
+              height="28" alt="MDB Logo" loading="lazy" />
+          </div>
+          <hr>
           <div style="display: flex ">
-            <div style="width: 80%">
-              <div class="modal-header ">
-                <h4 class="ms-4 " id="modal-title">Trello Clone</h4>
+            <hr>
+            <div style="">
+              <div class=" ">
               </div>
               <div>
-                <h6 class="ms-4 mt-1" id="modal-title">Ttile</h6>
-                <input id="task-title" class="form-control ms-4 mt-3" />
-                <span id="tsk-title"></span>
-                <h6 class="modal-desc ms-4 mt-3" id="modal-desc">Descriptiom</h6>
-                <div id="task-modal-desc">
-                  <textarea class="form-control ms-4  mt-3" id="task-desc" rows="3"></textarea>
-                  <span id="tsk-desc"></span>
+                <div>
+                  <label class="ms-2 mt-1" id="modal-title">Ttile</label>
+                  <input style="width:400px" id="task-title" class="form-control ms-2" />
+                  <span id="tsk-title"></span>
+                  <label class="modal-desc ms-2 mt-3" id="modal-desc">Descriptiom</label>
+                  <div style="width: 400px" id="task-modal-desc">
+                    <textarea class="form-control ms-2 " id="task-desc" rows="3"></textarea>
+                    <span id="tsk-desc"></span>
+                  </div>
+                  <h6 class="mt-4 ms-2">Attachment</h6>
+                  <input class="ms-2" style="min-width:100px" class="mb-4" id="task-file" type="file" name="files[]"
+                    multiple="multiple" />
+
+                  <div id="attachment-on-edit">
+
+                  </div>
                 </div>
-                <div id="attachment-on-edit">
+                <div>
 
                 </div>
               </div>
             </div>
 
 
-            <div class="ms-5 mt-4">
+            <div class="">
 
-              <div class="ms-5 mt-5">
-                <select style="width:60%" id="datalistOptions" class="form-select" aria-label="Default select example">
+              <div class="ms-5 mt-1">
+                {{-- <select style="width:60%" id="datalistOptions" class="form-select "
+                  aria-label="Default select example">
                   <option disabled selected>Assign Task</option>
+                </select> --}}
+                <label>Assign Task</label>
+                <br>
+                <select style="width:250px" id="assignTaskSelect2" class=" js-example-basic-multiple"
+                  multiple="multiple">
                 </select>
 
-                <h6 class="mb-3" style="color:blue" id="task-status-label"></h6>
+                <h6 class="mb-3" id="task-status-label"></h6><br>
+                <select style="width:250px" id="statusSelect2" class="mt-4 js-example-basic-single">
+                  <option selected>Choose Status</option>
+                </select>
                 <div id="modal-members"></div>
-
-
-
-                <h6 class="mt-4">Attachment</h6>
-                <input id="task-file" type="file" name="files[]" multiple="multiple" />
-
-                <div class="btn-group">
-                  <button style="min-width: 180px;" type="button" class="mt-4 btn btn-primary dropdown-toggle "
+                <div>
+                  {{-- <button style="min-width: 180px;" type="button" class="mt-4 btn btn-primary dropdown-toggle "
                     data-bs-toggle="dropdown" aria-expanded="false">
                     Choose Status
-                  </button>
+                  </button> --}}
+
                   <ul class="dropdown-menu">
                     <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
                       placeholder="Custom Status ..." />
@@ -59,8 +77,6 @@
                     </li>
 
                     <li id="task-status">
-
-
                     </li>
                   </ul>
                 </div>
@@ -68,24 +84,42 @@
             </div>
 
           </div>
-          <h6 class="ms-4 mt-4">Activity</h6>
-          <input style="width:94%" id="task-comment" class="ms-4 mb-3 mt-3 form-control"
-            placeholder="Add Comment ..." />
+          <label class="ms-2 mt-3 ">Activity</label>
+          <input style="width:95%" id="task-comment" class="ms-2 mb-3  form-control" placeholder="Add Comment ..." />
         </div>
 
-        <div class="modal-footer me-5">
+        <div class="modal-footer me-2">
           <button onClick="resetModal()" type="button" class="btn btn-secondary"
             data-mdb-dismiss="modal">Cancel</button>
-          <button id="save-task" type="button" class="btn btn-primary">Save changes</button>
+          <button id="save-task" type="button" class="ms-4 btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $('#statusSelect2').select2({
+        dropdownParent: $('#exampleModal')
+    });
+  
+  $('#assignTaskSelect2').select2({
+        dropdownParent: $('#exampleModal')
+    });  
+      
+</script>
+
 <script type="text/javascript">
   // var assignee = "Unassigned";
+  
+  $('#statusSelect2').change(function(){
+    localStorage.setItem("statusChangeFlag",true)
+    localStorage.setItem('status',$('#statusSelect2').val())
+    })
   localStorage.setItem("assignee","unassigned");
   function saveTask(data2){
     // console.log(data2)
@@ -115,9 +149,12 @@
                   $(`#project-task-${res.id}`).remove()
               } 
               if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
-                $('#task-list').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+res.status+`</div></div>`)
+                $('#task-list').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2" style="width:20%" >`+res.status+`</div></div>`)
               }
-              $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).append(
+              $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}  > div:nth-child(`+(1)+`)`).after(
+
+                // $("#controller > div:nth-child(" + (i) + ")").after("<div>great things</div>");
+
                 `<x-task-list id=${res.id} title=${res.title} description=${res.description}/>`
               )
             $('#exampleModal').modal('toggle')
@@ -140,11 +177,12 @@
 
    
   $(document).on('click','#add-task',function(e){
-     $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
-          $('#task-status').append(`
-          <li id="edit-time-status" class="dropdown-item">`+status+`</li>
-          `)
-        })
+    $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
+      
+      $('#statusSelect2').append(`
+        <option value=`+status+`>`+status+`</option>      
+      `)
+  })
     $.ajax({
             url:'api/add/assignees',
             data:{"project_id":localStorage.getItem('project_id')},
@@ -153,7 +191,9 @@
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
               $.each(res,function(key,mem){
-                $('#datalistOptions').append(`<option  value="`+mem.id+`">`+mem.email+`</option>`) 
+                $('#assignTaskSelect2').append(`
+                    <option value=`+mem.id+`>`+mem.email+`</option>      
+                `) 
               })
             },
             error: function(x){}
@@ -167,6 +207,10 @@
         localStorage.setItem("status","open");
         localStorage.setItem("assignee","unassigned");
         localStorage.setItem("statusChangeFlag",false);
+        $('#statusSelect2').html("")
+        
+        $('#assignTaskSelect2').html("")
+        $('#statusSelect2').append('<option selected>Choose Status</option>')
         $("#task-title").val("")
         $("#task-desc").val("")
         $("#custom-status").val("")
@@ -188,6 +232,7 @@
         localStorage.setItem("comments",JSON.stringify([]))
       }
       $(document).on('click','#save-task',function(e){
+        // console.log(  $('#statusSelect2').val())
         $("#tsk-title").html("")
         $("#tsk-desc").html("")
         taskFile = new FormData()
@@ -206,9 +251,10 @@
         "member_id":"2",
         "data":data,
         "comments":JSON.parse(localStorage.getItem("comments")),
-        "assignee":localStorage.getItem("assignee"),
+        "assignee":$('#assignTaskSelect2').val(),
       }
-        
+        // console.log(data2)
+        // return
         // taskFile = new FormData()
         // taskFile.append
 
@@ -234,7 +280,7 @@
       function renderComments(cmnt){
 
         $('#comment-body').append(`
-              <div class="mt-1 ms-4 me-4" style="background-color:#e9f1f7;border-radius:0.5rem">
+              <div class="mt-1 ms-5 me-4" style="background-color:#e9f1f7;border-radius:0.5rem">
                 <div class="mt-1 ms-1 d-flex justify-content-between-start " >
                   <i class="fas fa-user-tie mt-1"></i>
                   <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ cmnt.get_member.first_name+` `+cmnt.get_member.last_name+`</small>
@@ -252,6 +298,7 @@
        
         $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
           $('#task-status').append(`
+          
           <li><a class="dropdown-item">`+status+`</a></li>
           `)
         })
@@ -264,14 +311,14 @@
         if(task[0].attachments.length>0){
           $('#attachment-on-edit').append(`
             <div id="modal-attachments">
-              <h6  class="modal-attach ms-4 mt-3" >Attachments</h6>
+           
             </div>
               `)
         var srt=0;end=2
         for(i=0;i<=task[0].attachments.length/2;i++){
-          console.log(srt,end)
+         
           $('#modal-attachments').append(
-          `<div id=mdl-atch-${srt} class="row mt-3"></div>`)
+          `<div id=mdl-atch-${srt} class="row mt-3 "></div>`)
           for(j=srt;j<end;j++){
           if(!task[0].attachments[j])
             continue
@@ -290,8 +337,7 @@
           end=end+2
         }
         $.each(task[0].attachments,function(key,attch){
-          console.log(attch.attachment)
-         
+                 
         })
         }
         // if task has attachments it's comments are not rendering 
@@ -310,7 +356,7 @@
         }
 
 
-        console.log(task[0].comments)
+        // console.log(task[0].comments)
         $.each(task[0].comments,function(key,cmnt){
                 renderComments(cmnt)
               }) 
@@ -327,13 +373,13 @@
             success:  function (res) {
               // console.log(res)
               $('#modal-members').append(`
-              <div class="mt-3 mb-3 btn-group dropdown">
-                <button style="min-width: 180px;" type="button" class="btn btn-primary dropdown-toggle"
+              <div class="mt-3 mb-3 me-2 btn-group dropdown">
+                <button style="width: 250px;" type="button" class="btn btn-primary dropdown-toggle"
                   data-mdb-toggle="dropdown" aria-expanded="false">
                   Members
                   <i class="fas fa-users ms-2"></i>
                 </button>
-                <ul id="task-edit-members" class="dropdown-menu">
+                <ul style="width:250px" id="task-edit-members" class="dropdown-menu">
                 </ul>
               </div>
               `)
@@ -356,7 +402,9 @@
             success:  function (task) {
               // console.log(task)
               $('#status-heading').text('Status')
-              $('#task-status-label').append(`<a tittle="Status of Task" class="badge badge-dark mt-2 mb-2" style="width: 30%"; >`+task[0].status+`</a>`)
+              $('#task-status-label').append(`
+              <label class="mt-4">Current Status</label><br>
+              <a tittle="Status of Task" class="badge badge-info mt-2 mb-2" style="width: 100%"; >`+task[0].status+`</a>`)
              
               modalForEditOrAdd(task)
             },
@@ -369,7 +417,7 @@
 
         // console.log($(this).text().toLowerCase())
         // console.log('yes i am changed')
-        localStorage.setItem("statusChangeFlag",true)
+
         localStorage.setItem("status",$(this).text());  
       });
            
@@ -403,6 +451,12 @@
       });
 
       $(document).on('click','.edit-task',function(e){
+        $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
+      console.log(status)
+      $('#statusSelect2').append(`
+        <option value=`+status+`>`+status+`</option>      
+      `)
+  })
         $.ajax({
             url:'api/edit/assignees',
             data:{"project_id":localStorage.getItem('project_id'),"task_id":$(this).attr('data-task-edit-id')},
@@ -410,9 +464,10 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
-             
               $.each(res,function(key,mem){
-                $('#datalistOptions').append(`<option value="`+mem.id+`">`+mem.email+`</option>`) 
+                $('#assignTaskSelect2').append(`
+                    <option value=`+mem.id+`>`+mem.email+`</option>      
+                `) 
               })
             },
             error: function(x,xs,xt){}

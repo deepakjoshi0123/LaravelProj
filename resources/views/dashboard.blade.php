@@ -3,6 +3,29 @@
 <x-title />
 
 <body>
+  <style>
+    /* width */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px grey;
+      border-radius: 5px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: rgb(183, 207, 222);
+      border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b4c5d2;
+    }
+  </style>
   <div class="div">
     <div class="div">
       <!-- Navbar -->
@@ -25,7 +48,7 @@
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
   $(document).ready(function(){
-
+    
     function parseJwt (token) {
        return JSON.parse(atob(token.split('.')[1]));
     }
@@ -119,7 +142,14 @@ $.ajax({
         $('#task-list').html("")
         tasks=response
         
-        localStorage.setItem("Available_Status",JSON.stringify(Object.keys(response)));
+        localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP','TESTING','UNASSIGNED']))
+        sts=JSON.parse(localStorage.getItem('Available_Status'))
+
+        for(let i=0;i<Object.keys(response).length;i++){
+          sts.push(Object.keys(response)[i].toUpperCase())
+        }
+        uniq = [...new Set(sts)];
+        localStorage.setItem("Available_Status",JSON.stringify(uniq));
         //add 3 default status of open closed WIP
         $.each(response,function(key,item){
           

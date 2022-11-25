@@ -16,10 +16,11 @@ Class TaskService {
     public function addTask($req){
         $request = json_decode($req['data'],true);
         $data = $request['data'];
-        $member_id = $request['assignee'];
+        $members_id = $request['assignee'];
            $task = Task::create($data);
-            if($member_id != 'unassigned'){
-                $this->assignTask($task,$member_id);
+        
+            if(count($members_id)>0){
+                $this->assignTask($task,$members_id);
             }
             //replace member_id with member_if fetched from token
             if(count($request['comments'])>0){
@@ -34,11 +35,11 @@ Class TaskService {
     public function updateTask($req){
         $request = json_decode($req['data'],true);
         $data = $request['data'];
-        $member_id = $request['assignee'];
+        $members_id = $request['assignee'];
             $task = Task::find($data['id']);
             $task->fill($request['data'])->save();           
-            if($member_id != 'unassigned'){
-                $this->assignTask($task,$member_id);
+            if(count($members_id)>0){
+                $this->assignTask($task,$members_id);
             }
             if(count($request['comments'])>0){
                 $this->addComments($request,$task);
@@ -65,8 +66,10 @@ Class TaskService {
         
     }
 
-    public function assignTask($task,$member_id){
-        (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
+    public function assignTask($task,$members_id){
+        foreach($members_id as $member_id){
+            (new Task_Mem())->fill(['task_id'=>$task->id,'member_id'=>$member_id])->save();
+        }
     }
     
     public function delTask($request){

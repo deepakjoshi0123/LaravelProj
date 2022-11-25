@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException ;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 class Handler extends ExceptionHandler
 {
     /**
@@ -47,7 +48,15 @@ class Handler extends ExceptionHandler
         $this->renderable(function (NotFoundHttpException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Record not found.'
+                    'message' => 'Not found.'
+                ], 404);
+            }
+            return response()->view('errors.notFoundException', [], 500);
+        });
+        $this->renderable(function (MethodNotAllowedHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Invalid Method.'
                 ], 404);
             }
             return response()->view('errors.notFoundException', [], 500);
