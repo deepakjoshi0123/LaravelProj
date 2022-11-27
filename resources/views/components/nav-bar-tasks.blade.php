@@ -27,9 +27,12 @@
                     <i id="add-task" class="fas fa-plus fa-lg ms-3 mt-1" style="color: black;cursor: pointer"
                         data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Add Task"
                         onMouseOver="this.style.color='DodgerBlue'" onMouseOut="this.style.color='black'"></i>
-
                 </ul>
-                <div class="dropdown">
+                <div class="d-flex justify-content-between">
+                    <i id="add-status" class="fas fa-plus-circle fa-lg me-3 ms-3 mt-1"
+                        style="color: black;cursor: pointer" data-mdb-toggle="tooltip" data-mdb-placement="bottom"
+                        title="Add Custom Status" onMouseOver="this.style.color='DodgerBlue'"
+                        onMouseOut="this.style.color='black'"></i>
 
                     <i id="navbarDropdownMenuAvatar-filter-task" data-mdb-toggle="tooltip" aria-expanded="false"
                         style="margin-left:5px;color: black;cursor: pointer"

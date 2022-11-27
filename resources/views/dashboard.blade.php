@@ -40,6 +40,7 @@
     <x-project-Modal />
     <x-share-proj />
     <x-filter-modal />
+    <x-status-create-modal />
 
   </div>
 </body>
@@ -85,7 +86,8 @@
 
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
     localStorage.setItem("proj_old_id",999999)
-    localStorage.setItem("status","open");
+    localStorage.setItem("status","OPEN");
+    
 $.ajax({
     url:'api/projects',
     data:{"member_id":"3"},
@@ -115,6 +117,7 @@ $.ajax({
     }); //prettier 
         $(document).on('click','.project-item',function(e){
           var proj_id = $(this).attr('data-project-id')
+          localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP','TESTING']))
           $(`#project-title-nav`).text($(`#project-title${proj_id}`).text())
           //break this into another function
          //____________________________________________________________________________________________ 
@@ -130,6 +133,28 @@ $.ajax({
           document.getElementById("add-task").disabled = false;
           $("#search-task").prop('disabled', false);
           
+              
+        $.ajax({
+              url:'api/getCustomStatus',
+              data:{"project_id":$(this).attr('data-project-id')},
+              headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+              },
+              type:'get',
+              success:  function (res) {
+                console.log('check my response',res)
+                sts=JSON.parse(localStorage.getItem('Available_Status'))
+                for(let i=0;i<res.length;i++){
+                    sts.push(res[i].status.toUpperCase())
+                }
+                uniq = [...new Set(sts)];
+                // console.log(uniq)
+                localStorage.setItem("Available_Status",JSON.stringify(uniq));
+              },
+              error:    function(err){}
+            })
+
+    
     $.ajax({
     url:'api/tasks',
     data:{"project_id":$(this).attr('data-project-id')},
@@ -142,7 +167,6 @@ $.ajax({
         $('#task-list').html("")
         tasks=response
         
-        localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP','TESTING','UNASSIGNED']))
         sts=JSON.parse(localStorage.getItem('Available_Status'))
 
         for(let i=0;i<Object.keys(response).length;i++){
@@ -153,7 +177,7 @@ $.ajax({
         //add 3 default status of open closed WIP
         $.each(response,function(key,item){
           
-          $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
+          $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-info d-flex justify-content-center ms-2 mt-2" style="width:25%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
                   `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`)

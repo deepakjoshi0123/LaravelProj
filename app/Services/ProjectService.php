@@ -1,10 +1,12 @@
 <?php
 namespace App\Services;
+
 use App\Models\Proj_Mem;
 use App\Models\Project;
 use App\Models\Member;
+use App\Models\Status;
 use Illuminate\Http\Request;
-use Response;
+use Illuminate\Http\Response;
 
 Class ProjectService{
     
@@ -45,5 +47,25 @@ Class ProjectService{
     public function getAllMembers($request){
       return Project::find($request['project_id'])->members()->get(['id','first_name','last_name','email']);
     }
-   
+
+    public function createStatus($request){
+     
+     if (count(Status::where([
+      ['project_id',$request['project_id']],
+      ['status',strtoupper($request['status'])]
+     ])->get(['status']))>0)
+     {
+      return response()->json(['Duplicate : Choose Another Name'], Response::HTTP_BAD_REQUEST);
+     }
+
+      (new Status())->fill([
+        'project_id' => $request['project_id'],
+        'status' => strtoupper($request['status']),
+      ])->save() ;
+        return $this->getCustomStatus($request);
+    }
+    
+   public function getCustomStatus($request){
+      return Status::where('project_id',$request['project_id'])->distinct()->get(['status']);
+   }
 }

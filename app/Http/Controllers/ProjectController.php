@@ -16,6 +16,18 @@ class ProjectController extends Controller
     public function __construct(ProjectService $projectService) {
         $this->projectService = $projectService;  
     }
+    public function getCustomStatus(Request $req){
+        return $this->projectService->getCustomStatus($req->all());
+    }
+    public function createStatus(Request $req){
+        $validated = Validator::make($req->all(), [ 
+            'status' => 'required|string|min:3|max:20|regex:/^[a-zA-Z\s]*$/',    
+        ]);
+        if ($validated->fails()) {    
+            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+        }
+        return $this->projectService->createStatus($req->all());
+    }
     public function getProjects(Request $req){  //custom req class and pass it the functon arguments for validation
         
         // $validated = $req->validate([ 
@@ -27,7 +39,7 @@ class ProjectController extends Controller
     }
     public function createProject(Request $req){
         $validated = Validator::make($req->all(), [ 
-            'name' => 'required|string|min:3|max:20|regex:/^([A-Za-z\d\.-]+)$/',    
+            'name' => 'required|string|min:3|max:20|regex:/^[a-zA-Z\s]*$/',    
         ]);
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);

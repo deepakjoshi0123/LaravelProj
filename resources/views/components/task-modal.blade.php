@@ -23,8 +23,8 @@
                 <div>
                   <label class="ms-2 mt-1" id="modal-title">Ttile</label>
                   <input style="width:400px" id="task-title" class="form-control ms-2" />
-                  <span id="tsk-title"></span>
-                  <label class="modal-desc ms-2 mt-3" id="modal-desc">Descriptiom</label>
+                  <span id="tsk-title" class="mb-1"></span>
+                  <label class="modal-desc ms-2 mt-3 mb-1" id="modal-desc">Descriptiom</label>
                   <div style="width: 400px" id="task-modal-desc">
                     <textarea class="form-control ms-2 " id="task-desc" rows="3"></textarea>
                     <span id="tsk-desc"></span>
@@ -118,12 +118,11 @@
   
   $('#statusSelect2').change(function(){
     localStorage.setItem("statusChangeFlag",true)
-    localStorage.setItem('status',$('#statusSelect2').val())
+    // console.log('whats this',$('#statusSelect2').val())
+    localStorage.setItem('status',$('#statusSelect2').val().replaceAll('-',' '))
     })
   localStorage.setItem("assignee","unassigned");
   function saveTask(data2){
-    // console.log(data2)
-    // return
     taskFile.append('data',JSON.stringify(data2))
          $.ajax({
             url:data2.url,
@@ -134,41 +133,36 @@
             processData: false,
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            success:  function (res) {
-              // console.log('check this-- > res',res)                                                    
+            success:  function (res) {                                             
             avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
             if(!avl_sts.includes(res.status)){
-              // console.log('doesnt contain')
               avl_sts.push(res.status)
             localStorage.setItem('Available_Status',JSON.stringify(avl_sts))
             }
           if(res.edit){
-                  if($(`#project-task-${res.id}`).parent().children().length == 2){ 
+              if($(`#project-task-${res.id}`).parent().children().length == 2){ 
                     $(`#project-task-${res.id}`).parent().html("")
                   }
                   $(`#project-task-${res.id}`).remove()
               } 
               if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
-                $('#task-list').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2" style="width:20%" >`+res.status+`</div></div>`)
+                $('#task-list ').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-info ms-2 mt-2 d-flex justify-content-center" style="width:25%" >`+res.status+`</div></div>`)
               }
               $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}  > div:nth-child(`+(1)+`)`).after(
-
-                // $("#controller > div:nth-child(" + (i) + ")").after("<div>great things</div>");
-
+              
                 `<x-task-list id=${res.id} title=${res.title} description=${res.description}/>`
               )
             $('#exampleModal').modal('toggle')
               resetModal()
-           
           } ,
             error: function(err){
               // console.log(err.status)
               if(err.status == 400){
                 if(JSON.parse(err.responseText)['data.title']){
-                  $('#tsk-title').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.title'][0].replace('data.','')+`</small>`)
+                  $('#tsk-title').append(`<small class="ms-2 " style="color:red">`+JSON.parse(err.responseText)['data.title'][0].replace('data.','')+`</small><br>`)
                 }
                 if(JSON.parse(err.responseText)['data.description']){
-                  $('#tsk-desc').append(`<small class="ms-4" style="color:red">`+JSON.parse(err.responseText)['data.description'][0].replace('data.','')+`</small>`)
+                  $('#tsk-desc').append(`<small class="ms-2" style="color:red">`+JSON.parse(err.responseText)['data.description'][0].replace('data.','')+`</small>`)
                 }
               }
             }
@@ -178,9 +172,11 @@
    
   $(document).on('click','#add-task',function(e){
     $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
-      
+      console.log('probelm ----- >',status.replaceAll(' ','-'))
+
+      //man issues is this only as value not taking afer space
       $('#statusSelect2').append(`
-        <option value=`+status+`>`+status+`</option>      
+        <option value=`+status.replaceAll(' ','-')+`>`+status+`</option>      
       `)
   })
     $.ajax({
@@ -204,7 +200,7 @@
 
       function resetModal(){
        
-        localStorage.setItem("status","open");
+        localStorage.setItem("status","OPEN");
         localStorage.setItem("assignee","unassigned");
         localStorage.setItem("statusChangeFlag",false);
         $('#statusSelect2').html("")
@@ -332,31 +328,16 @@
           </div>
             `)
           }
-         
           srt=srt+2;
           end=end+2
         }
-        $.each(task[0].attachments,function(key,attch){
-                 
-        })
         }
-        // if task has attachments it's comments are not rendering 
-       
-        // $(`#append-comment-body`).append(`
-        // <input id="task-comment" class="ms-4 mb-3 mt-3 form-control" placeholder="Add Comment ..." />
-       
-        // `)
-
-
         if(task[0].comments.length>0){
           $(`#append-comment-body`).append(`
         <div style="height: 150px; overflow-y: auto;" id="comment-body"></div>
        
         `)
         }
-
-
-        // console.log(task[0].comments)
         $.each(task[0].comments,function(key,cmnt){
                 renderComments(cmnt)
               }) 
@@ -452,9 +433,9 @@
 
       $(document).on('click','.edit-task',function(e){
         $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
-      console.log(status)
+      // console.log(status)
       $('#statusSelect2').append(`
-        <option value=`+status+`>`+status+`</option>      
+        <option value=`+status.replaceAll(' ','-')+`>`+status+`</option>      
       `)
   })
         $.ajax({

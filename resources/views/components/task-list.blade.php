@@ -4,7 +4,7 @@
             <div style="padding:0.25rem 0.75rem" class="card-header d-flex justify-content-between">
                 <div class="">{{$title}}
                 </div>
-                <i data-task-del-id={{$id}} class="del-task fa fa-times fa-sm mt-2 me-2" style="cursor: pointer"
+                <i data-task-del-id={{$id}} class="del-task fas fa-backspace fa-sm mt-2 me-2" style="cursor: pointer"
                     onMouseOver="this.style.color='DodgerBlue'" onMouseOut="this.style.color='black'"></i>
             </div>
             <div style="padding:1rem 1rem;cursor: pointer" data-task-edit-id={{$id}}

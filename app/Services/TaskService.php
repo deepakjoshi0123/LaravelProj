@@ -51,8 +51,6 @@ Class TaskService {
            return $task;      
     }
     
-    
-
     public function members($request){
         
        return DB::table('tasks')
@@ -62,6 +60,7 @@ Class TaskService {
                     ['tasks.id',$request['task_id']],
                     ['tasks.project_id',$request['project_id']]
                 ])
+            ->distinct()
             ->get(['members.id as id','first_name','last_name','email']);
         
     }

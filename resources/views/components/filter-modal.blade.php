@@ -66,7 +66,7 @@
         $.each(JSON.parse(localStorage.getItem('Available_Status')),function(key,mem){
            
             $('#mySelect3').append(`
-            <option value=`+mem+`>`+mem+`</option>  
+            <option value=`+mem.replaceAll(' ','-')+`>`+mem+`</option>  
             `)
         })
     })
@@ -74,7 +74,7 @@
         $('#filterModal').modal('toggle')
         var filters = {"status":[''],"members":['']}; // it's sending null remove it at the backend before queryig to db
         for (const status of $('#mySelect3').val() ) 
-            { filters.status.push(status) }
+            { filters.status.push(status.replaceAll('-',' ')) }
         for (const member of $('#mySelect2').val() ) 
             { filters.members.push(member) }
        
@@ -94,7 +94,7 @@
             $('#task-list').html("")
             $.each(response,function(key,item){
           
-          $('#task-list').append(`<div id="status-`+key+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key.replaceAll(' ','').replaceAll("'",'')+`</div></div>`)
+            $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-info d-flex justify-content-center ms-2 mt-2" style="width:25%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
                     `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`
