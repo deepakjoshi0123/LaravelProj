@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Throwable;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException ;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -48,18 +49,34 @@ class Handler extends ExceptionHandler
         $this->renderable(function (NotFoundHttpException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Not found.'
+                    'message' => 'HTTP Method Not found.'
                 ], 404);
             }
-            return response()->view('errors.notFoundException', [], 500);
+
         });
         $this->renderable(function (MethodNotAllowedHttpException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Invalid Method.'
+                    'message' => 'Invalid HTTP Method.'
                 ], 404);
             }
-            return response()->view('errors.notFoundException', [], 500);
+
+        });
+        $this->renderable(function (ModelNotFoundException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Modal Not Found.'
+                ], 404);
+            }
+            // return response()->view('errors.notFoundException', [], 500);
+        });
+        $this->renderable(function (Throwable $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Something went wrong...Please Connect Admin'
+                ], 403);
+            }
+            // return response()->view('errors.notFoundException', [], 500);
         });
     }
 }

@@ -66,13 +66,16 @@ class MemberAuthController extends Controller
             $message->to('deepakjoshi0123@gmail.com','trello clone')
             ->subject('mailtrap test');
         });
-        return $member;
+        return response()->json([
+            'status' => 'OK',
+            'message' => 'Member added Successfully'
+        ]);
     }
    
     public function me()
-   {   
-       return response()->json(auth()->user());
-   }
+    {   
+        return response()->json(auth()->user());
+     }
    public function logout()
    {
     //    Auth::logout();
@@ -164,10 +167,8 @@ class MemberAuthController extends Controller
         if($member == null){
             return ["Invalid Request OR token expired"];
         }
-       
         return response()->json($member);
         }
-
 
         public function login(Request $req){
             $validated = Validator::make($req->all(), [ 
@@ -182,30 +183,25 @@ class MemberAuthController extends Controller
            $credentials = request(['email', 'password']);
            if (Auth::attempt($credentials)) {
                     // dd(Auth::check());
-                    
                     $req->session()->put('userid',Auth::id());
                     // Auth::logoutOtherDevices(request('password'));
                     return redirect('dashboard');
            }
            return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
          }
-        
          public function getToken(Request $req){
             $validated = Validator::make($req->all(), [ 
                 'email' => 'required|email', 
                 'password' => 'required'
             ]);
-           
             // if ($validated->fails()) {    
             //     return redirect('login')->withErrors($validated->messages());
             // }
-            
            $credentials = request(['email', 'password']);
            if ($token = auth()->attempt($credentials)) {
-                return $token;
+                return response()->json(['token' => $token,'first_name'=>auth()->guard('api')->user()->first_name,'last_name'=>auth()->guard('api')->user()->last_name,'member_id'=>auth()->guard('api')->user()->id]);
             }
             return response()->json(['unauthorized' => 'Unauthorized']);
          }
-    
 }
 

@@ -12,11 +12,12 @@ Class ProjectService{
     
     public function getAllProjects($req){
         // return auth('api')->user()->id;
-        return Member::find($req['member_id'])->projects()->get(['project_name','id']);
+        return Member::find($req['member_id'])->projects()->distinct()->get(['project_name','id']);
     }
 
     public function createProject($request){
       $project = new Project();
+     
       $project->fill([
         'project_name' => $request['name'],
         'owner' => $request['owner'],
@@ -53,10 +54,11 @@ Class ProjectService{
      if (count(Status::where([
       ['project_id',$request['project_id']],
       ['status',strtoupper($request['status'])]
-     ])->get(['status']))>0)
+     ])->get(['status']))>0 || strtoupper($request['status']) == 'OPEN' || strtoupper($request['status']) == 'CLOSED' || strtoupper($request['status']) == 'WIP')
      {
       return response()->json(['Duplicate : Choose Another Name'], Response::HTTP_BAD_REQUEST);
      }
+
 
       (new Status())->fill([
         'project_id' => $request['project_id'],
@@ -64,7 +66,7 @@ Class ProjectService{
       ])->save() ;
         return $this->getCustomStatus($request);
     }
-    
+
    public function getCustomStatus($request){
       return Status::where('project_id',$request['project_id'])->distinct()->get(['status']);
    }

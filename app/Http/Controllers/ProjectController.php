@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Member;
 use App\Models\Proj_Mem;
+use App\Models\Project;
 
 class ProjectController extends Controller
 { 
@@ -44,6 +45,9 @@ class ProjectController extends Controller
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
+        if(count(Project::where('project_name',$req['name'])->get())>0){
+            return response()->json(array(['message'=>'Duplicate Project Name']),Response::HTTP_BAD_REQUEST);
+          }
         return response()->json(($this->projectService->createProject($req->all())));
         
     }

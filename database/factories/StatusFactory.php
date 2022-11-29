@@ -18,7 +18,7 @@ class StatusFactory extends Factory
     public function definition()
     {
         return [
-            'status' => 'open',
+            'status' => 'OPEN',
             'project_id' => \App\Models\Project::get()->random(),
 
         ];

@@ -69,14 +69,17 @@
                     data:{'email':$('#email').val(),'password':$('#password').val()},
                     type:'get',
                     success:  function (response) {
-                          localStorage.setItem("jwt-token", response);
+                          localStorage.setItem("jwt-token", response.token);
+                          localStorage.setItem("first_name", response.first_name);
+                          localStorage.setItem("last_name", response.last_name);
+                          localStorage.setItem("member_id", response.member_id);
+                          e.preventDefault()
                     },
                     error: function(err){
                         console.log('err----->',err)
                     }
                   })
               })
-
 </script>
 
 </html>

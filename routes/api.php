@@ -35,11 +35,11 @@ Route::get('/projMembers',[ProjectController::class,'getMembers']);
 
 Route::get('/shareProject',[ProjectController::class,'shareProject']);
 
-Route::get('/add/assignees',[TaskController::class,'getAddAssignees']);
+Route::get('/add/assignees',[TaskController::class,'getAddAssignees']);//for add modal 
 
-Route::get('/edit/assignees',[TaskController::class,'getEditAssignees']);
+Route::get('/edit/assignees',[TaskController::class,'getEditAssignees']);//for edit modal
 
-Route::get('/task',[TaskController::class,'taskDetails']);
+Route::get('/taskDetails',[TaskController::class,'taskDetails']);
 
 Route::post('/addTask',[TaskController::class,'addTask']);
 Route::post('/updateTask',[TaskController::class,'updateTask']);
@@ -49,9 +49,7 @@ Route::post('/editTask',[TaskController::class,'editTask']);
 Route::delete('/delTask',[TaskController::class,'delTask']);
 Route::get('/members',[TaskController::class,'members']); // end point and functions should be understable 
 //___________________________________________________________________________________
-
-
- });
+});
 
 
 

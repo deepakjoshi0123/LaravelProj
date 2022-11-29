@@ -86,6 +86,7 @@
          }
         })
         $(document).on('click','#register',function(e){
+        // $('#register').prop('disabled', true);
         e.preventDefault()
         $('#email-span').html("")
         $('#first_name-span').html("")

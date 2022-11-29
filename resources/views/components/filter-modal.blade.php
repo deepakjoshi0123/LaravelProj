@@ -9,11 +9,13 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h5>Members</h5>
+                    <label>Members</label>
+                    <small style="font-size:10px">[Select Email of members whose you want to see the tasks]</small>
                     <select style="width:100%" id="mySelect2" class="js-example-basic-multiple" name="states[]"
                         multiple="multiple">
                     </select>
-                    <h5>Status</h5>
+                    <label class="mt-3 ">Status</label>
+                    <small style="font-size:10px">[Choose Status to filter the tasks]</small>
                     <select style="width:100%" id="mySelect3" class="js-example-basic-multiple" name="states[]"
                         multiple="multiple">
                     </select>
@@ -92,9 +94,15 @@
             success:  function (response) {
             // console.log(res)
             $('#task-list').html("")
+            console.log(response)
+            if(response.length === 0){
+            console.log('no task to display')
+            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:120px;margin-left:150px">There are no tasks which matches the filters ...</h5></div>`)  
+            return
+         }
             $.each(response,function(key,item){
           
-            $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-info d-flex justify-content-center ms-2 mt-2" style="width:25%" >`+key+`</div></div>`)
+            $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark d-flex justify-content-center ms-2 mt-2 mb-1" style="width:25%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
                     `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`

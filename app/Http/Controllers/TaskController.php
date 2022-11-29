@@ -25,27 +25,46 @@ class TaskController extends Controller
         return response()->json($this->taskService->getTasks($req->all()));
     }
     public function addTask(Request $req){ 
-              
+            // return $req['file'];
         $validated = Validator::make(json_decode($req['data'],true), [ 
             'data.title' => 'required|string|min:3|max:40|', 
             'data.description' => 'required|string|min:3|max:200', 
             'comments' => 'nullable', 
-            'data.status' => 'nullable|string',    
+            'data.status' => 'nullable|string',   
         ]);
+        // $validatedFile = Validator::make($req->all(),[ 
+        //     'file' => 'nullable|max:10000|mimes:jpg,bmp,png,pdf',
+        // ]);
+        // if($validatedFile->fails()){
+        //     return response()->json($validatedFile->messages(), Response::HTTP_BAD_REQUEST);
+        // }
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
         return response()->json($this->taskService->addTask($req));
     }
 
-    public function updateTask(Request $req){ 
-              
+    public function updateTask(Request $req){
+
+        // $fls = array();
+        // // return $req['files'] ;
+        // foreach($req['files'] as $file){
+        //     return $file;
+        //     return array_push($fls,$file->extension());
+        // }
+        // return $fls;
         $validated = Validator::make(json_decode($req['data'],true), [ 
             'data.title' => 'required|string|min:3|max:40|', 
             'data.description' => 'required|string|min:3|max:200', 
             'comments' => 'nullable', 
             'data.status' => 'nullable|string',    
         ]);
+        // $validatedFile = Validator::make($req->all(),[ 
+        //     'file' => 'nullable|max:10000|mimes:jpg,bmp,png,pdf,jpeg',
+        // ]);
+        // if($validatedFile->fails()){
+        //     return response()->json($validatedFile->messages(), Response::HTTP_BAD_REQUEST);
+        // }
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }

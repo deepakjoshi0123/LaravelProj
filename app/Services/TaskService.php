@@ -78,8 +78,11 @@ Class TaskService {
     }
         
     public function taskDetails($request){
+        // Task::where('id',$request['id'])->delete();
         $task = Task::where('id',$request['id'])->get(['id','title','description','status']);
-        $comment = Comment::with('getMember')->where('task_id',$request['id'])->get();
+        $comment = DB::table('comments')
+        ->join('members','members.id','=','comments.member_id')
+        ->where('task_id',$request['id'])->get(['description','comments.updated_at as updated_at','first_name','last_name']);
         $task_attachments = Task_Attachment::where('task_id',$request['id'])->get(['attachment']);
         $task[0]->comments=$comment;
         $task[0]->attachments =$task_attachments;
@@ -194,7 +197,7 @@ Class TaskService {
     }
     public function addComments($request,$task){
         foreach($request['comments'] as $cmnt){
-            (new Comment())->fill(['task_id'=>$task->id,'member_id'=>'1','description'=>$cmnt])->save();
+            (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request['member_id'],'description'=>$cmnt])->save();
         }
     }
 }

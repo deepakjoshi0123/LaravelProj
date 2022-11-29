@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
         \App\Models\Project::factory(10)->create();
         \App\Models\Proj_Mem::factory(100)->create();
         \App\Models\Task::factory(40)->create();
-        \App\Models\Task_Mem::factory(100)->create();
+        // \App\Models\Task_Mem::factory(100)->create();
         // \App\Models\Task_Attachment::factory(20)->create();
-        \App\Models\Status::factory(20)->create();
+        // \App\Models\Status::factory(20)->create();
         \App\Models\Comment::factory(100)->create();
 
         // \App\Models\User::factory()->create([

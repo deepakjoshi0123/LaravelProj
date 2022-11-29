@@ -8,7 +8,7 @@
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h5> Project Name</h5>
+                <label> Project Name</label>
                 <input id="project-name" placeholder="Enter project name " class="form-control" />
                 <span id="prj-title"></span>
             </div>

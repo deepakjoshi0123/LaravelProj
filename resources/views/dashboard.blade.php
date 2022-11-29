@@ -63,7 +63,12 @@
       }
       jqXHR.abort();
       const token = localStorage.getItem('jwt-token');
-        var ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
+      var ttl;
+      if(token){
+        ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
+      }
+        // console.log((new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000)
+        
         if(ttl/60<15 && ttl/60>0){
           options.refreshRequest = true
           $.ajax({
@@ -90,17 +95,19 @@
     
 $.ajax({
     url:'api/projects',
-    data:{"member_id":"3"},
+    data:{"member_id":localStorage.getItem('member_id')},
     headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
   },
     type:'get',
     success:  function (response) { 
-      $('#side-bar').append(``)
+      if(response.length === 0){
+        $('#side-bar').append(`<div id="no-projects-title"><h6  style="margin-top:150px" class="ms-2"> You don't have any Projects yet.</h6></div>`)
+      }
       $.each(response,function(key,item){
             $('#side-bar').append(
                 `<div onMouseOver="this.style.color='blue'"
-   onMouseOut="this.style.color='black'" id="project-`+item.id+`" data-project-id=`+item.id+` 
+                      onMouseOut="this.style.color='black'" id="project-`+item.id+`" data-project-id=`+item.id+` 
                         style="background-color: #e9f1f7;cursor: pointer"
                         class="project-item list-group-item list-group-item-action py-2 ripple 
                         data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="See Tasks"
@@ -117,7 +124,7 @@ $.ajax({
     }); //prettier 
         $(document).on('click','.project-item',function(e){
           var proj_id = $(this).attr('data-project-id')
-          localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP','TESTING']))
+          localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP']))
           $(`#project-title-nav`).text($(`#project-title${proj_id}`).text())
           //break this into another function
          //____________________________________________________________________________________________ 
@@ -154,7 +161,6 @@ $.ajax({
               error:    function(err){}
             })
 
-    
     $.ajax({
     url:'api/tasks',
     data:{"project_id":$(this).attr('data-project-id')},
@@ -174,10 +180,14 @@ $.ajax({
         }
         uniq = [...new Set(sts)];
         localStorage.setItem("Available_Status",JSON.stringify(uniq));
-        //add 3 default status of open closed WIP
+        if(response.length === 0){
+            // console.log('no task to display')
+            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:120px;margin-left:150px">There are no tasks in this project Yet ...</h5></div>`)  
+            return
+       }
+        
         $.each(response,function(key,item){
-          
-          $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-info d-flex justify-content-center ms-2 mt-2" style="width:25%" >`+key+`</div></div>`)
+          $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark d-flex justify-content-center ms-2 mt-2 mb-1" style="width:25%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
                   `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`)

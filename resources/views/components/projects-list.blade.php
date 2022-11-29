@@ -23,18 +23,18 @@
 <script type="text/javascript">
     $(document).on('click','#save-project',function(){
         // console.log($('#project-name').val())
-
+        
         $.ajax({
             url:'api/createProject',
-            data:{"owner":"3","name":$('#project-name').val()},
+            data:{"owner":localStorage.getItem('member_id'),"name":$('#project-name').val()},
             type:'post',
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
-              
+                $('#no-projects-title').html("")
                 $('#side-bar').append(
                     `<div  id="project-`+res.data.id+`" data-project-id=`+res.data.id+` 
-                        style="background-color: #e9f1f7;border-radius: 10px 10px;"
+                        style="background-color: #e9f1f7;"
                         class=" project-item list-group-item list-group-item-action py-2 ripple ">
                         <i  class="me-2 fab fa-medapps"></i><span id="project-title`+res.data.id+`">`+res.data.project_name+`</span>
                   </div>`
@@ -46,10 +46,14 @@
             },
             error: function(err){
                 if(err.status == 400){
+                    console.log(err)
                   $('#prj-title').html("")
-                if(JSON.parse(err.responseText)['name']){
-                  $('#prj-title').append(`<small class="" style="color:red">`+JSON.parse(err.responseText)['name'][0]+`</small>`)
-                }
+                    if(JSON.parse(err.responseText)['name']){
+                        $('#prj-title').append(`<small class="" style="color:red">`+JSON.parse(err.responseText)['name'][0]+`</small>`)
+                    }
+                    else{
+                        $('#prj-title').append(`<small class="" style="color:red">`+JSON.parse(err.responseText)[0].message+`</small>`)
+                    }
               }
             }
           })    

@@ -57,8 +57,8 @@
                   multiple="multiple">
                 </select>
 
-                <h6 class="mb-3" id="task-status-label"></h6><br>
-                <select style="width:250px" id="statusSelect2" class="mt-4 js-example-basic-single">
+                <h6 class="mb-2" id="task-status-label"></h6><br>
+                <select style="width:250px" id="statusSelect2" class="mt-1 js-example-basic-single">
                   <option selected>Choose Status</option>
                 </select>
                 <div id="modal-members"></div>
@@ -133,7 +133,8 @@
             processData: false,
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            success:  function (res) {                                             
+            success:  function (res) {       
+            $('#no-task-msg').remove()                                      
             avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
             if(!avl_sts.includes(res.status)){
               avl_sts.push(res.status)
@@ -141,12 +142,12 @@
             }
           if(res.edit){
               if($(`#project-task-${res.id}`).parent().children().length == 2){ 
-                    $(`#project-task-${res.id}`).parent().html("")
+                    $(`#project-task-${res.id}`).parent().remove()
                   }
                   $(`#project-task-${res.id}`).remove()
               } 
               if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
-                $('#task-list ').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-info ms-2 mt-2 d-flex justify-content-center" style="width:25%" >`+res.status+`</div></div>`)
+                $('#task-list ').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2 d-flex justify-content-center" style="width:25%" >`+res.status+`</div></div>`)
               }
               $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}  > div:nth-child(`+(1)+`)`).after(
               
@@ -172,8 +173,7 @@
    
   $(document).on('click','#add-task',function(e){
     $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
-      console.log('probelm ----- >',status.replaceAll(' ','-'))
-
+    
       //man issues is this only as value not taking afer space
       $('#statusSelect2').append(`
         <option value=`+status.replaceAll(' ','-')+`>`+status+`</option>      
@@ -243,17 +243,14 @@
           "title":$("#task-title").val(),
           "description":$("#task-desc").val(),
         }
+
         data2={
-        "member_id":"2",
+        "member_id":localStorage.getItem('member_id'),
         "data":data,
         "comments":JSON.parse(localStorage.getItem("comments")),
         "assignee":$('#assignTaskSelect2').val(),
       }
-        // console.log(data2)
-        // return
-        // taskFile = new FormData()
-        // taskFile.append
-
+       
         if(editOrAddFlag === "add"){
           data['project_id'] = localStorage.getItem("project_id");
           data['status'] = localStorage.getItem("status")
@@ -268,6 +265,7 @@
             data['status'] = localStorage.getItem("status")
           }
           data2['url'] = 'api/updateTask'
+          console.log(data2)
           saveTask(data2)
         }
 
@@ -276,10 +274,10 @@
       function renderComments(cmnt){
 
         $('#comment-body').append(`
-              <div class="mt-1 ms-5 me-4" style="background-color:#e9f1f7;border-radius:0.5rem">
+              <div class="mt-1 ms-2 me-4" style="background-color:#e9f1f7;border-radius:0.5rem">
                 <div class="mt-1 ms-1 d-flex justify-content-between-start " >
                   <i class="fas fa-user-tie mt-1"></i>
-                  <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ cmnt.get_member.first_name+` `+cmnt.get_member.last_name+`</small>
+                  <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ cmnt.first_name+` `+cmnt.last_name+`</small>
                   <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ new Date(cmnt.updated_at).toLocaleString() +`</small>
                   </div>
                   <div style="font-size:10px" class="ms-5 fs-6 " id="modal-desc">`+ cmnt.description +`</div>
@@ -306,7 +304,7 @@
         $("#task-desc").val(task[0].description)
         if(task[0].attachments.length>0){
           $('#attachment-on-edit').append(`
-            <div id="modal-attachments">
+            <div  id="modal-attachments">
            
             </div>
               `)
@@ -319,8 +317,8 @@
           if(!task[0].attachments[j])
             continue
             $(`#mdl-atch-${srt}`).append(`
-            <div class="col-4 ms-5" style="display: flex ">
-             <iframe seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" class="ms-4" height="60"  width="150" src=viewTaskAttachment/${task[0].attachments[j].attachment}" class="ms-4">
+            <div class="col-4 ms-4" style="display: flex ">
+             <iframe seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" class="ms-4" height="65"  width="150" src=viewTaskAttachment/${task[0].attachments[j].attachment}" class="ms-4">
             </iframe>
             <a class="" href="http://localhost:8000/downloadTaskAttachment/${task[0].attachments[j].attachment}" target="_blank" >
               <i class="fas fa-file-download"></i>
@@ -334,7 +332,7 @@
         }
         if(task[0].comments.length>0){
           $(`#append-comment-body`).append(`
-        <div style="height: 150px; overflow-y: auto;" id="comment-body"></div>
+        <div style="max-height: 150px; overflow-y: auto;" id="comment-body"></div>
        
         `)
         }
@@ -354,7 +352,7 @@
             success:  function (res) {
               // console.log(res)
               $('#modal-members').append(`
-              <div class="mt-3 mb-3 me-2 btn-group dropdown">
+              <div class="mt-4 mb-3 me-2 btn-group dropdown">
                 <button style="width: 250px;" type="button" class="btn btn-primary dropdown-toggle"
                   data-mdb-toggle="dropdown" aria-expanded="false">
                   Members
@@ -375,7 +373,7 @@
 
         task_id=id
         $.ajax({
-            url:'api/task',
+            url:'api/taskDetails',
             data:{"id":id},
             type:'get',
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
@@ -385,7 +383,7 @@
               $('#status-heading').text('Status')
               $('#task-status-label').append(`
               <label class="mt-4">Current Status</label><br>
-              <a tittle="Status of Task" class="badge badge-info mt-2 mb-2" style="width: 100%"; >`+task[0].status+`</a>`)
+              <a tittle="Status of Task" class="badge badge-dark mt-2" style="width: 97%"; >`+task[0].status+`</a>`)
              
               modalForEditOrAdd(task)
             },
@@ -414,12 +412,11 @@
               cmnts = JSON.parse(localStorage.getItem("comments")) 
               cmnts.push($("#task-comment").val())
               localStorage.setItem("comments",JSON.stringify(cmnts));
-              cmnt = {"description":$("#task-comment").val(),"get_member":{"first_name":"Missouri ","last_name":"Jacobs"},"updated_at":new Date()}
-              
-              
+              cmnt = {"description":$("#task-comment").val(),"first_name":localStorage.getItem('first_name'),"last_name":localStorage.getItem('last_name'),"updated_at":new Date()}
+             
               if($('#comment-body').length==0){
                 $(`#append-comment-body`).append(`
-                  <div style="height: 150px; overflow-y: auto;" id="comment-body"></div>
+                  <div style="max-height: 150px; overflow-y: auto;" id="comment-body"></div>
                 `)
               }
               // console.log()
@@ -478,7 +475,7 @@
                 $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).html("")
               }
             },
-            error: function(x,xs,xt){}
+            error: function(x){}
            })
         })
 </script>

@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <label>Status</label>
                 <input id="status-name" placeholder="Enter Custom Status ... " class="form-control" />
-                <span id="status-title-err"></span>
+                <span id="status-err-title"></span>
             </div>
             <div class="modal-footer">
                 <button id="save-status" type="button" class="btn btn-primary">Save</button>
@@ -21,6 +21,7 @@
 <script type="text/javascript">
     $(document).on('click','#status-modal-close',function(){
         $('#status-name').val("")
+        $('#status-err-title').html("")
   })
   
   $(document).on('click','#add-status',function(){
@@ -45,8 +46,19 @@
                 uniq = [...new Set(sts)];
                 // console.log(uniq)
                 localStorage.setItem("Available_Status",JSON.stringify(uniq));
+                $('#status-err-title').html("")
               },
-            error: function(err){}
+            error: function(err){
+                if(err.status == 400){
+                  $('#status-err-title').html("")
+                    if(JSON.parse(err.responseText)['status']){
+                    $('#status-err-title').append(`<small class="" style="color:red">`+JSON.parse(err.responseText)['status'][0]+`</small>`)
+                    }
+                    else{
+                        $('#status-err-title').append(`<small class="" style="color:red">`+(err.responseJSON)+`</small>`)
+                    }
+              }
+            }
           })
     
   })

@@ -82,9 +82,15 @@
             success:  function (response) {
             console.log(response)
             $('#task-list').html("")
+            console.log('no task to display')
+            if(response.length === 0){
+            console.log('no task to display')
+            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:120px;margin-left:150px">There are no tasks which matches the search criteria ...</h5></div>`)  
+            return
+             }
+
             $.each(response,function(key,item){
-          
-          $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark ms-2 mt-2" style="width:10%" >`+key+`</div></div>`)
+            $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark ms-2 mt-2 mb-1" style="width:10%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
                     `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`

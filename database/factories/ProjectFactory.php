@@ -18,7 +18,7 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
-            'project_name' => fake()->text(10),
+            'project_name' => fake()->name(10),
             'owner' => \App\Models\Member::get()->random(),
         ];
     }
