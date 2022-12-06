@@ -1,4 +1,7 @@
 <div class="div" style="width:80%">
+    {{-- <div class="alert alert-success">
+        <strong>Info!</strong> This alert box could indicate a neutral informative change or action.
+    </div> --}}
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg" style="background-color: #a1d0ef;padding:0.2rem">
         <!-- Container wrapper -->
@@ -20,7 +23,7 @@
                     </li>
                     <i id="share-project-button" class="far fa-share-square fa-lg ms-3 mt-1"
                         style="color: black;cursor: pointer" data-mdb-toggle="tooltip" data-mdb-placement="bottom"
-                        title="Share Project" onMouseOver="this.style.color='DodgerBlue'"
+                        title="Add Member To Project" onMouseOver="this.style.color='DodgerBlue'"
                         onMouseOut="this.style.color='black'"></i>
 
 
@@ -44,8 +47,9 @@
                 <!-- Left links -->
             </div>
     </nav>
-    <div class="div"
+    <div
         style="padding:1rem; background-color:#e9f1f7; width: 1023px; height: 522px; overflow-y: scroll; scrollbar-width: none;">
+        <div id="task-list-msg-append"></div>
         <div class="list-group list-group-light" id="task-list">
         </div>
     </div>

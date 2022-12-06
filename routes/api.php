@@ -45,12 +45,11 @@ Route::post('/addTask',[TaskController::class,'addTask']);
 Route::post('/updateTask',[TaskController::class,'updateTask']);
 
 Route::post('/assignTask',[TaskController::class,'assignTask']);
-Route::post('/editTask',[TaskController::class,'editTask']);
+// Route::post('/editTask',[TaskController::class,'editTask']);
 Route::delete('/delTask',[TaskController::class,'delTask']);
 Route::get('/members',[TaskController::class,'members']); // end point and functions should be understable 
 //___________________________________________________________________________________
 });
-
 
 
 Route::get('/member/verify/{token}',[MemberAuthController::class,'verifyMember']);

@@ -8,7 +8,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Encryption\Encrypter;
+use Config;
 use Illuminate\Support\Facades\Crypt;
 use Dirape\Token\Token;
 use Carbon\Carbon;
@@ -77,8 +78,8 @@ class MemberAuthController extends Controller
         return response()->json(auth()->user());
      }
    public function logout()
-   {
-    //    Auth::logout();
+   {    
+    //    auth()->logout();
        Session::flush();
        return redirect('login');
    }
@@ -133,7 +134,7 @@ class MemberAuthController extends Controller
         }
         $email = Member::where('email',$req['email'])->get();
         if($email->count()===0){
-            return response()->json(['email not found in db'], Response::HTTP_BAD_REQUEST);;
+            return response()->json(['Email not found in db'], Response::HTTP_BAD_REQUEST);;
         }
         $member = Member::where('email',$req['email'])->first();
         $member->reset_token = str_random(32);
@@ -150,8 +151,14 @@ class MemberAuthController extends Controller
         
         $validated = Validator::make($req->all(), [ 
             'token' => 'required', 
-            'password' => 'required_with:cnf-password|same:cnf-password',
-            'cnf-password' => 'required'
+            'password' => [
+                'required','same:cnf-password',
+                'min:6',             
+            ],
+            'cnf-password' => [
+                'required',
+                'min:6',             
+            ],
             
         ]);
 
@@ -190,6 +197,7 @@ class MemberAuthController extends Controller
            return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
          }
          public function getToken(Request $req){
+           
             $validated = Validator::make($req->all(), [ 
                 'email' => 'required|email', 
                 'password' => 'required'

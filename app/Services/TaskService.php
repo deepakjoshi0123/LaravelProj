@@ -90,19 +90,21 @@ Class TaskService {
     }
    
     public function getTasks($request){
-
-        // return 1/0;
-        // abort(404,'user not found');
        
-        $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status']);//get(['id',etc..]) was giving error when
-        $res=array();
-        for($i=0;$i<count($project);$i++){
-            $res[$project[$i]['status']] =  array();
-         }
-        for($i=0;$i<count($project);$i++){
-           array_push($res[$project[$i]['status']],$project[$i]);
+        // $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status']);
+        $tasks = DB::table('tasks')
+        ->where('project_id',$request['project_id'])->get(['id','title','description','status']);
+        foreach($tasks as $task){
+            $task->members=$this->getEditAssignees($task->id,$request['project_id']);
         }
-        return $res;
+        $resToSend=array();
+        for($i=0;$i<count($tasks);$i++){
+            $resToSend[$tasks[$i]->status] =  array();
+         }
+        for($i=0;$i<count($tasks);$i++){
+           array_push($resToSend[$tasks[$i]->status],$tasks[$i]);
+        }
+        return $resToSend;
     }
 
     public function getAddAssignees($request){    
@@ -110,18 +112,25 @@ Class TaskService {
             return Project::find($id)->members()->distinct()->get(['email','id','first_name']);
     }
 
-    public function getEditAssignees($request){  
-        $id = $request->get('task_id');//taking out task_id
-            $project_id = $request->get('project_id');//taking out project_id
-            $memToBeEliminated = Task_Mem::where('task_id',$id)->distinct()->get(['member_id']);
-            
-            $membersRes = DB::table('proj__mems')
-            ->join('members','proj__mems.member_id','=','members.id')
-            ->where('project_id',$project_id)
-            ->whereNotIn('member_id',$memToBeEliminated)
+    public function getEditAssignees($task_id,$project_id){  
+            // $memToBeEliminated = Task_Mem::where('task_id',$id)->distinct()->get(['member_id']);
+    
+            // $membersRes = DB::table('proj__mems')
+            // ->join('members','proj__mems.member_id','=','members.id')
+            // ->where('project_id',$project_id)
+            // ->whereNotIn('member_id',$memToBeEliminated)
+            // ->distinct()
+            // ->get(['email','first_name','last_name','members.id as id']);
+            // return $membersRes; 
+            return DB::table('tasks')
+            ->join('task__mems','task__mems.task_id','=','tasks.id')
+            ->join('members','task__mems.member_id','=','members.id')
+            ->where([
+                    ['tasks.id',$task_id],
+                    ['tasks.project_id',$project_id]
+                ])
             ->distinct()
-            ->get(['email','first_name','last_name','members.id as id']);
-            return $membersRes; 
+            ->get(['members.id as id','first_name','last_name','email']);
     }
     
     public function searchTask($request){

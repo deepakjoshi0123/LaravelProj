@@ -27,7 +27,8 @@
                         <hr>
                         <form>
                             <div class="form-group mt-3">
-                                <label for="password">Enter New Paasword *</label>
+                                <label for="password">Enter New Paasword *<small style="font-size: 9px">Should be
+                                        atleast 6 characters long</small></label>
                                 <input id="password" type="password" class="form-control mt-2" name="email" value=""
                                     placeholder="Enter password">
                                 <span id="password-span"></span>

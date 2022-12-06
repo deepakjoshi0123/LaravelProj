@@ -18,12 +18,12 @@
         <img class="mt-2" style="height:50px;width:200px"
             src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Trello_logo.svg/1280px-Trello_logo.svg.png" />
         <div class="row">
-            <div class="col-md-4 col-md-offset-4" style="margin-top:10px; margin-left:330px">
+            <div class="col-md-4 col-md-offset-4" style="margin-top:5px; margin-left:330px">
 
                 <div class="card" style="width: 31rem;">
                     <div class="card-body">
                         <div id="success-msg"></div>
-                        <h6>Member Registration</h6>
+                        <h5>Registration</h5>
                         <hr>
                         <form class="ms-2 me-2">
                             <div class="row mt-3">
@@ -48,14 +48,18 @@
                                 <small id="email-span"></small>
                             </div>
                             <div class="form-group mt-3">
-                                <label for="password">Password *</label>
+                                <label for="password">Password *<small style="font-size: 10px">should be atleast 6
+                                        characters
+                                        long</small></label>
 
                                 <input id="password" type="password" class="form-control" password="password" value=""
                                     placeholder="Enter your password">
                                 <small id="password-span"></small>
                             </div>
                             <div class="form-group mt-3">
-                                <label for="password">Confirm Password *</label>
+                                <label for="password">Confirm Password *<small style="font-size: 10px">should be same as
+                                        password
+                                    </small></label>
                                 <input id="cnf-password" type="password" class="form-control" password="password"
                                     value="" placeholder="Enter your password">
                                 <small id="cnf-password-span"></small>

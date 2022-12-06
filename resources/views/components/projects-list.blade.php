@@ -22,8 +22,9 @@
 </div>
 <script type="text/javascript">
     $(document).on('click','#save-project',function(){
-        // console.log($('#project-name').val())
-        
+        console.log($('#project-name').val())
+ 
+        // return
         $.ajax({
             url:'api/createProject',
             data:{"owner":localStorage.getItem('member_id'),"name":$('#project-name').val()},
@@ -31,10 +32,17 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
+             var message="project added sucessfully"
+              $('#task-list').prepend(`<x-action-modal  message=${message}/>`)
+              setTimeout(() => {    
+                // console.log('webapi--')
+                $('#response-message').remove()
+              }, 2000);
                 $('#no-projects-title').html("")
                 $('#side-bar').append(
                     `<div  id="project-`+res.data.id+`" data-project-id=`+res.data.id+` 
-                        style="background-color: #e9f1f7;"
+                        style="background-color: #e9f1f7;cursor: pointer"
+                        title="Created by ${localStorage.getItem('first_name') } ${localStorage.getItem('last_name') }"
                         class=" project-item list-group-item list-group-item-action py-2 ripple ">
                         <i  class="me-2 fab fa-medapps"></i><span id="project-title`+res.data.id+`">`+res.data.project_name+`</span>
                   </div>`

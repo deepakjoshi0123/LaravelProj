@@ -26,47 +26,71 @@ class TaskController extends Controller
     }
     public function addTask(Request $req){ 
             // return $req['file'];
-        $validated = Validator::make(json_decode($req['data'],true), [ 
-            'data.title' => 'required|string|min:3|max:40|', 
-            'data.description' => 'required|string|min:3|max:200', 
-            'comments' => 'nullable', 
-            'data.status' => 'nullable|string',   
-        ]);
-        // $validatedFile = Validator::make($req->all(),[ 
-        //     'file' => 'nullable|max:10000|mimes:jpg,bmp,png,pdf',
-        // ]);
-        // if($validatedFile->fails()){
-        //     return response()->json($validatedFile->messages(), Response::HTTP_BAD_REQUEST);
-        // }
-        if ($validated->fails()) {    
-            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
-        }
+            $fls=array();
+            $extensionFlag = false;
+            $sizeFlag = false;
+            $allowedExtension = array("jpg", "jpeg", "png");
+            if($req['files']){
+                foreach($req['files'] as $file){
+                    $extension = $file->getClientOriginalExtension();
+                    if($file->getSize() >150000) {
+                        // return $file->getSize() ;
+                        $sizeFlag = true;
+                    }
+                    if(!in_array($extension, $allowedExtension)) {
+                        $extensionFlag = true;
+                    }
+                }
+            }
+            
+            $validated = Validator::make(json_decode($req['data'],true), [ 
+                'data.title' => 'required|string|min:3|max:40|', 
+                'data.description' => 'required|string|min:3|max:200', 
+                'comments' => 'nullable', 
+                'data.status' => 'nullable|string',    
+            ]);
+           
+            if ($validated->fails()) {  
+                return response()->json([$validated->messages(),"sizeFlag"=>$sizeFlag,"extensionFlag"=>$extensionFlag],Response::HTTP_BAD_REQUEST);
+            }
+            if($sizeFlag === true || $extensionFlag === true){
+                return response()->json([$validated->messages(),"sizeFlag"=>$sizeFlag,"extensionFlag"=>$extensionFlag],Response::HTTP_BAD_REQUEST);
+            }
         return response()->json($this->taskService->addTask($req));
     }
 
     public function updateTask(Request $req){
 
-        // $fls = array();
-        // // return $req['files'] ;
-        // foreach($req['files'] as $file){
-        //     return $file;
-        //     return array_push($fls,$file->extension());
-        // }
-        // return $fls;
+       
+        $fls=array();
+        $extensionFlag = false;
+        $sizeFlag = false;
+        $allowedExtension = array("jpg", "jpeg", "png");
+        if($req['files']){
+            foreach($req['files'] as $file){
+                $extension = $file->getClientOriginalExtension();
+                if($file->getSize() >150000) {
+                    // return $file->getSize() ;
+                    $sizeFlag = true;
+                }
+                if(!in_array($extension, $allowedExtension)) {
+                    $extensionFlag = true;
+                }
+            }
+        }
+        
         $validated = Validator::make(json_decode($req['data'],true), [ 
             'data.title' => 'required|string|min:3|max:40|', 
             'data.description' => 'required|string|min:3|max:200', 
             'comments' => 'nullable', 
             'data.status' => 'nullable|string',    
         ]);
-        // $validatedFile = Validator::make($req->all(),[ 
-        //     'file' => 'nullable|max:10000|mimes:jpg,bmp,png,pdf,jpeg',
-        // ]);
-        // if($validatedFile->fails()){
-        //     return response()->json($validatedFile->messages(), Response::HTTP_BAD_REQUEST);
-        // }
-        if ($validated->fails()) {    
-            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+       
+        if ($validated->fails()) {  
+            return response()->json([$validated->messages(),"sizeFlag"=>$sizeFlag,"extensionFlag"=>$extensionFlag],Response::HTTP_BAD_REQUEST);
+        }
+        if($sizeFlag === true || $extensionFlag === true){
+            return response()->json([$validated->messages(),"sizeFlag"=>$sizeFlag,"extensionFlag"=>$extensionFlag],Response::HTTP_BAD_REQUEST);
         }
         return response()->json($this->taskService->updateTask($req));
     }
@@ -74,16 +98,16 @@ class TaskController extends Controller
     public function assignTask(Request $req){ 
         return $this->taskService->assignTask($req->all());
     }
-    public function editTask(Request $req){ 
-        $validated = $req->validate([ 
-            'id' => 'required',
-            'title' => 'required', 
-            'description' => 'required', 
-            'status' => 'required',
-            'project_id' => 'required',   
-        ]);
-        return $this->taskService->editTask($req->all());
-    }
+    // public function editTask(Request $req){ 
+    //     $validated = $req->validate([ 
+    //         'id' => 'required',
+    //         'title' => 'required', 
+    //         'description' => 'required', 
+    //         'status' => 'required',
+    //         'project_id' => 'required',   
+    //     ]);
+    //     return $this->taskService->editTask($req->all());
+    // }
     public function delTask(Request $req){ 
         return $this->taskService->delTask($req->all());
     }

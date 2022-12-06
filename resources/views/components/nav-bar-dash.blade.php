@@ -2,6 +2,7 @@
     <!-- Container wrapper -->
     <div class="container-fluid ">
         <!-- Toggle button -->
+
         <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
             data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -15,6 +16,7 @@
                 <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Trello_logo.svg/1280px-Trello_logo.svg.png"
                     height="18" alt="MDB Logo" loading="lazy" />
             </a>
+
             <!-- Left links -->
             <div class="d-flex justify-content-between">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -45,6 +47,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                         <li>
+                            <a id="user-name" class="dropdown-item"></a>
                             <a id="logout" class="dropdown-item">Logout</a>
                         </li>
                     </ul>
@@ -59,6 +62,7 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
+    $('#user-name').text(`Hi ! ${localStorage.getItem('first_name')}  ${localStorage.getItem('last_name')}`)
     $('#logout').on('click',function(){
         $.ajax({
             url:'logout',
@@ -85,7 +89,7 @@
             console.log('no task to display')
             if(response.length === 0){
             console.log('no task to display')
-            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:120px;margin-left:150px">There are no tasks which matches the search criteria ...</h5></div>`)  
+            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the search criteria ...</h5></div>`)  
             return
              }
 

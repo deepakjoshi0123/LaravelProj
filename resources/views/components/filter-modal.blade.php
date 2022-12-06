@@ -97,7 +97,7 @@
             console.log(response)
             if(response.length === 0){
             console.log('no task to display')
-            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:120px;margin-left:150px">There are no tasks which matches the filters ...</h5></div>`)  
+            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the filters ...</h5></div>`)  
             return
          }
             $.each(response,function(key,item){

@@ -70,10 +70,10 @@
             error: function(err){
                 console.log(err.responseJSON[0])
                 if(JSON.parse(err.responseText)['email']){
-                       $('#email-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
+                       $('#email-span').append(`<small  style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</small>`)
                     }
                 if(err.responseJSON[0]){
-                       $('#email-span').append(`<span  style="color:red">`+err.responseJSON[0]+`</span>`)
+                       $('#email-span').append(`<small  style="color:red">`+err.responseJSON[0]+`</small>`)
                     }
             }
         })

@@ -49,7 +49,6 @@
                             </div>
                             <div class="mt-4 md-3"> <a href="register" class="form-control btn btn-primary ">Sign Up</a>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -59,16 +58,25 @@
 </body>
 <!-- JavaScript Bundle with Popper -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js">
+</script>
+
+<?php $message = "Hello Folks"; ?>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
     $(document).on('click','#login',function(e){
-        // console.log(e)
+        // <?php $message ?>
+        
+        // e.preventDefault()
+        // console.log(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256($('#password').val(),'secret')))
+        // return
               $.ajax({
                     url:'api/getToken',
                     data:{'email':$('#email').val(),'password':$('#password').val()},
                     type:'get',
                     success:  function (response) {
+                        console.log(response)
                           localStorage.setItem("jwt-token", response.token);
                           localStorage.setItem("first_name", response.first_name);
                           localStorage.setItem("last_name", response.last_name);

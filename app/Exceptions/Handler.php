@@ -68,15 +68,15 @@ class Handler extends ExceptionHandler
                     'message' => 'Modal Not Found.'
                 ], 404);
             }
-            // return response()->view('errors.notFoundException', [], 500);
+
         });
-        $this->renderable(function (Throwable $e, $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'message' => 'Something went wrong...Please Connect Admin'
-                ], 403);
-            }
-            // return response()->view('errors.notFoundException', [], 500);
-        });
+        // $this->renderable(function (Throwable $e, $request) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json([
+        //             'message' => 'Something went wrong...Please Connect Admin'
+        //         ], 403);
+        //     }
+
+        // });
     }
 }

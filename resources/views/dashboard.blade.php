@@ -41,6 +41,7 @@
     <x-share-proj />
     <x-filter-modal />
     <x-status-create-modal />
+    <x-confirmmation-modal />
 
   </div>
 </body>
@@ -110,7 +111,7 @@ $.ajax({
                       onMouseOut="this.style.color='black'" id="project-`+item.id+`" data-project-id=`+item.id+` 
                         style="background-color: #e9f1f7;cursor: pointer"
                         class="project-item list-group-item list-group-item-action py-2 ripple 
-                        data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="See Tasks"
+                        data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Created by ${item.first_name} ${item.last_name}"
                         ">
                         <i  class="me-2 fab fa-medapps"></i><span id="project-title`+item.id+`">`+item.project_name+`</span>
                   </div>`
@@ -169,7 +170,7 @@ $.ajax({
   },
     type:'get',
     success:  function (response) {
-        // console.log(response)
+        // console.log('checking ress',response)
         $('#task-list').html("")
         tasks=response
         
@@ -182,15 +183,16 @@ $.ajax({
         localStorage.setItem("Available_Status",JSON.stringify(uniq));
         if(response.length === 0){
             // console.log('no task to display')
-            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:120px;margin-left:150px">There are no tasks in this project Yet ...</h5></div>`)  
+            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks in this project Yet ...</h5></div>`)  
             return
        }
         
         $.each(response,function(key,item){
           $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark d-flex justify-content-center ms-2 mt-2 mb-1" style="width:25%" >`+key+`</div></div>`)
             $.each(item,function(key2,item2){
+              console.log( item2.members)
                 $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
-                  `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`)
+                  `<x-task-list  id=${item2.id} title=${item2.title} description=${item2.description} mem=${item2.members}/>`)
             })            
         });
       },

@@ -1,25 +1,25 @@
 <!-- Modal -->
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="statusModalLabel">Create New Status</h4>
-                <button id="status-modal-close" type="button" class="btn-close" data-mdb-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <label>Status</label>
-                <input id="status-name" placeholder="Enter Custom Status ... " class="form-control" />
-                <span id="status-err-title"></span>
-            </div>
-            <div class="modal-footer">
-                <button id="save-status" type="button" class="btn btn-primary">Save</button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="statusModalLabel">Create New Status</h4>
+        <button id="status-modal-close" type="button" class="btn-close" data-mdb-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label>Status</label>
+        <input id="status-name" placeholder="Enter Custom Status ... " class="form-control" />
+        <span id="status-err-title"></span>
+      </div>
+      <div class="modal-footer">
+        <button id="save-status" type="button" class="btn btn-primary">Save</button>
+      </div>
     </div>
+  </div>
 </div>
 <script type="text/javascript">
-    $(document).on('click','#status-modal-close',function(){
+  $(document).on('click','#status-modal-close',function(){
         $('#status-name').val("")
         $('#status-err-title').html("")
   })
@@ -36,6 +36,12 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
+              var message="Custom Status created sucessfully"
+                            $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
+                            setTimeout(() => {    
+                                // console.log('webapi--')
+                                $('#response-message').remove()
+                            }, 2000);
                 // console.log(res[0])
                 $('#statusModal').modal('toggle')
                 $('#status-name').val("")

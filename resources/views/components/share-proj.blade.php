@@ -40,6 +40,12 @@
                 },
                     type:'get',
                     success:  function (response) {
+                        var message="Member Added to Project sucessfully"
+                            $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
+                            setTimeout(() => {    
+                                // console.log('webapi--')
+                                $('#response-message').remove()
+                            }, 2000);
                         console.log(response)
                         $('#share-project-email').val('') 
                         $('#shareProjModal').modal('toggle')

@@ -31,11 +31,10 @@ class ProjectController extends Controller
     }
     public function getProjects(Request $req){  //custom req class and pass it the functon arguments for validation
         
-        // $validated = $req->validate([ 
-        //     'member_id' => 'required', 
-        // ]);
-        //all json routes in api
-        //all html templetes web
+        $validated = $req->validate([ 
+            'member_id' => 'required', 
+        ]);
+        
         return response()->json(($this->projectService->getAllProjects($req->all())));
     }
     public function createProject(Request $req){
@@ -45,11 +44,10 @@ class ProjectController extends Controller
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
-        if(count(Project::where('project_name',$req['name'])->get())>0){
+        if(count(Project::where([['owner',$req['owner']],['project_name',$req['name']]])->get())>0){
             return response()->json(array(['message'=>'Duplicate Project Name']),Response::HTTP_BAD_REQUEST);
           }
-        return response()->json(($this->projectService->createProject($req->all())));
-        
+        return response()->json(($this->projectService->createProject($req->all())));   
     }
    
     public function getMembers(Request $req){ 
@@ -68,7 +66,7 @@ class ProjectController extends Controller
 
     public function shareProject(Request $req){
         $validated = Validator::make($req->all(), [
-            'email' => 'required|email',
+            'email' => 'required|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/',
         ]);
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
@@ -92,6 +90,8 @@ class ProjectController extends Controller
             'project_id' => $req['project_id'],
             'member_id' => $email[0]->id,
           ])->save() ;
-
+        return array(
+            'success' => true,
+          ); 
     }
 }

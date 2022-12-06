@@ -7,12 +7,17 @@ use App\Models\Member;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
+use DB;
 Class ProjectService{
     
     public function getAllProjects($req){
-        // return auth('api')->user()->id;
-        return Member::find($req['member_id'])->projects()->distinct()->get(['project_name','id']);
+
+        return DB::table('projects')
+        ->join('proj__mems','proj__mems.project_id','=','projects.id')
+        ->join('members','proj__mems.member_id','=','members.id')
+        ->join('members as mem2','projects.owner','=','mem2.id')
+        ->where('proj__mems.member_id',$req['member_id'])
+        ->get(['mem2.first_name as first_name','mem2.last_name as last_name','project_name','projects.id as id']);
     }
 
     public function createProject($request){
@@ -58,7 +63,6 @@ Class ProjectService{
      {
       return response()->json(['Duplicate : Choose Another Name'], Response::HTTP_BAD_REQUEST);
      }
-
 
       (new Status())->fill([
         'project_id' => $request['project_id'],
