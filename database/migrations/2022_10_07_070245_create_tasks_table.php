@@ -18,8 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->string('title',200);
             $table->string('description',2000);
-            $table->string('status',20);
+            $table->unsignedBigInteger('status_id');
             $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreign('status_id')->references('id')->on('statuses');
             $table->timestamps();
         });
     }

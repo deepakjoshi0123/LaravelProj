@@ -44,6 +44,8 @@ Route::get('/taskDetails',[TaskController::class,'taskDetails']);
 Route::post('/addTask',[TaskController::class,'addTask']);
 Route::post('/updateTask',[TaskController::class,'updateTask']);
 
+Route::get('/getNextTasks',[TaskController::class,'getNextTasks']);
+
 Route::post('/assignTask',[TaskController::class,'assignTask']);
 // Route::post('/editTask',[TaskController::class,'editTask']);
 Route::delete('/delTask',[TaskController::class,'delTask']);

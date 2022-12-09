@@ -17,6 +17,7 @@ Class TaskService {
         $request = json_decode($req['data'],true);
         $data = $request['data'];
         $members_id = $request['assignee'];
+        // return $req;
            $task = Task::create($data);
         
             if(count($members_id)>0){
@@ -29,6 +30,7 @@ Class TaskService {
             if(isset($_FILES['files'])){
                 $this->addAttachment($request,$task);
               }
+            $task->status = DB::table('statuses')->where('id',$task->status_id)->get('status');
             return $task;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
     }
 
@@ -48,6 +50,7 @@ Class TaskService {
             if(isset($_FILES['files'])){
                 $this->addAttachment($request,$task);
               }
+            $task->status = DB::table('statuses')->where('id',$task->status_id)->get('status');
            return $task;      
     }
     
@@ -61,8 +64,7 @@ Class TaskService {
                     ['tasks.project_id',$request['project_id']]
                 ])
             ->distinct()
-            ->get(['members.id as id','first_name','last_name','email']);
-        
+            ->get(['members.id as id','first_name','last_name','email']);   
     }
 
     public function assignTask($task,$members_id){
@@ -74,12 +76,12 @@ Class TaskService {
     public function delTask($request){
        $task = Task::find($request['task_id']);
        $task->delete();
-        return array('status' => $task->status);
+        return array('status_id' => $task->status_id);
     }
         
     public function taskDetails($request){
         // Task::where('id',$request['id'])->delete();
-        $task = Task::where('id',$request['id'])->get(['id','title','description','status']);
+        $task = DB::table('tasks')->join('statuses','statuses.id','=','tasks.status_id')->where('tasks.id',$request['id'])->get(['tasks.id as id','title','description','status_id','status']);
         $comment = DB::table('comments')
         ->join('members','members.id','=','comments.member_id')
         ->where('task_id',$request['id'])->get(['description','comments.updated_at as updated_at','first_name','last_name']);
@@ -90,21 +92,23 @@ Class TaskService {
     }
    
     public function getTasks($request){
-       
-        // $project = Task::where('project_id',$request['project_id'])->get(['id','title','description','status']);
-        $tasks = DB::table('tasks')
-        ->where('project_id',$request['project_id'])->get(['id','title','description','status']);
-        foreach($tasks as $task){
-            $task->members=$this->getEditAssignees($task->id,$request['project_id']);
+        $pageSize = 1;
+        $status = DB::table('statuses')->where('project_id',$request['project_id'])->get(['id','status']);
+        foreach($status as $key => $sts){
+            $grpSts = $sts->status;
+            $tasks = DB::table('tasks')->where('status_id',$sts->id)->skip(0)->take($pageSize)->get();
+            if(count($tasks) > 0){
+                $sts->$grpSts = $tasks;
+                $sts->len = DB::table('tasks')->where('status_id',$sts->id)->count() - $pageSize ; // currently showing one tasks so pending tasks are total - 1
+                foreach($tasks as $task){
+                    $task->members=$this->getEditAssignees($task->id,$request['project_id']);
+                }
+            }
+            else{
+                unset($status[$key]);
+            }
         }
-        $resToSend=array();
-        for($i=0;$i<count($tasks);$i++){
-            $resToSend[$tasks[$i]->status] =  array();
-         }
-        for($i=0;$i<count($tasks);$i++){
-           array_push($resToSend[$tasks[$i]->status],$tasks[$i]);
-        }
-        return $resToSend;
+        return $status;
     }
 
     public function getAddAssignees($request){    
@@ -208,6 +212,19 @@ Class TaskService {
         foreach($request['comments'] as $cmnt){
             (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request['member_id'],'description'=>$cmnt])->save();
         }
+    }
+    public function getNextTasks($request){
+        $pageSize = 1;
+        $tasks = DB::table('tasks')->where([
+            ['project_id',$request['project_id']],
+            ['status_id',$request['status_id']]
+    ])->skip($request['pageNo']*$pageSize)->take($pageSize)->get();
+    foreach($tasks as $task){
+        $task->members=$this->getEditAssignees($task->id,$request['project_id']);
+    }
+    $len = DB::table('tasks')->where([['project_id',$request['project_id']],['status_id',$request['status_id']]])->count();
+    // dd($tasks);
+    return array("tasks"=>$tasks , "len"=>$len-$request['pageNo']*$pageSize-$pageSize);
     }
 }
 

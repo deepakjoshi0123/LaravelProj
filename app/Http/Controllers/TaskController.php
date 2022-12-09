@@ -26,6 +26,7 @@ class TaskController extends Controller
     }
     public function addTask(Request $req){ 
             // return $req['file'];
+            // return $req;
             $fls=array();
             $extensionFlag = false;
             $sizeFlag = false;
@@ -47,7 +48,7 @@ class TaskController extends Controller
                 'data.title' => 'required|string|min:3|max:40|', 
                 'data.description' => 'required|string|min:3|max:200', 
                 'comments' => 'nullable', 
-                'data.status' => 'nullable|string',    
+                'data.status_id' => 'nullable|string',    
             ]);
            
             if ($validated->fails()) {  
@@ -83,7 +84,7 @@ class TaskController extends Controller
             'data.title' => 'required|string|min:3|max:40|', 
             'data.description' => 'required|string|min:3|max:200', 
             'comments' => 'nullable', 
-            'data.status' => 'nullable|string',    
+            'data.status_id' => 'nullable|string',    
         ]);
        
         if ($validated->fails()) {  
@@ -135,5 +136,8 @@ class TaskController extends Controller
     }
     public function viewTaskAttachment(Request $req,$file_name){
         return response()->file('media/'.$file_name);
+    }
+    public function getNextTasks(Request $req){
+        return response()->json($this->taskService->getNextTasks($req->all()));
     }
 }

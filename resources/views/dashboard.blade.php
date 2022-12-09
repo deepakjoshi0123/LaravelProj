@@ -59,6 +59,7 @@
     var editOrAddFlag
     var tasks = {};
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+      // console.log('cheeelkkkk................')
       if(options.url === 'api/refresh' || options.url === '/logout' || options.refreshRequest  ){
         return ;
       }
@@ -92,7 +93,7 @@
 
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
     localStorage.setItem("proj_old_id",999999)
-    localStorage.setItem("status","OPEN");
+    // localStorage.setItem("status","OPEN");
     
 $.ajax({
     url:'api/projects',
@@ -123,9 +124,64 @@ $.ajax({
           console.log(x);
         } 
     }); //prettier 
+
+    //WIP localStorage.getItem('page_rec')  $(this).attr('data-show-more-id')
+    $(document).on('click','.show-more',function(e){
+      // var pageNo = 
+      let pageRec = JSON.parse(localStorage.getItem('page_rec'))
+
+      pageRec[`${$(this).attr('data-show-more-id').replaceAll('-',' ')}`] = pageRec[`${$(this).attr('data-show-more-id').replaceAll('-',' ')}`] + 1 
+      localStorage.setItem('page_rec',JSON.stringify(pageRec))
+      // console.log( pageRec )
+      // return
+      
+      $.ajax({
+      url:'api/getNextTasks',
+      data:{"project_id":localStorage.getItem('project_id'),"status_id":$(this).attr('data-show-more-id').replaceAll('-',' '),"pageNo":pageRec[`${$(this).attr('data-show-more-id').replaceAll('-',' ')}`]},
+      headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+      },
+        type:'get',
+        success:  function (response) {
+          console.log('got res ',response.tasks)
+          showTask(response.tasks,response.tasks[0].status_id,response.len)
+        },
+        error:  function(err){}
+        })
+      })
+
+  function showTask(item,key,len){
+      // console.log('show task', item ,key,len)
+      $.each(item,function(key2,item2){
+              //  var memToSend = JSON.stringify(item2.members)
+              // console.log( item2.members[0].first_name)
+              var mmnt=""
+              if(item2.members.length === 0){
+                mmnt=`No members added in this task`
+              }  
+              if(item2.members.length === 1){
+                mmnt=`${item2.members[0].first_name} added in this task`
+              }  
+              if(item2.members.length === 2){
+                mmnt=`${item2.members[0].first_name} and ${item2.members[1].first_name} added in this task`
+              } 
+              if(item2.members.length > 2){
+                mmnt=`${item2.members[0].first_name},${item2.members[1].first_name} and ${item2.members.length -2} more added in this task`
+              }        
+                // console.log('chec my key',key,item)
+                $(`#status-${key}`).append(
+                  `<x-task-list  id=${item2.id} title=${item2.title} description=${item2.description} memToShow=${mmnt}/>`)
+            })
+            // console.log('check it ---- ',item,key,len)
+            $(`#show-more-${key}`).remove();
+            if(len>0){
+              $(`#status-${key}`).append(`<div style="cursor:pointer;font-size:12px;color:blue" data-show-more-id="`+key+`" id="show-more-`+key+`" class="ms-3 show-more">see `+len+` more </div>`)
+            }
+         }
+
         $(document).on('click','.project-item',function(e){
           var proj_id = $(this).attr('data-project-id')
-          localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP']))
+          // localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP']))
           $(`#project-title-nav`).text($(`#project-title${proj_id}`).text())
           //break this into another function
          //____________________________________________________________________________________________ 
@@ -150,57 +206,57 @@ $.ajax({
               },
               type:'get',
               success:  function (res) {
-                console.log('check my response',res)
-                sts=JSON.parse(localStorage.getItem('Available_Status'))
+                // console.log('check res', res)
+                let sts=[]
                 for(let i=0;i<res.length;i++){
-                    sts.push(res[i].status.toUpperCase())
+                    sts.push(res[i].id)
                 }
-                uniq = [...new Set(sts)];
-                // console.log(uniq)
-                localStorage.setItem("Available_Status",JSON.stringify(uniq));
+                console.log(sts)
+                let pageRec = sts.reduce((keys, val) => ({ ...keys, [val]: 0}), {}) 
+                // console.log('check my response',pageRec)
+                localStorage.setItem("Available_Status",JSON.stringify(res));
+                localStorage.setItem("page_rec",JSON.stringify(pageRec));
+                localStorage.setItem("status",res[0].id);
+                // console.log('yet this is only',localStorage.getItem('Available_Status'))
               },
-              error:    function(err){}
+              error:  function(err){}
             })
 
-    $.ajax({
-    url:'api/tasks',
-    data:{"project_id":$(this).attr('data-project-id')},
-     headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-  },
-    type:'get',
-    success:  function (response) {
-        // console.log('checking ress',response)
-        $('#task-list').html("")
-        tasks=response
-        
-        sts=JSON.parse(localStorage.getItem('Available_Status'))
-
-        for(let i=0;i<Object.keys(response).length;i++){
-          sts.push(Object.keys(response)[i].toUpperCase())
-        }
-        uniq = [...new Set(sts)];
-        localStorage.setItem("Available_Status",JSON.stringify(uniq));
-        if(response.length === 0){
-            // console.log('no task to display')
-            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks in this project Yet ...</h5></div>`)  
-            return
-       }
-        
-        $.each(response,function(key,item){
-          $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark d-flex justify-content-center ms-2 mt-2 mb-1" style="width:25%" >`+key+`</div></div>`)
-            $.each(item,function(key2,item2){
-              console.log( item2.members)
-                $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
-                  `<x-task-list  id=${item2.id} title=${item2.title} description=${item2.description} mem=${item2.members}/>`)
-            })            
-        });
-      },
-       error: function(x,xs,xt){
-      }
-     });
-    })
-  })
+            $.ajax({
+                url:'api/tasks',
+                data:{"project_id":$(this).attr('data-project-id')},
+                headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+              },
+                type:'get',
+                success:  function (response) {
+                    // console.log('checking ress',response)
+                    $('#task-list').html("")
+                    tasks=response
+                    // console.log('its wrong',localStorage.getItem('Available_Status'))
+                    if(response.length === 0){
+                        // console.log('no task to display')
+                        $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks in this project Yet ...</h5></div>`)  
+                        return
+                  }
+                    $.each(response,function(key,item){
+                      // console.log('pa',item)
+                      $('#task-list').append(`<div id="status-`+response[key].id+`"><div class="">
+                      <div style="background-color:#009999" class="badge  ms-2 mt-2 mb-1" style="width:25%" >`+response[key].status+`</div>
+                      </div></div>
+                      `)
+                      // console.log()
+                      showTask(item[item.status],response[key].id,response[key].len)
+                     
+                           
+                    });
+                  },
+                  error: function(x,xs,xt){
+                  }
+                });
+                
+                })
+              })
 </script>
 <script src="{{ asset('js/mdb.min.js') }}">
 </script>

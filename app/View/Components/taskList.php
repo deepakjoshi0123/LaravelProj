@@ -9,18 +9,18 @@ class taskList extends Component
     public $id;
     public $title;
     public $description;
-    public $mem;
+    public $memToShow;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($id,$title,$description,$mem = [])
+    public function __construct($id,$title,$description,$memToShow = "")
     {
         $this->id = $id;
         $this->title = $title;
         $this->description = $description;
-        $this->mem = $mem;
+        $this->memToShow = $memToShow;
         // dd($mem);
         //
     }

@@ -1,26 +1,4 @@
 <div>
-  <style>
-    .select2-results__options[aria-multiselectable="true"] li {
-      padding-left: 30px;
-      position: relative
-    }
-
-    .select2-results__options[aria-multiselectable="true"] li:before {
-      position: absolute;
-      left: 8px;
-      opacity: .6;
-      top: 6px;
-      font-family: "FontAwesome";
-      content: "◻";
-    }
-
-    .select2-results__options[aria-multiselectable="true"] li[aria-selected="true"]:before {
-      content: "☑";
-    }
-  </style>
-  {{--
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous"> --}}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
   </script>
@@ -55,23 +33,15 @@
 
                   <div id="attachment-on-edit">
                     <span id="file-error"></span>
-
                   </div>
                 </div>
                 <div>
-
                 </div>
               </div>
             </div>
 
-
             <div class="">
-
               <div class="ms-5 mt-1">
-                {{-- <select style="width:60%" id="datalistOptions" class="form-select "
-                  aria-label="Default select example">
-                  <option disabled selected>Assign Task</option>
-                </select> --}}
                 <label>Assign Task</label>
                 <br>
                 <select style="width:250px" id="assignTaskSelect2" class=" js-select2" multiple="multiple">
@@ -83,10 +53,6 @@
                 </select>
                 <div id="modal-members"></div>
                 <div>
-                  {{-- <button style="min-width: 180px;" type="button" class="mt-4 btn btn-primary dropdown-toggle "
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    Choose Status
-                  </button> --}}
 
                   <ul class="dropdown-menu">
                     <input onChange="getCustomTaskStatus()" id="custom-status" class="form-control"
@@ -133,22 +99,15 @@
 </script>
 
 <script type="text/javascript">
-  // var assignee = "Unassigned";
-  
   $('#statusSelect2').change(function(){
     localStorage.setItem("statusChangeFlag",true)
     console.log('whats this',$('#statusSelect2').val())
-    localStorage.setItem('status',$('#statusSelect2').val().replaceAll('-',' '))
+    localStorage.setItem('status',$('#statusSelect2').val())
     })
-    // $("#assignTaskSelect2").select2({
-		// 	// closeOnSelect : false,
-		// 	// placeholder : "Placeholder",
-		// 	// allowHtml: true,
-		// 	// allowClear: true,
-		// 	// tags: true // создает новые опции на лету
-		// });
+
   localStorage.setItem("assignee","unassigned");
   function saveTask(data2){
+    console.log(data2)
     taskFile.append('data',JSON.stringify(data2))
     
          $.ajax({
@@ -160,52 +119,44 @@
             processData: false,
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            success:  function (res) {       
-            $('#no-task-msg').remove()                                      
-            avl_sts = JSON.parse(localStorage.getItem('Available_Status'))
-            if(!avl_sts.includes(res.status)){
-              avl_sts.push(res.status)
-            localStorage.setItem('Available_Status',JSON.stringify(avl_sts))
-            }
-          if(!res.edit){
-            var message="Task Added sucessfully"
-              $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
-              setTimeout(() => {    
-                // console.log('webapi--')
-                $('#response-message').remove()
-              }, 2000);
+            success:  function (res) {    
+              console.log('show more del',res)   
+                $('#no-task-msg').remove()                                      
+              if(!res.edit){
+                var message="Task Added sucessfully"
+                  $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
+                  setTimeout(() => {    
+                    $('#response-message').remove()
+                  }, 2000);
           }
           if(res.edit){
             var message="Task Updated sucessfully"
               $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
               setTimeout(() => {    
-                // console.log('webapi--')
                 $('#response-message').remove()
               }, 2000);
-
             if($(`#project-task-${res.id}`).parent().children().length == 2){ 
                     $(`#project-task-${res.id}`).parent().remove()
+                    console.log($(`#show-more-${res.status_id}`))
+                    $(`#show-more-${res.status_id}`).remove()
+
                   }
                   $(`#project-task-${res.id}`).remove()
               } 
-
-            if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length === 0){
-                $('#task-list ').prepend(`<div id=status-`+res.status.replaceAll(' ','').replaceAll("'",'')+`><div  class="badge badge-dark ms-2 mt-2 d-flex justify-content-center" style="width:25%" >`+res.status+`</div></div>`)
+            // console.log('error',res)
+            if($(`#status-${res.status_id}`).children().length === 0){
+                $('#task-list ').prepend(`<div id=status-`+res.status_id+`><div  class="badge ms-2 mt-2 d-flex justify-content-center" style="background-color:#009999;width:25%" >`+res.status[0].status+`</div></div>`)
               }
-              $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}  > div:nth-child(`+(1)+`)`).after(
-              
+              $(`#status-${res.status_id}  > div:nth-child(`+(1)+`)`).after(
                 `<x-task-list id=${res.id} title=${res.title} description=${res.description}/>`
               )
             $('#exampleModal').modal('toggle')
               resetModal()
           } ,
-            error: function(err){
-              
-              console.log(JSON.parse(err.responseText)['0']['data.title'])
-              console.log(JSON.parse(err.responseText)['sizeFlag'])
+            error: function(err){ 
               if(JSON.parse(err.responseText)['extensionFlag'])
               {
-                console.log('yes itsworking')
+                // console.log('yes itsworking')
               }
               if(err.status == 400){
                 if(JSON.parse(err.responseText)['0']['data.title']){
@@ -225,13 +176,12 @@
           })
   }
 
-   
   $(document).on('click','#add-task',function(e){
-    $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
-    
+    $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,val){
+      // console.log(val)
       //man issues is this only as value not taking afer space
       $('#statusSelect2').append(`
-        <option value=`+status.replaceAll(' ','-')+`>`+status+`</option>      
+        <option value=`+val.id+`>`+val.status+`</option>      
       `)
   })
     $.ajax({
@@ -256,7 +206,7 @@
 
       function resetModal(){
        
-        localStorage.setItem("status","OPEN");
+        localStorage.setItem("status",JSON.parse(localStorage.getItem("Available_Status"))[0].id);
         localStorage.setItem("assignee","unassigned");
         localStorage.setItem("statusChangeFlag",false);
         $('#statusSelect2').empty()
@@ -312,7 +262,7 @@
        
         if(editOrAddFlag === "add"){
           data['project_id'] = localStorage.getItem("project_id");
-          data['status'] = localStorage.getItem("status")
+          data['status_id'] = localStorage.getItem("status")
           data2['url'] = 'api/addTask'
           saveTask(data2)
         }
@@ -321,10 +271,10 @@
           statusSendFlag = localStorage.getItem("statusChangeFlag")
 
           if( statusSendFlag === 'true'){
-            data['status'] = localStorage.getItem("status")
+            data['status_id'] = localStorage.getItem("status")
           }
           data2['url'] = 'api/updateTask'
-          console.log(data2)
+          // console.log(data2)
           saveTask(data2)
         }
 
@@ -348,16 +298,16 @@
 
       function modalForEditOrAdd(task){
 
-      //  console.log(task)
-        $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
-          if(status !== task[0].status ){
+      //  console.log('k ',task)
+        $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,val){
+          if(val.status !== task[0].status ){
             $('#statusSelect2').append(`
-            <option  value=`+status.replaceAll(' ','-')+`>`+status+`</option>      
+            <option  value=`+val.id+`>`+val.status+`</option>      
            `)
           }
          
         })
-        $('#statusSelect2').prepend(` <option selected value=`+task[0].status.replaceAll(' ','-')+`>`+task[0].status+`</option>   `)
+        $('#statusSelect2').prepend(` <option selected value=`+task[0].status_id+`>`+task[0].status+`</option>   `)
 
         // console.log('going to apply--->',task[0].status)
     
@@ -371,11 +321,8 @@
         
         if(task[0].attachments.length>0){
           $('#attachment-on-edit').append(`
-          
             <div  id="modal-attachments">
-           
-            </div>
-            
+            </div>          
               `)
         var srt=0;end=2
         for(i=0;i<=task[0].attachments.length/2;i++){
@@ -411,9 +358,7 @@
         $('#exampleModal').modal('show')
       }
       function editOrAddTask(id){
-                      // $("#assignTaskSelect2").val(['11','17']);
-                      
-       
+
         task_id=id
         $.ajax({
             url:'api/taskDetails',
@@ -540,6 +485,7 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
+              console.log('del',res)
               var message="Task Deleted sucessfully"
               $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
               setTimeout(() => {    
@@ -551,11 +497,12 @@
                 console.log('webapi--')
                 $('#responseModalMsg').modal('toggle')
               }, 1000);
+
               $(`#project-task-${id}`).remove()
             
-              if($(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).children().length == 1){
-             
-                $(`#status-${res.status.replaceAll(' ','').replaceAll("'",'')}`).html("")
+              if($(`#status-${res.status_id}`).children().length == 1){     
+                $(`#status-${res.status_id}`).html("")
+                $(`#show-more-${res.status_id}`).html("")
               }
             },
             error: function(x){}

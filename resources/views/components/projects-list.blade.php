@@ -1,5 +1,6 @@
 <div class="div"
     style="width:20%;height:558px ;overflow-y: scroll; scrollbar-width: thin;scrollbar-color: blue orange;">
+
     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
         <div class="position-sticky">
             <div id="project-heading-title"></div>
@@ -8,6 +9,7 @@
                     <div class="ms-4" style="pdding:0.2rem">
                         <h5 class="ms-5 mt-2">Projects</h5>
                     </div>
+
                     <div class="nav-item mt-1 me-3">
                         <a class="" data-mdb-toggle="modal" data-mdb-target="#projectModal">
                             <i class="far fa-plus-square fa-lg mt-2" style="color: black;cursor: pointer"

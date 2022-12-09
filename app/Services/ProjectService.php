@@ -32,13 +32,24 @@ Class ProjectService{
         'project_id' => $project->id,
         'member_id' => $project->owner,
       ])->save() ;
-
-       return array(
+      
+      $this->addDefaultStatus($project->id);
+      
+      return array(
         'success' => true,
         'data'   => $project
       ); 
     }
-    
+
+    public function addDefaultStatus($project_id){
+        $defStatus = ['OPEN','CLOSED','WIP'];
+        foreach($defStatus as $status){
+          (new Status())->fill([
+            'project_id' => $project_id,
+            'status' => $status,
+          ])->save() ;
+        }
+    }
     public function addMemberToProject($request){
       (new Proj_Mem())->fill([
         'project_id' => $request['project_id'],
@@ -72,6 +83,6 @@ Class ProjectService{
     }
 
    public function getCustomStatus($request){
-      return Status::where('project_id',$request['project_id'])->distinct()->get(['status']);
+      return Status::where('project_id',$request['project_id'])->distinct()->get(['id','status']);
    }
 }
