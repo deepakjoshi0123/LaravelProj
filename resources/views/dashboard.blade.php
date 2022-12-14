@@ -45,9 +45,11 @@
 
   </div>
 </body>
+<script type="text/javascript" src="{{ URL::asset('js/helpers.js') }}"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+
 <script type="text/javascript">
   $(document).ready(function(){
     
@@ -125,19 +127,27 @@ $.ajax({
         } 
     }); //prettier 
 
+
     //WIP localStorage.getItem('page_rec')  $(this).attr('data-show-more-id')
-    $(document).on('click','.show-more',function(e){
+    $(document).on('click','.show-more-tasks',function(e){
       // var pageNo = 
+      console.log('iam clicked')
       let pageRec = JSON.parse(localStorage.getItem('page_rec'))
 
-      pageRec[`${$(this).attr('data-show-more-id').replaceAll('-',' ')}`] = pageRec[`${$(this).attr('data-show-more-id').replaceAll('-',' ')}`] + 1 
+      pageRec[`${$(this).attr('data-show-more-id')}`].pageNo = pageRec[`${$(this).attr('data-show-more-id')}`].pageNo + 1 
+      console.log(pageRec[`${$(this).attr('data-show-more-id')}`].pageNo)
       localStorage.setItem('page_rec',JSON.stringify(pageRec))
-      // console.log( pageRec )
+
       // return
       
       $.ajax({
       url:'api/getNextTasks',
-      data:{"project_id":localStorage.getItem('project_id'),"status_id":$(this).attr('data-show-more-id').replaceAll('-',' '),"pageNo":pageRec[`${$(this).attr('data-show-more-id').replaceAll('-',' ')}`]},
+      data:{"project_id":localStorage.getItem('project_id'),
+      "status_id":$(this).attr('data-show-more-id'),
+      "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
+      "add":pageRec[`${$(this).attr('data-show-more-id')}`].Add,
+      "del":pageRec[`${$(this).attr('data-show-more-id')}`].del
+    },
       headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
       },
@@ -145,41 +155,12 @@ $.ajax({
         success:  function (response) {
           console.log('got res ',response.tasks)
           showTask(response.tasks,response.tasks[0].status_id,response.len)
+          showMore(response.tasks[0].status_id,response.len,'show-more-tasks',`show-more-tasks-${response.tasks[0].status_id}`)
         },
         error:  function(err){}
         })
       })
-
-  function showTask(item,key,len){
-      // console.log('show task', item ,key,len)
-      $.each(item,function(key2,item2){
-              //  var memToSend = JSON.stringify(item2.members)
-              // console.log( item2.members[0].first_name)
-              var mmnt=""
-              if(item2.members.length === 0){
-                mmnt=`No members added in this task`
-              }  
-              if(item2.members.length === 1){
-                mmnt=`${item2.members[0].first_name} added in this task`
-              }  
-              if(item2.members.length === 2){
-                mmnt=`${item2.members[0].first_name} and ${item2.members[1].first_name} added in this task`
-              } 
-              if(item2.members.length > 2){
-                mmnt=`${item2.members[0].first_name},${item2.members[1].first_name} and ${item2.members.length -2} more added in this task`
-              }        
-                // console.log('chec my key',key,item)
-                $(`#status-${key}`).append(
-                  `<x-task-list  id=${item2.id} title=${item2.title} description=${item2.description} memToShow=${mmnt}/>`)
-            })
-            // console.log('check it ---- ',item,key,len)
-            $(`#show-more-${key}`).remove();
-            if(len>0){
-              $(`#status-${key}`).append(`<div style="cursor:pointer;font-size:12px;color:blue" data-show-more-id="`+key+`" id="show-more-`+key+`" class="ms-3 show-more">see `+len+` more </div>`)
-            }
-         }
-
-        $(document).on('click','.project-item',function(e){
+    $(document).on('click','.project-item',function(e){
           var proj_id = $(this).attr('data-project-id')
           // localStorage.setItem("Available_Status",JSON.stringify(['OPEN','CLOSED','WIP']))
           $(`#project-title-nav`).text($(`#project-title${proj_id}`).text())
@@ -197,7 +178,8 @@ $.ajax({
           document.getElementById("add-task").disabled = false;
           $("#search-task").prop('disabled', false);
           
-              
+       taskRefresh()
+        
         $.ajax({
               url:'api/getCustomStatus',
               data:{"project_id":$(this).attr('data-project-id')},
@@ -207,12 +189,12 @@ $.ajax({
               type:'get',
               success:  function (res) {
                 // console.log('check res', res)
-                let sts=[]
+                let pageRec ={}
                 for(let i=0;i<res.length;i++){
-                    sts.push(res[i].id)
+                  pageRec[res[i].id] = {'pageNo':0,'del':0,'Add':0}
                 }
-                console.log(sts)
-                let pageRec = sts.reduce((keys, val) => ({ ...keys, [val]: 0}), {}) 
+                
+                // let pageRec = sts.reduce((keys, val) => ({ ...keys, [val]: 0}), {}) 
                 // console.log('check my response',pageRec)
                 localStorage.setItem("Available_Status",JSON.stringify(res));
                 localStorage.setItem("page_rec",JSON.stringify(pageRec));
@@ -221,10 +203,11 @@ $.ajax({
               },
               error:  function(err){}
             })
-
-            $.ajax({
+      })
+      function taskRefresh(){
+        $.ajax({
                 url:'api/tasks',
-                data:{"project_id":$(this).attr('data-project-id')},
+                data:{"project_id":localStorage.getItem('project_id')},
                 headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
               },
@@ -238,7 +221,7 @@ $.ajax({
                         // console.log('no task to display')
                         $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks in this project Yet ...</h5></div>`)  
                         return
-                  }
+                     }
                     $.each(response,function(key,item){
                       // console.log('pa',item)
                       $('#task-list').append(`<div id="status-`+response[key].id+`"><div class="">
@@ -247,16 +230,18 @@ $.ajax({
                       `)
                       // console.log()
                       showTask(item[item.status],response[key].id,response[key].len)
-                     
-                           
+                      showMore(response[key].id,response[key].len,'show-more-tasks',`show-more-tasks-${response[key].id}`)
+
                     });
+                   
                   },
                   error: function(x,xs,xt){
-                  }
-                });
-                
-                })
-              })
+                }
+            });
+          }
+        })
+    
+    
 </script>
 <script src="{{ asset('js/mdb.min.js') }}">
 </script>

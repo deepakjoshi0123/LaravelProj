@@ -28,6 +28,9 @@ Route::group(['middleware' => ['jwt.verify']
     Route::post('/refresh', [MemberAuthController::class,'refresh']);
     Route::post('/me', [MemberAuthController::class,'me']);
     Route::get('/searchTask',[TaskController::class,'searchTask']);
+    Route::get('/getNextSearchedTasks',[TaskController::class,'getNextSearchedTasks']);
+    Route::get('/getNextFilteredTasks',[TaskController::class,'getNextFilteredTasks']);
+    
 Route::get('/filterTask',[TaskController::class,'filterTask']);
 Route::post('/createProject',[ProjectController::class,'createProject']);
 

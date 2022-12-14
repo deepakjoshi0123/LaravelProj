@@ -25,8 +25,6 @@ class TaskController extends Controller
         return response()->json($this->taskService->getTasks($req->all()));
     }
     public function addTask(Request $req){ 
-            // return $req['file'];
-            // return $req;
             $fls=array();
             $extensionFlag = false;
             $sizeFlag = false;
@@ -35,7 +33,6 @@ class TaskController extends Controller
                 foreach($req['files'] as $file){
                     $extension = $file->getClientOriginalExtension();
                     if($file->getSize() >150000) {
-                        // return $file->getSize() ;
                         $sizeFlag = true;
                     }
                     if(!in_array($extension, $allowedExtension)) {
@@ -43,8 +40,7 @@ class TaskController extends Controller
                     }
                 }
             }
-            
-            $validated = Validator::make(json_decode($req['data'],true), [ 
+        $validated = Validator::make(json_decode($req['data'],true), [ 
                 'data.title' => 'required|string|min:3|max:40|', 
                 'data.description' => 'required|string|min:3|max:200', 
                 'comments' => 'nullable', 
@@ -95,20 +91,9 @@ class TaskController extends Controller
         }
         return response()->json($this->taskService->updateTask($req));
     }
-
     public function assignTask(Request $req){ 
         return $this->taskService->assignTask($req->all());
     }
-    // public function editTask(Request $req){ 
-    //     $validated = $req->validate([ 
-    //         'id' => 'required',
-    //         'title' => 'required', 
-    //         'description' => 'required', 
-    //         'status' => 'required',
-    //         'project_id' => 'required',   
-    //     ]);
-    //     return $this->taskService->editTask($req->all());
-    // }
     public function delTask(Request $req){ 
         return $this->taskService->delTask($req->all());
     }
@@ -131,7 +116,6 @@ class TaskController extends Controller
         return response()->json(($this->taskService->filterTask($req->all())));
     }
     public function downloadTaskAttachment(Request $req,$file_name){
-        // return 'media/'.$file_name;
         return response()->download('media/'.$file_name);
     }
     public function viewTaskAttachment(Request $req,$file_name){
@@ -139,5 +123,11 @@ class TaskController extends Controller
     }
     public function getNextTasks(Request $req){
         return response()->json($this->taskService->getNextTasks($req->all()));
+    }
+    public function getNextSearchedTasks(Request $req){
+        return response()->json($this->taskService->getNextSearchedTasks($req->all()));
+    }
+    public function getNextFilteredTasks(Request $req){
+        return response()->json($this->taskService->getNextFilteredTasks($req->all()));
     }
 }

@@ -84,6 +84,9 @@
   </div>
 </div>
 
+
+<script type="text/javascript" src="{{ URL::asset('js/helpers.js') }}"></script>
+
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
   integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 
@@ -120,15 +123,19 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {    
-              console.log('show more del',res)   
+              console.log('show more ',res)   
                 $('#no-task-msg').remove()                                      
               if(!res.edit){
+              let page_rec = JSON.parse(localStorage.getItem('page_rec'))
+              page_rec[res.status_id].Add = JSON.parse(localStorage.getItem('page_rec'))[res.status_id].Add + 1;
+              localStorage.setItem('page_rec',JSON.stringify(page_rec))
                 var message="Task Added sucessfully"
                   $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
                   setTimeout(() => {    
                     $('#response-message').remove()
                   }, 2000);
           }
+          
           if(res.edit){
             var message="Task Updated sucessfully"
               $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
@@ -138,18 +145,24 @@
             if($(`#project-task-${res.id}`).parent().children().length == 2){ 
                     $(`#project-task-${res.id}`).parent().remove()
                     console.log($(`#show-more-${res.status_id}`))
-                    $(`#show-more-${res.status_id}`).remove()
-
-                  }
+                    // $(`#show-more-${res.status_id}`).remove()
+                }
                   $(`#project-task-${res.id}`).remove()
               } 
             // console.log('error',res)
             if($(`#status-${res.status_id}`).children().length === 0){
-                $('#task-list ').prepend(`<div id=status-`+res.status_id+`><div  class="badge ms-2 mt-2 d-flex justify-content-center" style="background-color:#009999;width:25%" >`+res.status[0].status+`</div></div>`)
+              $('#task-list').append(`<div id="status-`+res.status_id+`"><div class="">
+                  <div style="background-color:#009999" class="badge  ms-2 mt-2 mb-1" style="width:25%" >`+res.status[0].status+`</div>
+                </div></div>
+              `)
+                // $('#task-list ').prepend(`<div id=status-`+res.status_id+`><div  class="badge ms-2 mt-2 d-flex justify-content-center" style="background-color:#009999;width:25%" >`+res.status[0].status+`</div></div>`)
               }
-              $(`#status-${res.status_id}  > div:nth-child(`+(1)+`)`).after(
-                `<x-task-list id=${res.id} title=${res.title} description=${res.description}/>`
-              )
+              let resArr = [res];
+              // console.log('hello',resArr,res,res.status_id)
+              // $(`#status-${res.status_id}  > div:nth-child(`+(1)+`)`).after(
+                showTask(resArr,res.status_id,)
+
+              // )
             $('#exampleModal').modal('toggle')
               resetModal()
           } ,
@@ -204,37 +217,7 @@
           $('#exampleModal').modal('show')   
       });  
 
-      function resetModal(){
-       
-        localStorage.setItem("status",JSON.parse(localStorage.getItem("Available_Status"))[0].id);
-        localStorage.setItem("assignee","unassigned");
-        localStorage.setItem("statusChangeFlag",false);
-        $('#statusSelect2').empty()
-        
-        $('#assignTaskSelect2').html("")
-        // $('#statusSelect2').append('<option selected>Choose Status</option>')
-        $('added-current-status').remove()
-        $("#task-title").val("")
-        $("#task-desc").val("")
-        $("#custom-status").val("")
-        $("#task-comment").val("")
-        $("#task-file").val("")
-        $("#comment-body").remove()
-        $("#task-status").html("")
-
-        $("#tsk-title").html("")
-        $("#tsk-desc").html("")
-        $('#file-error').html("")
-        $('#datalistOptions').html("")
-        $('#datalistOptions').append(`<option value="unassigned">Assign Task</option>`)
-        $('#task-status-label').text("")
-        $('#status-heading').text("")
-        $('#attachment-on-edit').html("")
-        
-        
-        $('#modal-members').html("")
-        localStorage.setItem("comments",JSON.stringify([]))
-      }
+  
       $(document).on('click','#save-task',function(e){
         // console.log(  $('#statusSelect2').val())
         $("#tsk-title").html("")
@@ -259,9 +242,8 @@
         "comments":JSON.parse(localStorage.getItem("comments")),
         "assignee":$('#assignTaskSelect2').val(),
       }
-       
+        data['project_id'] = localStorage.getItem("project_id");
         if(editOrAddFlag === "add"){
-          data['project_id'] = localStorage.getItem("project_id");
           data['status_id'] = localStorage.getItem("status")
           data2['url'] = 'api/addTask'
           saveTask(data2)
@@ -280,23 +262,7 @@
 
       });
 
-      function renderComments(cmnt){
-
-        $('#comment-body').append(`
-              <div class="mt-1 ms-2 me-4" style="background-color:#e9f1f7;border-radius:0.5rem">
-                <div class="mt-1 ms-1 d-flex justify-content-between-start " >
-                  <i class="fas fa-user-tie mt-1"></i>
-                  <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ cmnt.first_name+` `+cmnt.last_name+`</small>
-                  <small style="font-size:11px" class="ms-4 " id="modal-desc">`+ new Date(cmnt.updated_at).toLocaleString() +`</small>
-                  </div>
-                  <div style="font-size:10px" class="ms-5 fs-6 " id="modal-desc">`+ cmnt.description +`</div>
-                </div> 
-              </div>
-
-                `)
-      }
-
-      function modalForEditOrAdd(task){
+    function modalForEditOrAdd(task){
 
       //  console.log('k ',task)
         $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,val){
@@ -474,38 +440,5 @@
         $('#confirmModalDel').modal('toggle')
           deleteTask(localStorage.getItem('tsk-del-id'))
       })
-      function deleteTask(id){
-            var id=id
-            console.log('--->',id)
-            // return
-            $.ajax({
-            url:'api/delTask',
-            data:{"task_id":id},
-            type:'delete',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            success:  function (res) {
-              console.log('del',res)
-              var message="Task Deleted sucessfully"
-              $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
-              setTimeout(() => {    
-                // console.log('webapi--')
-                $('#response-message').remove()
-              }, 2000);
-              $('#responseModalMsg').modal('show')
-              setTimeout(() => {
-                console.log('webapi--')
-                $('#responseModalMsg').modal('toggle')
-              }, 1000);
-
-              $(`#project-task-${id}`).remove()
-            
-              if($(`#status-${res.status_id}`).children().length == 1){     
-                $(`#status-${res.status_id}`).html("")
-                $(`#show-more-${res.status_id}`).html("")
-              }
-            },
-            error: function(x){}
-           })
-        }
+     
 </script>

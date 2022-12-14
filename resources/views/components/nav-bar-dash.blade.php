@@ -76,30 +76,73 @@
             error: function(err){}
         })
     })
+
+    $(document).on('click','.show-more-search-tasks',function(e){
+       
+    // console.log($(this).attr('data-show-more-id'))
+     let pageRec = JSON.parse(localStorage.getItem('page_rec'))
+      pageRec[`${$(this).attr('data-show-more-id')}`].pageNo = pageRec[`${$(this).attr('data-show-more-id')}`].pageNo + 1 
+      console.log(pageRec[`${$(this).attr('data-show-more-id')}`].pageNo)
+      localStorage.setItem('page_rec',JSON.stringify(pageRec))
+
+      $.ajax({
+      url:'api/getNextSearchedTasks',
+      data:{"project_id":localStorage.getItem('project_id'),
+      "status_id":$(this).attr('data-show-more-id'),
+      "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
+      "add":pageRec[`${$(this).attr('data-show-more-id')}`].Add,
+      "del":pageRec[`${$(this).attr('data-show-more-id')}`].del,
+      "text":$('#search-task').val()
+    },
+      headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+      },
+        type:'get',
+        success:  function (response) {
+        //   console.log('got res ',response.tasks)
+          showTask(response.tasks,response.tasks[0].status_id,response.len)
+          showMore(response.tasks[0].status_id,response.len,'show-more-search-tasks',`show-more-search-tasks-${response.tasks[0].status_id}`)
+        },
+        error:  function(err){}
+        })
+
+    })
+
     function searchTask(){
+        let res = Object.keys(JSON.parse(localStorage.getItem('page_rec')))
+      
+        let pageRec ={}
+                for(let i=0;i<res.length;i++){
+                  pageRec[res[i]] = {'pageNo':0,'del':0,'Add':0}
+                }
+        localStorage.setItem("page_rec",JSON.stringify(pageRec));
+        // console.log(pageRec)
+        // return 
         $.ajax({
             url:'api/searchTask',
-            data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id')},
+            data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id'),
+        },
             type:'get',
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
-            console.log(response)
+            // console.log(response)
             $('#task-list').html("")
-            console.log('no task to display')
+            // console.log('no task to display')
             if(response.length === 0){
-            console.log('no task to display')
+            // console.log('no task to display')
             $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the search criteria ...</h5></div>`)  
             return
              }
-
+             console.log('check item',response)
             $.each(response,function(key,item){
-            $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark ms-2 mt-2 mb-1" style="width:10%" >`+key+`</div></div>`)
-            $.each(item,function(key2,item2){
-                $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
-                    `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`
-                 )
-            })            
+                console.log(item[item.status],response[key].id)
+                $('#task-list').append(`<div id="status-`+response[key].id+`"><div class="">
+                  <div style="background-color:#009999" class="badge  ms-2 mt-2 mb-1" style="width:25%" >`+item.status+`</div>
+                </div></div>
+              `)
+                showTask(item[item.status],response[key].id)
+                showMore(response[key].id,response[key].len,'show-more-search-tasks',`show-more-search-tasks-${response[key].id}`)           
         });
      },
             error: function(res){}

@@ -28,6 +28,7 @@
     </div>
 </div>
 
+<script type="text/javascript" src="{{ URL::asset('js/helpers.js') }}"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous">
 </script>
@@ -48,7 +49,7 @@
   })
     $(document).on('click','#navbarDropdownMenuAvatar-filter-task',function(e){
         $('#filterModal').modal('toggle')
-       
+       console.log('filter modal clicked')
         $.ajax({
             url:'api/add/assignees',
             data:{"project_id":localStorage.getItem('project_id')},
@@ -56,7 +57,7 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
-                console.log(res)
+                // console.log(res)
                 $.each(res,function(key,mem){   
                     $('#mySelect2').append(`
                     <option value=`+mem.id+`>`+mem.email+`</option>      
@@ -66,9 +67,9 @@
             error: function (err){}
             })   
         $.each(JSON.parse(localStorage.getItem('Available_Status')),function(key,mem){
-           
+        //    console.log(mem)
             $('#mySelect3').append(`
-            <option value=`+mem.replaceAll(' ','-')+`>`+mem+`</option>  
+            <option value=`+mem.id+`>`+mem.status+`</option>  
             `)
         })
     })
@@ -83,8 +84,16 @@
         $('#mySelect3').html("")
         $('#mySelect2').html("")
         data={"project_id":localStorage.getItem("project_id"),'filters':filters}
-        // console.log('data->',data)
-        // return
+       localStorage.setItem('filterData',JSON.stringify(data))
+        let res = Object.keys(JSON.parse(localStorage.getItem('page_rec')))
+      
+        let pageRec ={}
+            for(let i=0;i<res.length;i++){
+              pageRec[res[i]] = {'pageNo':0,'del':0,'Add':0}
+            }
+        localStorage.setItem("page_rec",JSON.stringify(pageRec));
+        // console.log(pageRec)
+        // return 
         $.ajax({
             url:'api/filterTask',
             data:data,
@@ -92,27 +101,62 @@
             headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
-            // console.log(res)
+            if(!response.length){
+                    response = Object.values(response)
+                }
+            console.log(response , typeof response , response.length)
+            // return
             $('#task-list').html("")
-            console.log(response)
+            // console.log('no task to display')
             if(response.length === 0){
-            console.log('no task to display')
-            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the filters ...</h5></div>`)  
+            // console.log('no task to display')
+            $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the search criteria ...</h5></div>`)  
             return
-         }
+             }
+             console.log('check item',response)
             $.each(response,function(key,item){
-          
-            $('#task-list').append(`<div id="status-`+key.replaceAll(' ','').replaceAll("'",'')+`"><div  class="badge badge-dark d-flex justify-content-center ms-2 mt-2 mb-1" style="width:25%" >`+key+`</div></div>`)
-            $.each(item,function(key2,item2){
-                $(`#status-${key.replaceAll(' ','').replaceAll("'",'')}`).append(
-                    `<x-task-list id=${item2.id} title=${item2.title} description=${item2.description}/>`
-                 )
-            })            
+                console.log(item[item.status],response[key].id)
+                $('#task-list').append(`<div id="status-`+response[key].id+`"><div class="">
+                  <div style="background-color:#009999" class="badge  ms-2 mt-2 mb-1" style="width:25%" >`+item.status+`</div>
+                </div></div>
+              `)
+                showTask(item[item.status],response[key].id)
+                showMore(response[key].id,response[key].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[key].id}`)           
         });
-           
-            },
-            error: function(err){}
+     },
+            error: function(res){}
         })
     
     })
+
+    $(document).on('click','.show-more-filter-tasks',function(e){
+       
+       console.log($(this).attr('data-show-more-id'),'hi filter')
+        let pageRec = JSON.parse(localStorage.getItem('page_rec'))
+         pageRec[`${$(this).attr('data-show-more-id')}`].pageNo = pageRec[`${$(this).attr('data-show-more-id')}`].pageNo + 1 
+         console.log(pageRec[`${$(this).attr('data-show-more-id')}`].pageNo)
+         localStorage.setItem('page_rec',JSON.stringify(pageRec))
+        // return
+      $.ajax({
+         url:'api/getNextFilteredTasks',
+         data:{"filters":JSON.parse(localStorage.getItem('filterData'))['filters'],
+         "status_id":$(this).attr('data-show-more-id'),
+         "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
+         "add":pageRec[`${$(this).attr('data-show-more-id')}`].Add,
+         "del":pageRec[`${$(this).attr('data-show-more-id')}`].del,
+         "project_id":localStorage.getItem('project_id')
+       },
+         headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+         },
+           type:'get',
+           success:  function (response) {
+           //   console.log('got res ',response.tasks)
+             showTask(response.tasks,response.tasks[0].status_id,response.len)
+             showMore(response.tasks[0].status_id,response.len,'show-more-filter-tasks',`show-more-filter-tasks-${response.tasks[0].status_id}`)
+           },
+           error:  function(err){}
+           })
+       })
+
 </script>
