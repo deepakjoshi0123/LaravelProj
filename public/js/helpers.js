@@ -1,8 +1,4 @@
-// function hello(name) {
-//     console.log(`hello this is helper ${name}`);
-// }
-
-function showTask(item, key) {
+function showTask(item, key, appendAt = 1) {
     // console.log("show task", item, key, len);
     $.each(item, function (key2, item2) {
         //  var memToSend = JSON.stringify(item2.members)
@@ -22,7 +18,7 @@ function showTask(item, key) {
                 item2.members[1].first_name
             } and ${item2.members.length - 2} more added in this task`;
         }
-        $(`#status-${key}  > div:nth-child(` + 1 + `)`).after(
+        $(`#status-${key}  > div:nth-child(` + appendAt + `)`).after(
             `<div class=" ms-1 " id="project-task-` +
                 item2.id +
                 `">
@@ -118,9 +114,11 @@ function showMore(key, len, clsName, id) {
                 key +
                 `" id=` +
                 id +
-                ` class="ms-2 ${clsName} ">see ` +
+                ` class="ms-2 ${clsName} ">see ${
+                    len - 2 >= 0 ? 2 : 1
+                } more  [` +
                 len +
-                ` more </div>`
+                `]  </div>`
         );
     }
 }

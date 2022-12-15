@@ -139,7 +139,7 @@ $.ajax({
       localStorage.setItem('page_rec',JSON.stringify(pageRec))
 
       // return
-      
+      console.log('check this----> ',this)
       $.ajax({
       url:'api/getNextTasks',
       data:{"project_id":localStorage.getItem('project_id'),
@@ -152,9 +152,9 @@ $.ajax({
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
       },
         type:'get',
-        success:  function (response) {
-          console.log('got res ',response.tasks)
-          showTask(response.tasks,response.tasks[0].status_id,response.len)
+        success:   (response) => {
+          console.log('got res ')
+          showTask(response.tasks,response.tasks[0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
           showMore(response.tasks[0].status_id,response.len,'show-more-tasks',`show-more-tasks-${response.tasks[0].status_id}`)
         },
         error:  function(err){}
@@ -229,7 +229,7 @@ $.ajax({
                       </div></div>
                       `)
                       // console.log()
-                      showTask(item[item.status],response[key].id,response[key].len)
+                      showTask(item[item.status],response[key].id)
                       showMore(response[key].id,response[key].len,'show-more-tasks',`show-more-tasks-${response[key].id}`)
 
                     });

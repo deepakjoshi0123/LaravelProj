@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
+use App\Services\MemberAuthService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
@@ -17,7 +18,12 @@ use Session;
 
 class MemberAuthController extends Controller
 {
+    protected $memberAuthService;
+    public function __construct(MemberAuthService $memberAuthService) {
+        $this->memberAuthService = $memberAuthService;  
+    }
     public function login_view(Request $req){
+       
         if($req->session()->get('userid')){
             return redirect('dashboard');
         }
@@ -55,57 +61,27 @@ class MemberAuthController extends Controller
         if($email->count()!==0){
             return response()->json(['email already exists,register with another email'], Response::HTTP_BAD_REQUEST);;
         }
-
-        $memberData = $req->all();
-        $member = Member::create($memberData);
-        $member = Member::where('email',$req['email'])->first();
-        $member->verification_token = str_random(32);
-        $member->save();
-
-        // $memberData->save();
-        Mail::send('mail.register-mail',$member->toArray(), function ($message) {
-            $message->to('deepakjoshi0123@gmail.com','trello clone')
-            ->subject('mailtrap test');
-        });
-        return response()->json([
-            'status' => 'OK',
-            'message' => 'Member added Successfully'
-        ]);
+        return response()->json($this->memberAuthService->register($req));
     }
    
     public function me()
     {   
         return response()->json(auth()->user());
      }
+   
    public function logout()
-   {    
-    //    auth()->logout();
+     {    
        Session::flush();
        return redirect('login');
-   }
+     }
 
    public function refresh()
    { 
        return auth()->refresh();
    }
 
-   protected function respondWithToken($token)
-   {
-       return response()->json([
-           'access_token' => $token,
-           'token_type' => 'bearer',
-           'expires_in' => auth()->factory()->getTTL() 
-       ]);
-   }
-
     public function verifyMember($token){
-        $member = Member::where([['verification_token',$token],["is_verfied","0"]])->first();
-        if($member == null){
-            return "Invalid request OR invalid token";
-        }
-        $member->is_verfied = "1";
-        $member->save();
-        return "verified successfully";
+        return response()->json($this->memberAuthService->verifyMember($token));
     }
 
     public function Enter_Email_view(){
@@ -113,42 +89,25 @@ class MemberAuthController extends Controller
     }
     // handle exception
     public function change_password_view(Request $req , $key){
-        $member = Member::where([
-            ['reset_token',$key],
-            ['token_expiry','>=',Carbon::now('Asia/Kolkata')]
-        ])->first();
-        if($member === null){
-            return "Link expired OR Invalid Req";
-        }
-            return view('changePassword');
+        return $this->memberAuthService->change_password_view($req,$key);
     }
 
     public function sendRestLink(Request $req){
-        
         $validated = Validator::make($req->all(), [ 
             'email' => 'required|email|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/', 
         ]);
        
         if ($validated->fails()) {    
-            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST) ;
         }
         $email = Member::where('email',$req['email'])->get();
         if($email->count()===0){
-            return response()->json(['Email not found in db'], Response::HTTP_BAD_REQUEST);;
+            return response()->json(['Email not found in db'], Response::HTTP_BAD_REQUEST);
         }
-        $member = Member::where('email',$req['email'])->first();
-        $member->reset_token = str_random(32);
-        $member->token_expiry = Carbon::now('Asia/Kolkata')->addMinutes(5);
-        $member->save();
-        $token = array('token' => $member->reset_token);
-        
-        Mail::send('mail.password-reset-link',$token, function ($message) {
-            $message->to('deepakjoshi0123@gmail.com','trello clone')
-            ->subject('password reset link');
-        });
+        return $this->memberAuthService->sendResetLink($req);  
     }
-       public function changePassword(Request $req){
-        
+       
+    public function changePassword(Request $req){ 
         $validated = Validator::make($req->all(), [ 
             'token' => 'required', 
             'password' => [
@@ -162,19 +121,10 @@ class MemberAuthController extends Controller
             
         ]);
 
-        if ($validated->fails()) {    
-            return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
-        }
-       
-        $member = Member::where('reset_token',$req->get('token'))->first();
-
-        $member->password = $req['password'];
-        $member->save();
-
-        if($member == null){
-            return ["Invalid Request OR token expired"];
-        }
-        return response()->json($member);
+            if ($validated->fails()) {    
+                return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
+            }
+            return $this->memberAuthService->changePassword($req);  
         }
 
         public function login(Request $req){
@@ -186,30 +136,17 @@ class MemberAuthController extends Controller
             if ($validated->fails()) {    
                 return redirect('login')->withErrors($validated->messages());
             }
-            
-           $credentials = request(['email', 'password']);
-           if (Auth::attempt($credentials)) {
-                    // dd(Auth::check());
-                    $req->session()->put('userid',Auth::id());
-                    // Auth::logoutOtherDevices(request('password'));
-                    return redirect('dashboard');
-           }
-           return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
+            return $this->memberAuthService->login($req);  
          }
-         public function getToken(Request $req){
+
+    public function getToken(Request $req){
            
-            $validated = Validator::make($req->all(), [ 
-                'email' => 'required|email', 
-                'password' => 'required'
-            ]);
-            // if ($validated->fails()) {    
-            //     return redirect('login')->withErrors($validated->messages());
-            // }
-           $credentials = request(['email', 'password']);
-           if ($token = auth()->attempt($credentials)) {
-                return response()->json(['token' => $token,'first_name'=>auth()->guard('api')->user()->first_name,'last_name'=>auth()->guard('api')->user()->last_name,'member_id'=>auth()->guard('api')->user()->id]);
+        $credentials = request(['email', 'password']);
+        if ($token = auth()->attempt($credentials)) {
+                return (['token' => $token,'first_name'=>auth()->guard('api')->user()->first_name,'last_name'=>auth()->guard('api')->user()->last_name,'member_id'=>auth()->guard('api')->user()->id]);
             }
-            return response()->json(['unauthorized' => 'Unauthorized']);
+        return (['unauthorized' => 'Unauthorized']);
+        //    return response()->json($this->memberAuthService->getToekn($req));
          }
 }
 

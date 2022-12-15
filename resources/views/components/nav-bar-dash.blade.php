@@ -98,9 +98,9 @@
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
       },
         type:'get',
-        success:  function (response) {
+        success: (response) => {
         //   console.log('got res ',response.tasks)
-          showTask(response.tasks,response.tasks[0].status_id,response.len)
+          showTask(response.tasks,response.tasks[0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
           showMore(response.tasks[0].status_id,response.len,'show-more-search-tasks',`show-more-search-tasks-${response.tasks[0].status_id}`)
         },
         error:  function(err){}
