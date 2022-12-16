@@ -164,7 +164,7 @@ Class TaskService {
             ->orderBy('id', 'DESC')->skip(0)->take($pageSize)->get();
             if(count($tasks) > 0){
                 $sts->$grpSts = $tasks;
-                $sts->len = $this->getPendingTasksLength($sts->id,$request)- $pageSize; // currently showing one tasks so pending tasks are total - 1
+                $sts->len = $this->getPendingTasksLength($sts->id,$request)- $pageSize ; // currently showing one tasks so pending tasks are total - 1
                 foreach($tasks as $task){
                     $task->members=$this->getEditAssignees($task->id,$request['project_id']);
                 }
@@ -198,7 +198,7 @@ Class TaskService {
 
             $len = $this->getPendingTasksLength($status_id,$request,$pageSize);
             // return $len;
-            return array("tasks"=>$tasks , "len"=>$len-$request['pageNo']*$pageSize- $pageSize);
+            return array("tasks"=>$tasks , "len"=>$len-$request['pageNo']*$pageSize- $pageSize +$request['del']-$request['add']);
         }
 
     public function filterArray($arr){
@@ -235,7 +235,7 @@ Class TaskService {
     // return $tasks;
     $len = $this->getFilterTasksLen($request,$members,$request['status_id']);
     // $len = 5;
-    return array("tasks"=>$tasksRes , "len"=>$len-$request['pageNo']*$pageSize-$pageSize);
+    return array("tasks"=>$tasksRes , "len"=>$len-$request['pageNo']*$pageSize-$pageSize+$request['del']-$request['add']);
         // return "hi";
     }
 
@@ -329,7 +329,7 @@ Class TaskService {
         $task->members=$this->getEditAssignees($task->id,$request['project_id']);
     }
     $len = DB::table('tasks')->where([['project_id',$request['project_id']],['status_id',$request['status_id']]])->count();
-    return array("tasks"=>$tasks , "len"=>$len-$request['pageNo']*$pageSize-$pageSize);
+    return array("tasks"=>$tasks , "len"=>$len-$request['pageNo']*$pageSize-$pageSize+$request['del']-$request['add']);
     }
 }
 
