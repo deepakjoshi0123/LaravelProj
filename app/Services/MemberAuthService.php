@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use App\Models\Member;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 Class MemberAuthService{
     public function register($req){
         $memberData = $req->all();
@@ -74,14 +76,17 @@ Class MemberAuthService{
         }
         return response()->json($member);
     }
+
     public function login($req){
         // return 'hi login';
         $credentials = request(['email', 'password']);
         if (Auth::attempt($credentials)) {
-                 // dd(Auth::check());
+
                  $req->session()->put('userid',Auth::id());
                  // Auth::logoutOtherDevices(request('password'));
-                 return redirect('dashboard');
+                 setcookie("user", "deepak joshi", time() - 3600); 
+                 return redirect('dashboard')->withCookie('jwt-token',auth()->attempt($credentials),60,"/", null, false, false);
+                 //last 3 flags are for path , secure and http only for cookie
         }
         return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
     }

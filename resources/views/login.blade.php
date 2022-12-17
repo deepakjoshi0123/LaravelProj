@@ -65,29 +65,28 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
-    $(document).on('click','#login',function(e){
-        // <?php $message ?>
-        
-        // e.preventDefault()
-        // console.log(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256($('#password').val(),'secret')))
-        // return
-              $.ajax({
-                    url:'api/getToken',
-                    data:{'email':$('#email').val(),'password':$('#password').val()},
-                    type:'get',
-                    success:  function (response) {
-                        console.log(response)
-                          localStorage.setItem("jwt-token", response.token);
-                          localStorage.setItem("first_name", response.first_name);
-                          localStorage.setItem("last_name", response.last_name);
-                          localStorage.setItem("member_id", response.member_id);
-                          e.preventDefault()
-                    },
-                    error: function(err){
-                        console.log('err----->',err)
-                    }
-                  })
-              })
+    // $(document).on('click','#login',function(e){
+    //     // <?php $message ?>
+    //     // e.preventDefault()
+    //     // console.log(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256($('#password').val(),'secret')))
+    //     // return
+    //           $.ajax({
+    //                 url:'api/getToken',
+    //                 data:{'email':$('#email').val(),'password':$('#password').val()},
+    //                 type:'get',
+    //                 success:  function (response) {
+    //                     console.log(response)
+    //                       localStorage.setItem("jwt-token", response.token);
+    //                       localStorage.setItem("first_name", response.first_name);
+    //                       localStorage.setItem("last_name", response.last_name);
+    //                       localStorage.setItem("member_id", response.member_id);
+    //                       e.preventDefault()
+    //                 },
+    //                 error: function(err){
+    //                     console.log('err----->',err)
+    //                 }
+    //               })
+    //           })
 </script>
 
 </html>

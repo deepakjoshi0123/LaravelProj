@@ -82,6 +82,7 @@ Class TaskService {
     }
         
     public function taskDetails($request){
+        // return $request;
         // Task::where('id',$request['id'])->delete();
         $task = DB::table('tasks')->join('statuses','statuses.id','=','tasks.status_id')->where('tasks.id',$request['id'])->get(['tasks.id as id','title','description','status_id','status']);
         $comment = DB::table('comments')

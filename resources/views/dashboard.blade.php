@@ -52,7 +52,27 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
+
+    console.log('cookie check ----? > ',document.cookie.split(`jwt-token=`).pop().split(';')[0])
     
+    // $.ajax({
+    //         url:'api/refresh',
+    //         headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}` },
+    //         type:'get',
+    //         success:  function (res) {
+    //            localStorage.setItem('jwt-token',res) 
+    //            options['headers']['Authorization']=`Bearer ${localStorage.getItem('jwt-token')}`
+    //            $.ajax(options) 
+    //         },
+    //         error: function(err){}
+    //       })
+
+//   $.ajaxSetup({
+//     beforeSend: function(xhr) {
+//         console.log('yes iam called')
+//         // xhr.setRequestHeader('x-my-custom-header', 'some value');
+//     }
+// });      
     function parseJwt (token) {
        return JSON.parse(atob(token.split('.')[1]));
     }
@@ -61,12 +81,12 @@
     var editOrAddFlag
     var tasks = {};
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-      // console.log('cheeelkkkk................')
+      console.log('cheeelkkkk................')
       if(options.url === 'api/refresh' || options.url === '/logout' || options.refreshRequest  ){
         return ;
       }
       jqXHR.abort();
-      const token = localStorage.getItem('jwt-token');
+      const token = document.cookie.split(`jwt-token=`).pop().split(';')[0];
       var ttl;
       if(token){
         ttl = (new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000;
@@ -99,8 +119,8 @@
     
 $.ajax({
     url:'api/projects',
-    data:{"member_id":localStorage.getItem('member_id')},
-    headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+    data:{"member_id":"1"},
+    headers:{'Authorization': `Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`,
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
   },
     type:'get',
@@ -208,7 +228,7 @@ $.ajax({
         $.ajax({
                 url:'api/tasks',
                 data:{"project_id":localStorage.getItem('project_id')},
-                headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
+                headers:{'Authorization': `Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`,
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
               },
                 type:'get',
