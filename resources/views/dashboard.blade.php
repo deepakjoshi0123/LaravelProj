@@ -67,12 +67,12 @@
     //         error: function(err){}
     //       })
 
-//   $.ajaxSetup({
-//     beforeSend: function(xhr) {
-//         console.log('yes iam called')
-//         // xhr.setRequestHeader('x-my-custom-header', 'some value');
-//     }
-// });      
+  $.ajaxSetup({
+    beforeSend: function(xhr) {
+        console.log('yes iam called')
+        xhr.setRequestHeader('Authorization',`Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`);
+    }
+});      
     function parseJwt (token) {
        return JSON.parse(atob(token.split('.')[1]));
     }
@@ -81,7 +81,7 @@
     var editOrAddFlag
     var tasks = {};
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-      console.log('cheeelkkkk................')
+      console.log('cheeelkkkk................',options['headers'])
       if(options.url === 'api/refresh' || options.url === '/logout' || options.refreshRequest  ){
         return ;
       }
@@ -108,6 +108,7 @@
           })
         }
         else {
+          console.log('going fine')
           options.refreshRequest = true
             $.ajax(options)
         }
