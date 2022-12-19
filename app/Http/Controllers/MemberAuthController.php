@@ -59,9 +59,9 @@ class MemberAuthController extends Controller
         return response()->json($this->memberAuthService->register($req));
     }
    
-    public function me()
+    public function me(Request $req)
     {   
-        return response()->json(auth()->user());
+        return response()->json(["id"=>$req['user']['id'],"first_name"=>$req['user']['first_name'],"last_name"=>$req['user']['last_name']]);
     }
    
    public function logout()

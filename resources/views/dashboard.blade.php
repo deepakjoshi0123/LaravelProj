@@ -53,23 +53,9 @@
 <script type="text/javascript">
   $(document).ready(function(){
 
-    console.log('cookie check ----? > ',document.cookie.split(`jwt-token=`).pop().split(';')[0])
-    
-    // $.ajax({
-    //         url:'api/refresh',
-    //         headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}` },
-    //         type:'get',
-    //         success:  function (res) {
-    //            localStorage.setItem('jwt-token',res) 
-    //            options['headers']['Authorization']=`Bearer ${localStorage.getItem('jwt-token')}`
-    //            $.ajax(options) 
-    //         },
-    //         error: function(err){}
-    //       })
-
   $.ajaxSetup({
     beforeSend: function(xhr) {
-        // console.log('yes iam called')
+      console.log('check')
         xhr.setRequestHeader('Authorization',`Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`);
         xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
       }
@@ -94,16 +80,12 @@
       }
         // console.log((new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000)
         
-        if(ttl/60<2 && ttl/60>0){
+        if(ttl/60<15 && ttl/60>0){
           options.refreshRequest = true
           $.ajax({
             url:'api/refresh',
             type:'get',
             success:  function (res) {
-              console.log('got token cookie',res)
-              //  localStorage.setItem('jwt-token',res) 
-              // xhr.setRequestHeader('Authorization',;
-        // xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
                options['headers']['Authorization']=`Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`;
                $.ajax(options) 
             },
@@ -111,16 +93,29 @@
           })
         }
         else {
-          // console.log('going fine')
           options.refreshRequest = true
-            $.ajax(options)
+          $.ajax(options)
         }
   });
 
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
     localStorage.setItem("proj_old_id",999999)
-    // localStorage.setItem("status","OPEN");
-    
+
+    $.ajax({
+      url:'api/getUserInfo',
+      type:'get',
+      success:  function (res) {
+          localStorage.setItem('member_id',res.id)
+          localStorage.setItem('first_name',res.first_name)
+          localStorage.setItem('last_name',res.last_name)
+          console.log('see user api',res)
+          $('#user-name').text(`Hi ! ${res.first_name}  ${res.last_name}`)
+        },
+      error: function(err){
+
+         }
+      })  
+
 $.ajax({
     url:'api/projects',
     type:'get',
@@ -142,7 +137,7 @@ $.ajax({
         });
       $(`#project-${response[0].id}`).click()
     },
-    error: function(x,xs,xt){
+    error: function(x){
           console.log(x);
         } 
     }); //prettier 
@@ -158,8 +153,6 @@ $.ajax({
       console.log(pageRec[`${$(this).attr('data-show-more-id')}`].pageNo)
       localStorage.setItem('page_rec',JSON.stringify(pageRec))
 
-      // return
-      console.log('check this----> ',this)
       $.ajax({
       url:'api/getNextTasks',
       data:{"project_id":localStorage.getItem('project_id'),
@@ -251,9 +244,7 @@ $.ajax({
                       // console.log()
                       showTask(item[item.status],response[key].id)
                       showMore(response[key].id,response[key].len,'show-more-tasks',`show-more-tasks-${response[key].id}`)
-
                     });
-                   
                   },
                   error: function(x,xs,xt){
                 }

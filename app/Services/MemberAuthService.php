@@ -41,7 +41,7 @@ Class MemberAuthService{
             ['token_expiry','>=',Carbon::now('Asia/Kolkata')]
         ])->first();
         if($member === null){
-            return "Link expired OR Invalid Req";
+            return redirect('register');
         }
             return view('changePassword');
     }
@@ -64,9 +64,9 @@ Class MemberAuthService{
 
         $member->password = $req['password'];
         $member->save();
-
+        //Extra Check
         if($member == null){
-            return ["Invalid Request OR token expired"];
+            return redirect('register');
         }
         return response()->json($member);
     }
@@ -79,6 +79,7 @@ Class MemberAuthService{
                  return redirect('dashboard')->withCookie('jwt-token',auth()->attempt($credentials),60,"/", null, false, false);
                  //last 3 flags are for path , secure and http only for cookie
         }
+        // ajax - automatic sending 
         return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
     }
 }

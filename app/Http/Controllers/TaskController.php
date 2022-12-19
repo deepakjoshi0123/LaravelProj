@@ -40,6 +40,7 @@ class TaskController extends Controller
                     }
                 }
             }
+        
         $validated = Validator::make(json_decode($req['data'],true), [ 
                 'data.title' => 'required|string|min:3|max:40|', 
                 'data.description' => 'required|string|min:3|max:200', 

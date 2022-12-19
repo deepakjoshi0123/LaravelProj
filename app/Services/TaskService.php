@@ -13,46 +13,37 @@ use DB;
 
 Class TaskService {
 
+    public function taskAddOrUpdateHelper($request,$task,$data){
+        $members_id = $request['assignee'];
+        if(count($members_id)>0){
+            $this->assignTask($task,$members_id);
+        }
+        //replace member_id with member_if fetched from token
+        if(count($request['comments'])>0){
+            $this->addComments($request,$task);
+        }
+        if(isset($_FILES['files'])){
+            $this->addAttachment($request,$task);
+          }
+        $task->status = DB::table('statuses')->where('id',$task->status_id)->get('status');
+        $task->members=$this->getEditAssignees($task->id,$data['project_id']);
+    }
     public function addTask($req){
         $request = json_decode($req['data'],true);
         $data = $request['data'];
-        $members_id = $request['assignee'];
-        // return $req;
-           $task = Task::create($data);
-        
-            if(count($members_id)>0){
-                $this->assignTask($task,$members_id);
-            }
-            //replace member_id with member_if fetched from token
-            if(count($request['comments'])>0){
-                $this->addComments($request,$task);
-            }
-            if(isset($_FILES['files'])){
-                $this->addAttachment($request,$task);
-              }
-            $task->status = DB::table('statuses')->where('id',$task->status_id)->get('status');
-            $task->members=$this->getEditAssignees($task->id,$data['project_id']);
-            return $task;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+        $task = Task::create($data);
+        $this->taskAddOrUpdateHelper($request,$task,$data);
+        return $task;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
     }
 
     public function updateTask($req){
+        // return $req;
         $request = json_decode($req['data'],true);
         $data = $request['data'];
-        $members_id = $request['assignee'];
+       
             $task = Task::find($data['id']);
             $task->fill($request['data'])->save();           
-            if(count($members_id)>0){
-                $this->assignTask($task,$members_id);
-            }
-            if(count($request['comments'])>0){
-                $this->addComments($request,$task);
-            }
-            $task['edit'] = true;
-            if(isset($_FILES['files'])){
-                $this->addAttachment($request,$task);
-              }
-            $task->status = DB::table('statuses')->where('id',$task->status_id)->get('status');
-            $task->members = $this->getEditAssignees($task->id,$data['project_id']);
+            $this->taskAddOrUpdateHelper($request,$task,$data);
            return $task;      
     }
     
@@ -78,12 +69,11 @@ Class TaskService {
     public function delTask($request){
        $task = Task::find($request['task_id']);
        $task->delete();
-        return array('status_id' => $task->status_id);
+       return array('status_id' => $task->status_id);
     }
         
     public function taskDetails($request){
-        // return $request;
-        // Task::where('id',$request['id'])->delete();
+
         $task = DB::table('tasks')->join('statuses','statuses.id','=','tasks.status_id')->where('tasks.id',$request['id'])->get(['tasks.id as id','title','description','status_id','status']);
         $comment = DB::table('comments')
         ->join('members','members.id','=','comments.member_id')

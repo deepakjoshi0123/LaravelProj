@@ -84,6 +84,13 @@
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+
+        function showError(err){
+             for (let property in err.responseJSON) {
+                $(`#${property}-span`).append(`<span  style="color:red">`+err.responseJSON[property][0]+`</span>`)
+            }
+        }
+
         $.ajaxSetup({
          headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -117,31 +124,12 @@
                 }, 2000);
             },
             error: function(err){
-                console.log(err)
                 if(err.status == 400){
-                     if(JSON.parse(err.responseText)['email']){
-                       $('#email-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
-                       }
-                     if(JSON.parse(err.responseText)['password']){
-                       $('#password-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
-                       }
-                     if(JSON.parse(err.responseText)['first_name']){
-                       $('#first_name-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['first_name'][0]+`</span>`)
-                       }
-                     if(JSON.parse(err.responseText)['last_name']){
-                       $('#last_name-span').append(`<span style="color:red">`+JSON.parse(err.responseText)['last_name'][0]+`</span>`)
-                       }
-                     if(JSON.parse(err.responseText)['cnf-password']){
-                       $('#cnf-password-span').append(`<span style="color:red">`+JSON.parse(err.responseText)['cnf-password'][0]+`</span>`)
-                       }
-                    if(err.responseJSON[0]){
-                       $('#email-span').append(`<span  style="color:red">`+err.responseJSON[0]+`</span>`)
+                    showError(err)
                     }
                 }
-            }
+            })
         })
-    })
-         
     })
 </script>
 

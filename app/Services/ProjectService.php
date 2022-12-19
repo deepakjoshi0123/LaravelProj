@@ -70,7 +70,7 @@ Class ProjectService{
      if (count(Status::where([
       ['project_id',$request['project_id']],
       ['status',strtoupper($request['status'])]
-     ])->get(['status']))>0 || strtoupper($request['status']) == 'OPEN' || strtoupper($request['status']) == 'CLOSED' || strtoupper($request['status']) == 'WIP')
+     ])->get(['status']))>0 )
      {
       return response()->json(['Duplicate : Choose Another Name'], Response::HTTP_BAD_REQUEST);
      }

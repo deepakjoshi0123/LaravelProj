@@ -17,12 +17,14 @@ use App\Http\Controllers\MemberAuthController;
 |
 */
 
-Route::get('/getToken', [MemberAuthController::class,'getToken']);
+
 Route::post('/create/status', [ProjectController::class,'createStatus']);
 Route::get('/getCustomStatus', [ProjectController::class,'getCustomStatus']);
 Route::group(['middleware' => ['jwt.verify']
     ], function ($router) {
-        Route::get('/refresh', [MemberAuthController::class,'refresh']);
+ 
+    Route::get('/getUserInfo', [MemberAuthController::class,'me']);
+    Route::get('/refresh', [MemberAuthController::class,'refresh']);
     Route::get('/projects',[ProjectController::class,'getProjects']);
     Route::get('/tasks',[TaskController::class,'getTasks']);   
     Route::post('/refresh', [MemberAuthController::class,'refresh']);

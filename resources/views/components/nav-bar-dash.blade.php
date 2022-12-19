@@ -62,7 +62,6 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
-    $('#user-name').text(`Hi ! ${localStorage.getItem('first_name')}  ${localStorage.getItem('last_name')}`)
     $('#logout').on('click',function(){
         $.ajax({
             url:'logout',
