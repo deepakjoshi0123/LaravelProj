@@ -33,9 +33,8 @@
             url:'api/create/status',
             data:{"project_id":localStorage.getItem('project_id'),'status':$('#status-name').val()},
             type:'post',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
+              console.log('status res',res)
               var message="Custom Status created sucessfully"
                             $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
                             setTimeout(() => {    
@@ -46,9 +45,8 @@
                 $('#statusModal').modal('toggle')
                 $('#status-name').val("")
                 sts=JSON.parse(localStorage.getItem('Available_Status'))
-                for(let i=0;i<res.length;i++){
-                    sts.push(res[i].status.toUpperCase())
-                }
+                console.log({"id":res.id,"status":res.status})
+                sts.push({"id":res.id,"status":res.status})
                 uniq = [...new Set(sts)];
                 // console.log(uniq)
                 localStorage.setItem("Available_Status",JSON.stringify(uniq));

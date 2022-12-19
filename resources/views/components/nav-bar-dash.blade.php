@@ -111,9 +111,9 @@
         let res = Object.keys(JSON.parse(localStorage.getItem('page_rec')))
       
         let pageRec ={}
-                for(let i=0;i<res.length;i++){
-                  pageRec[res[i]] = {'pageNo':0,'del':0,'Add':0}
-                }
+        for(let i=0;i<res.length;i++){
+          pageRec[res[i]] = {'pageNo':0,'del':0,'Add':0}
+            }
         localStorage.setItem("page_rec",JSON.stringify(pageRec));
         // console.log(pageRec)
         // return 
@@ -122,8 +122,6 @@
             data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id'),
         },
             type:'get',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
             // console.log(response)
             $('#task-list').html("")
@@ -133,7 +131,6 @@
             $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the search criteria ...</h5></div>`)  
             return
              }
-             console.log('check item',response)
             $.each(response,function(key,item){
                 console.log(item[item.status],response[key].id)
                 $('#task-list').append(`<div id="status-`+response[key].id+`"><div class="">
@@ -142,8 +139,8 @@
               `)
                 showTask(item[item.status],response[key].id)
                 showMore(response[key].id,response[key].len,'show-more-search-tasks',`show-more-search-tasks-${response[key].id}`)           
-        });
-     },
+            });
+         },
             error: function(res){}
         })
     }

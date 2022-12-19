@@ -13,21 +13,6 @@ use DB;
 
 Class TaskService {
 
-    public function taskAddOrUpdateHelper($request,$task,$data){
-        $members_id = $request['assignee'];
-        if(count($members_id)>0){
-            $this->assignTask($task,$members_id);
-        }
-        //replace member_id with member_if fetched from token
-        if(count($request['comments'])>0){
-            $this->addComments($request,$task);
-        }
-        if(isset($_FILES['files'])){
-            $this->addAttachment($request,$task);
-          }
-        $task->status = DB::table('statuses')->where('id',$task->status_id)->get('status');
-        $task->members=$this->getEditAssignees($task->id,$data['project_id']);
-    }
     public function addTask($req){
         $request = json_decode($req['data'],true);
         $data = $request['data'];
@@ -104,10 +89,10 @@ Class TaskService {
         return $status;
     }
 
-    public function getAddAssignees($request){    
-            $id = $request->all()['project_id'];
-            return Project::find($id)->members()->distinct()->get(['email','id','first_name']);
-    }
+    // public function getAddAssignees($request){    
+    //         $id = $request->all()['project_id'];
+    //         return Project::find($id)->members()->distinct()->get(['email','id','first_name']);
+    // }
 
     public function getEditAssignees($task_id,$project_id){  
             return DB::table('tasks')
@@ -304,11 +289,13 @@ Class TaskService {
             Task_Attachment::create(['task_id' => $task->id,'attachment' => time().$file_name ]);
         }
     }
+
     public function addComments($request,$task){
         foreach($request['comments'] as $cmnt){
             (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request['member_id'],'description'=>$cmnt])->save();
         }
     }
+
     public function getNextTasks($request){
         // return $request;
         $pageSize = 2;
@@ -321,6 +308,22 @@ Class TaskService {
     }
     $len = DB::table('tasks')->where([['project_id',$request['project_id']],['status_id',$request['status_id']]])->count();
     return array("tasks"=>$tasks , "len"=>$len-$request['pageNo']*$pageSize-$pageSize+$request['del']-$request['add']);
+    }
+
+    public function taskAddOrUpdateHelper($request,$task,$data){
+        $members_id = $request['assignee'];
+        if(count($members_id)>0){
+            $this->assignTask($task,$members_id);
+        }
+        //replace member_id with member_if fetched from token
+        if(count($request['comments'])>0){
+            $this->addComments($request,$task);
+        }
+        if(isset($_FILES['files'])){
+            $this->addAttachment($request,$task);
+          }
+        $task->status = DB::table('statuses')->where('id',$task->status_id)->get('status');
+        $task->members=$this->getEditAssignees($task->id,$data['project_id']);
     }
 }
 

@@ -74,12 +74,12 @@ Class ProjectService{
      {
       return response()->json(['Duplicate : Choose Another Name'], Response::HTTP_BAD_REQUEST);
      }
-
-      (new Status())->fill([
+     $status = new Status();
+      $status->fill([
         'project_id' => $request['project_id'],
         'status' => strtoupper($request['status']),
-      ])->save() ;
-        return $this->getCustomStatus($request);
+      ])->save();
+      return array('id'=>$status->id,'status'=>$status->status);
     }
 
    public function getCustomStatus($request){

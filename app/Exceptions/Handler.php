@@ -70,13 +70,13 @@ class Handler extends ExceptionHandler
             }
 
         });
-        // $this->renderable(function (Throwable $e, $request) {
-        //     if ($request->is('api/*')) {
-        //         return response()->json([
-        //             'message' => 'Something went wrong...Please Connect Admin'
-        //         ], 403);
-        //     }
+        $this->renderable(function (Throwable $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Something went wrong...Please Connect Admin'
+                ], 403);
+            }
 
-        // });
+        });
     }
 }
