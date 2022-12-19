@@ -63,7 +63,7 @@
                 
                 $('#success-msg').text('Check your email for password reset link')
                 setInterval(() => {
-                    window.location.href = "http://localhost:8000/login";    
+                    window.location.href = "login";    
                 }, 4000);
                 
             },

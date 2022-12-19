@@ -69,9 +69,10 @@
 
   $.ajaxSetup({
     beforeSend: function(xhr) {
-        console.log('yes iam called')
+        // console.log('yes iam called')
         xhr.setRequestHeader('Authorization',`Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`);
-    }
+        xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+      }
 });      
     function parseJwt (token) {
        return JSON.parse(atob(token.split('.')[1]));
@@ -81,7 +82,7 @@
     var editOrAddFlag
     var tasks = {};
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-      console.log('cheeelkkkk................',options['headers'])
+      // console.log('cheeelkkkk................',options['headers'])
       if(options.url === 'api/refresh' || options.url === '/logout' || options.refreshRequest  ){
         return ;
       }
@@ -93,22 +94,24 @@
       }
         // console.log((new Date(parseJwt(token).exp*1000) - new Date(Date.now()))/1000)
         
-        if(ttl/60<15 && ttl/60>0){
+        if(ttl/60<2 && ttl/60>0){
           options.refreshRequest = true
           $.ajax({
             url:'api/refresh',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}` },
             type:'get',
             success:  function (res) {
-               localStorage.setItem('jwt-token',res) 
-               options['headers']['Authorization']=`Bearer ${localStorage.getItem('jwt-token')}`
+              console.log('got token cookie',res)
+              //  localStorage.setItem('jwt-token',res) 
+              // xhr.setRequestHeader('Authorization',;
+        // xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+               options['headers']['Authorization']=`Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`;
                $.ajax(options) 
             },
             error: function(err){}
           })
         }
         else {
-          console.log('going fine')
+          // console.log('going fine')
           options.refreshRequest = true
             $.ajax(options)
         }
@@ -120,10 +123,6 @@
     
 $.ajax({
     url:'api/projects',
-    data:{"member_id":"1"},
-    headers:{'Authorization': `Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-  },
     type:'get',
     success:  function (response) { 
       if(response.length === 0){

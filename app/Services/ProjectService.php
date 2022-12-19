@@ -16,7 +16,7 @@ Class ProjectService{
         ->join('proj__mems','proj__mems.project_id','=','projects.id')
         ->join('members','proj__mems.member_id','=','members.id')
         ->join('members as mem2','projects.owner','=','mem2.id')
-        ->where('proj__mems.member_id',$req['member_id'])
+        ->where('proj__mems.member_id',$req['user']['id'])
         ->get(['mem2.first_name as first_name','mem2.last_name as last_name','project_name','projects.id as id']);
     }
 
@@ -25,12 +25,12 @@ Class ProjectService{
      
       $project->fill([
         'project_name' => $request['name'],
-        'owner' => $request['owner'],
+        'owner' => $request['user']['id'],
       ])->save() ;
 
        (new Proj_Mem())->fill([
         'project_id' => $project->id,
-        'member_id' => $project->owner,
+        'member_id' => $request['user']['id'],
       ])->save() ;
       
       $this->addDefaultStatus($project->id);

@@ -40,7 +40,7 @@ class MemberAuthController extends Controller
     public function register(Request $req){
 
         $validated = Validator::make($req->all(), [
-            'email' => 'required|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/', 
+            'email' => 'required|unique:members,email|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/', 
             'first_name' => 'required|min:3|max:20|regex:/^([A-Za-z\d\.-]+)$/',
             'last_name' => 'required||min:3|max:20|regex:/^([A-Za-z\d\.-]+)$/', 
             'password' => [
@@ -56,18 +56,13 @@ class MemberAuthController extends Controller
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
-        
-        $email = Member::where('email',$req['email'])->get();
-        if($email->count()!==0){
-            return response()->json(['email already exists,register with another email'], Response::HTTP_BAD_REQUEST);;
-        }
         return response()->json($this->memberAuthService->register($req));
     }
    
     public function me()
     {   
         return response()->json(auth()->user());
-     }
+    }
    
    public function logout()
      {    
@@ -77,7 +72,7 @@ class MemberAuthController extends Controller
 
    public function refresh()
    { 
-       return auth()->refresh();
+       return response()->json(['status'=>true])->withCookie('jwt-token',auth()->refresh(),60,"/", null, false, false);
    }
 
     public function verifyMember($token){
@@ -137,16 +132,6 @@ class MemberAuthController extends Controller
                 return redirect('login')->withErrors($validated->messages());
             }
             return $this->memberAuthService->login($req);  
-         }
-
-    public function getToken(Request $req){
-           
-        $credentials = request(['email', 'password']);
-        if ($token = auth()->attempt($credentials)) {
-                return (['token' => $token,'first_name'=>auth()->guard('api')->user()->first_name,'last_name'=>auth()->guard('api')->user()->last_name,'member_id'=>auth()->guard('api')->user()->id]);
-            }
-        return (['unauthorized' => 'Unauthorized']);
-        //    return response()->json($this->memberAuthService->getToekn($req));
          }
 }
 

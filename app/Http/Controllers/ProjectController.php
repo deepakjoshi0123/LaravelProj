@@ -29,12 +29,7 @@ class ProjectController extends Controller
         }
         return $this->projectService->createStatus($req->all());
     }
-    public function getProjects(Request $req){  //custom req class and pass it the functon arguments for validation
-        
-        $validated = $req->validate([ 
-            'member_id' => 'required', 
-        ]);
-        
+    public function getProjects(Request $req){          
         return response()->json(($this->projectService->getAllProjects($req->all())));
     }
     public function createProject(Request $req){
@@ -44,7 +39,7 @@ class ProjectController extends Controller
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
-        if(count(Project::where([['owner',$req['owner']],['project_name',$req['name']]])->get())>0){
+        if(count(Project::where([['owner',$req['user']['id']],['project_name',$req['name']]])->get())>0){
             return response()->json(array(['message'=>'Duplicate Project Name']),Response::HTTP_BAD_REQUEST);
           }
         return response()->json(($this->projectService->createProject($req->all())));   

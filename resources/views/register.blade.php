@@ -113,7 +113,7 @@
             success:  function (response) {
                 $('#success-msg').append(`<h6 class="ms-5" style="color:green" >congratulations! check mail for verification</h6>`)
                 setTimeout(()=>{
-                    window.location.href = "http://localhost:8000/login";
+                    window.location.href = "login";
                 }, 2000);
             },
             error: function(err){

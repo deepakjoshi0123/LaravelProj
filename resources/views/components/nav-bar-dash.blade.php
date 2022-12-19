@@ -71,7 +71,7 @@
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
                 localStorage.clear();
-                window.location.href = "http://localhost:8000/login";
+                window.location.href = "login";
             },
             error: function(err){}
         })

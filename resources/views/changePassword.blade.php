@@ -70,10 +70,11 @@
             success:  function (res) {
                 $('#success-msg-password').text('your password is successfully changed')
                 setInterval(() => {
-                    window.location.href = "http://localhost:8000/login"; 
+                    window.location.href = "/login"; 
                 }, 4000);
             },
             error: function(err){
+                
                 if(JSON.parse(err.responseText)['password']){
                        $('#password-span').append(`<span  style="color:red">`+JSON.parse(err.responseText)['password'][0]+`</span>`)
                     }

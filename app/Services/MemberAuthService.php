@@ -2,26 +2,23 @@
 namespace App\Services;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Services\MailService;
 use Response;
 use Carbon\Carbon;
 use App\Models\Member;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 Class MemberAuthService{
+
     public function register($req){
         $memberData = $req->all();
         $member = Member::create($memberData);
-        $member = Member::where('email',$req['email'])->first();
         $member->verification_token = str_random(32);
         $member->save();
 
-        // $memberData->save();
-        Mail::send('mail.register-mail',$member->toArray(), function ($message) {
-            $message->to('deepakjoshi0123@gmail.com','trello clone')
-            ->subject('mailtrap test');
-        });
+        MailService::sendMail('mail.register-mail',$member->toArray(),$member->email,'Registration verification');
         return ([
             'status' => 'OK',
             'message' => 'Member added Successfully'
@@ -56,10 +53,7 @@ Class MemberAuthService{
         $member->save();
         $token = array('token' => $member->reset_token);
         
-        Mail::send('mail.password-reset-link',$token, function ($message) {
-            $message->to('deepakjoshi0123@gmail.com','trello clone')
-            ->subject('password reset link');
-        });
+        MailService::sendMail('mail.password-reset-link',$token,$member->email,'Password-reset');
         return ([
             'status' => 'OK',
         ]);
@@ -78,19 +72,13 @@ Class MemberAuthService{
     }
 
     public function login($req){
-        // return 'hi login';
         $credentials = request(['email', 'password']);
         if (Auth::attempt($credentials)) {
-
                  $req->session()->put('userid',Auth::id());
                  // Auth::logoutOtherDevices(request('password'));
-                 setcookie("user", "deepak joshi", time() - 3600); 
                  return redirect('dashboard')->withCookie('jwt-token',auth()->attempt($credentials),60,"/", null, false, false);
                  //last 3 flags are for path , secure and http only for cookie
         }
         return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
     }
-    // public function getToken($req){
-       
-    // }
 }
