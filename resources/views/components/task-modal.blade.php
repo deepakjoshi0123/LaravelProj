@@ -120,8 +120,6 @@
             type:'post',
             contentType: false,
             processData: false,
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {    
               console.log('show more ',res)   
                 $('#no-task-msg').remove()                                      
@@ -147,6 +145,7 @@
                     console.log($(`#show-more-${res.status_id}`))
                     // $(`#show-more-${res.status_id}`).remove()
                 }
+                 
                   $(`#project-task-${res.id}`).remove()
               } 
             // console.log('error',res)
@@ -330,8 +329,6 @@
             url:'api/taskDetails',
             data:{"id":id},
             type:'get',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (task) {
               // console.log(task)
               $('#status-heading').text('Status')
@@ -382,13 +379,7 @@
       });
 
       $(document).on('click','.edit-task',function(e){
-        // $.each(JSON.parse(localStorage.getItem("Available_Status")),function(key,status){
-      // console.log(status)
-      // $('#statusSelect2').append(`
-      //   <option  value=`+status.replaceAll(' ','-')+`>`+status+`</option>      
-      // `)
-  // })
-              $.ajax({
+          $.ajax({
                     url:'api/members',
                     data:{"task_id":$(this).attr('data-task-edit-id'),"project_id":localStorage.getItem('project_id')},
                     type:'get',

@@ -93,9 +93,7 @@
       "del":pageRec[`${$(this).attr('data-show-more-id')}`].del,
       "text":$('#search-task').val()
     },
-      headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-      },
+
         type:'get',
         success: (response) => {
         //   console.log('got res ',response.tasks)
@@ -118,7 +116,7 @@
         // console.log(pageRec)
         // return 
         $.ajax({
-            url:'api/searchTask',
+            url:'api/filterTask',
             data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id'),
         },
             type:'get',

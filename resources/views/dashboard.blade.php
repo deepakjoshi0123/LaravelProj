@@ -100,7 +100,6 @@
 
     localStorage.setItem("comments",JSON.stringify([]));  //setting up temp array of comments for modal popup
     localStorage.setItem("proj_old_id",999999)
-
     $.ajax({
       url:'api/getUserInfo',
       type:'get',
@@ -112,7 +111,6 @@
           $('#user-name').text(`Hi ! ${res.first_name}  ${res.last_name}`)
         },
       error: function(err){
-
          }
       })  
 

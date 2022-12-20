@@ -29,6 +29,7 @@ Class TaskService {
             $task = Task::find($data['id']);
             $task->fill($request['data'])->save();           
             $this->taskAddOrUpdateHelper($request,$task,$data);
+            $task->edit = true;
            return $task;      
     }
     
@@ -89,13 +90,14 @@ Class TaskService {
         return $status;
     }
 
-    // public function getAddAssignees($request){    
-    //         $id = $request->all()['project_id'];
-    //         return Project::find($id)->members()->distinct()->get(['email','id','first_name']);
-    // }
+    //using this function
+    public function getAddAssignees($request){    
+            $id = $request->all()['project_id'];
+            return Project::find($id)->members()->distinct()->get(['email','id','first_name']);
+    }
 
     public function getEditAssignees($task_id,$project_id){  
-            return DB::table('tasks')
+        return DB::table('tasks')
             ->join('task__mems','task__mems.task_id','=','tasks.id')
             ->join('members','task__mems.member_id','=','members.id')
             ->where([
@@ -233,10 +235,13 @@ Class TaskService {
     }
 
     public function filterTask($request){
-
-        $members = $this->filterArray($request['filters']['members']);
-        $statuses  = $this->filterArray($request['filters']['status']);  
-
+        $members = [];
+        $statuses = [];
+        if(array_key_exists('filters', $request)){
+            $members = $this->filterArray($request['filters']['members']);
+            $statuses  = $this->filterArray($request['filters']['status']); 
+        } 
+ 
         $pageSize = 2;
         $status = DB::table('statuses')->where('project_id',$request['project_id'])->get(['id','status']);
         // return gettype($status) ;
@@ -253,6 +258,19 @@ Class TaskService {
             ->where(function ($query) use ($statuses) {
                 if(sizeof($statuses)!==0){
                     return $query->whereIn('status_id', $statuses);
+                }
+            })
+            ->where(function($query) use($request,$sts){
+                if(array_key_exists('text', $request)){
+                   return $query->where([
+                        ['status_id',$sts->id],
+                        ['project_id',$request['project_id']],
+                        ['title','like','%'.$request['text'].'%'],
+                    ])->orWhere([
+                        ['status_id',$sts->id],
+                        ['project_id',$request['project_id']],
+                        ['description','like','%'.$request['text'].'%'],
+                    ]);
                 }
             })
             ->where([['project_id',$request['project_id']],['status_id',$sts->id]])
