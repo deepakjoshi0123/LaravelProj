@@ -218,19 +218,24 @@ Class TaskService {
     }
 
     public function getFilterTasksLen($request,$members,$sts){
-
-        return DB::table('tasks')
+    return DB::table('tasks')
         ->leftjoin('task__mems','task__mems.task_id','=','tasks.id')
         ->leftjoin('members','task__mems.member_id','=','members.id')
+        ->where(function($query) use($request,$sts){
+            if(array_key_exists('text', $request)){
+               return $query->where([
+                    ['title','like','%'.$request['text'].'%'],
+                ])->orWhere([
+                    ['description','like','%'.$request['text'].'%'],
+                ]);
+            }
+        })
         ->where(function ($query) use ($members) {
             if(sizeof($members)!==0){
                 return $query->whereIn('members.id', $members);
             }
         })
-        ->where(function ($query) use ($sts) {
-            return $query->whereIn('status_id', [$sts]);
-        })
-        ->where([['project_id',$request['project_id']]])
+        ->where([['project_id',$request['project_id']],['status_id',$sts]])
         ->distinct()->count();
     }
 
@@ -263,12 +268,8 @@ Class TaskService {
             ->where(function($query) use($request,$sts){
                 if(array_key_exists('text', $request)){
                    return $query->where([
-                        ['status_id',$sts->id],
-                        ['project_id',$request['project_id']],
                         ['title','like','%'.$request['text'].'%'],
                     ])->orWhere([
-                        ['status_id',$sts->id],
-                        ['project_id',$request['project_id']],
                         ['description','like','%'.$request['text'].'%'],
                     ]);
                 }
@@ -276,24 +277,21 @@ Class TaskService {
             ->where([['project_id',$request['project_id']],['status_id',$sts->id]])
             ->distinct()   
             ->orderBy('id', 'DESC')
-            ->skip(0)->take($pageSize)->get(['tasks.id as id','title','description','status_id']);
+            ->skip($request['pageNo']*$pageSize-$request['del']+$request['add'])->take($pageSize)
+            ->get(['tasks.id as id','title','description','status_id']);
             
             if(count($tasks) > 0){
-                // return $tasks;
                 $sts->$grpSts = $tasks;
-                // return $status;
-                $sts->len = $this->getFilterTasksLen($request,$members,$sts->id)- $pageSize; // currently showing one tasks so pending tasks are total - 1
+                $sts->len = $this->getFilterTasksLen($request,$members,$sts->id) - $request['pageNo']*$pageSize-$pageSize+$request['del']-$request['add']; // currently showing one tasks so pending tasks are total - 1
                 foreach($tasks as $task){
                     $task->members=$this->getEditAssignees($task->id,$request['project_id']);
                 }
             }
             else{
-                // return $status[$key];
-                // return $status;
-                // array_diff($status, $status[$key]);
                  unset($status[$key]);
             }
         }
+
         return $status;
     }
 

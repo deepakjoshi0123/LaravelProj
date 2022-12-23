@@ -117,8 +117,13 @@
         // return 
         $.ajax({
             url:'api/filterTask',
-            data:{"text":$('#search-task').val(),"project_id":localStorage.getItem('project_id'),
-        },
+            data:{
+            "text":$('#search-task').val(),
+            "project_id":localStorage.getItem('project_id'),
+            "pageNo":0,
+            "add":0,
+            "del":0
+            },
             type:'get',
             success:  function (response) {
             // console.log(response)

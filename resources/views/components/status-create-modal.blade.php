@@ -45,11 +45,14 @@
                 $('#statusModal').modal('toggle')
                 $('#status-name').val("")
                 sts=JSON.parse(localStorage.getItem('Available_Status'))
+                page_rec=JSON.parse(localStorage.getItem('page_rec'))
+                page_rec[res.id]={'add':0,'del':0,'pageNo':0}
                 console.log({"id":res.id,"status":res.status})
                 sts.push({"id":res.id,"status":res.status})
                 uniq = [...new Set(sts)];
                 // console.log(uniq)
                 localStorage.setItem("Available_Status",JSON.stringify(uniq));
+                localStorage.setItem("page_rec",JSON.stringify(page_rec));
                 $('#status-err-title').html("")
               },
             error: function(err){

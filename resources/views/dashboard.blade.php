@@ -59,7 +59,7 @@
         xhr.setRequestHeader('Authorization',`Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`);
         xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
       }
-});      
+  });      
     function parseJwt (token) {
        return JSON.parse(atob(token.split('.')[1]));
     }
@@ -159,12 +159,9 @@ $.ajax({
       "add":pageRec[`${$(this).attr('data-show-more-id')}`].Add,
       "del":pageRec[`${$(this).attr('data-show-more-id')}`].del
     },
-      headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-      },
         type:'get',
         success:   (response) => {
-          console.log('got res ')
+          console.log('got res ' ,response)
           showTask(response.tasks,response.tasks[0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
           showMore(response.tasks[0].status_id,response.len,'show-more-tasks',`show-more-tasks-${response.tasks[0].status_id}`)
         },
@@ -219,12 +216,9 @@ $.ajax({
         $.ajax({
                 url:'api/tasks',
                 data:{"project_id":localStorage.getItem('project_id')},
-                headers:{'Authorization': `Bearer ${document.cookie.split(`jwt-token=`).pop().split(';')[0]}`,
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-              },
                 type:'get',
                 success:  function (response) {
-                    // console.log('checking ress',response)
+                    console.log('checking ress',response)
                     $('#task-list').html("")
                     tasks=response
                     // console.log('its wrong',localStorage.getItem('Available_Status'))

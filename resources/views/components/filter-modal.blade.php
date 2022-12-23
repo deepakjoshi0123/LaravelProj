@@ -80,26 +80,28 @@
             { filters.status.push(status.replaceAll('-',' ')) }
         for (const member of $('#mySelect2').val() ) 
             { filters.members.push(member) }
-       
+            let res = Object.keys(JSON.parse(localStorage.getItem('page_rec')))
+      
+      let pageRec ={}
+          for(let i=0;i<res.length;i++){
+            pageRec[res[i]] = {'pageNo':0,'del':0,'Add':0}
+          }
+      localStorage.setItem("page_rec",JSON.stringify(pageRec));
         $('#mySelect3').html("")
         $('#mySelect2').html("")
-        data={"project_id":localStorage.getItem("project_id"),'filters':filters}
+        data={"project_id":localStorage.getItem("project_id"),'filters':filters,
+        "pageNo":0,
+        "add":0,
+        "del":0
+    }
        localStorage.setItem('filterData',JSON.stringify(data))
-        let res = Object.keys(JSON.parse(localStorage.getItem('page_rec')))
-      
-        let pageRec ={}
-            for(let i=0;i<res.length;i++){
-              pageRec[res[i]] = {'pageNo':0,'del':0,'Add':0}
-            }
-        localStorage.setItem("page_rec",JSON.stringify(pageRec));
+       
         // console.log(pageRec)
         // return 
         $.ajax({
             url:'api/filterTask',
             data:data,
             type:'get',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
             if(!response.length){
                     response = Object.values(response)
@@ -112,20 +114,20 @@
             // console.log('no task to display')
             $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the search criteria ...</h5></div>`)  
             return
-             }
-             console.log('check item',response)
+          }
+            console.log('check item',response)
             $.each(response,function(key,item){
                 console.log(item[item.status],response[key].id)
                 $('#task-list').append(`<div id="status-`+response[key].id+`"><div class="">
                   <div style="background-color:#009999" class="badge  ms-2 mt-2 mb-1" style="width:25%" >`+item.status+`</div>
                 </div></div>
               `)
-                showTask(item[item.status],response[key].id)
-                showMore(response[key].id,response[key].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[key].id}`)           
+            showTask(item[item.status],response[key].id)
+            showMore(response[key].id,response[key].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[key].id}`)           
         });
      },
-            error: function(res){}
-        })
+        error: function(res){}
+    })
     
     })
 
@@ -138,7 +140,7 @@
          localStorage.setItem('page_rec',JSON.stringify(pageRec))
         // return
       $.ajax({
-         url:'api/getNextFilteredTasks',
+         url:'api/filterTask',
          data:{"filters":JSON.parse(localStorage.getItem('filterData'))['filters'],
          "status_id":$(this).attr('data-show-more-id'),
          "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
@@ -146,14 +148,11 @@
          "del":pageRec[`${$(this).attr('data-show-more-id')}`].del,
          "project_id":localStorage.getItem('project_id')
        },
-         headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-         },
            type:'get',
            success: (response) => {
-           //   console.log('got res ',response.tasks)
-             showTask(response.tasks,response.tasks[0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
-             showMore(response.tasks[0].status_id,response.len,'show-more-filter-tasks',`show-more-filter-tasks-${response.tasks[0].status_id}`)
+             console.log('got res ',response[0][response[0].status][0].status_id,response[0].status,response)
+             showTask(response[0][response[0].status],response[0][response[0].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
+             showMore(response[0][response[0].status][0].status_id,response[0].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[0][response[0].status][0].status_id}`)
            },
            error:  function(err){}
            })

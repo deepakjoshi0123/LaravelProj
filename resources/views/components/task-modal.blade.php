@@ -125,7 +125,8 @@
                 $('#no-task-msg').remove()                                      
               if(!res.edit){
               let page_rec = JSON.parse(localStorage.getItem('page_rec'))
-              page_rec[res.status_id].Add = JSON.parse(localStorage.getItem('page_rec'))[res.status_id].Add + 1;
+              console.log('new',page_rec,page_rec[res.status_id])
+              page_rec[res.status_id].Add = page_rec[res.status_id].Add + 1;
               localStorage.setItem('page_rec',JSON.stringify(page_rec))
                 var message="Task Added sucessfully"
                   $(`#task-list-msg-append`).prepend(`<x-action-modal  message=${message}/>`)
