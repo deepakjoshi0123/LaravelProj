@@ -25,14 +25,15 @@ Class MemberAuthService{
         ]);
 
     }
-    public function verifyMember($token){
-        $member = Member::where([['verification_token',$token],["is_verfied","0"]])->first();
-        if($member == null){
-            return "Invalid request OR invalid token";
-        }
+
+    public function verifyMember($token,$member){
+        
         $member->is_verfied = "1";
         $member->save();
-        return "verified successfully";
+        return ([
+            'status' => 'OK',
+            'message' => 'verified successfully'
+        ]);
     }
 
     public function change_password_view($req,$key){
@@ -40,10 +41,8 @@ Class MemberAuthService{
             ['reset_token',$key],
             ['token_expiry','>=',Carbon::now('Asia/Kolkata')]
         ])->first();
-        if($member === null){
-            return redirect('register');
-        }
-            return view('changePassword');
+        return $member === null ? true : false ;
+       
     }
     public function sendResetLink($req){
        
@@ -61,25 +60,23 @@ Class MemberAuthService{
 
     public function changePassword($req){
         $member = Member::where('reset_token',$req->get('token'))->first();
-
         $member->password = $req['password'];
         $member->save();
-        //Extra Check
         if($member == null){
-            return redirect('register');
+            return false;
         }
-        return response()->json($member);
+        return true;
     }
 
-    public function login($req){
-        $credentials = request(['email', 'password']);
+    public function login($req,$credentials){
         if (Auth::attempt($credentials)) {
                  $req->session()->put('userid',Auth::id());
-                 // Auth::logoutOtherDevices(request('password'));
-                 return redirect('dashboard')->withCookie('jwt-token',auth()->attempt($credentials),60,"/", null, false, false);
-                 //last 3 flags are for path , secure and http only for cookie
+                 return true;
         }
-        // ajax - automatic sending 
-        return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
+        return false;
     }
 }
+
+
+
+// Auth::logoutOtherDevices(request('password'));  ----> read about this

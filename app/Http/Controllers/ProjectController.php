@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Member;
 use App\Models\Proj_Mem;
+use App\Models\Status;
 use App\Models\Project;
 
 class ProjectController extends Controller
@@ -27,6 +28,13 @@ class ProjectController extends Controller
         if ($validated->fails()) {    
             return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
         }
+        if (count(Status::where([
+            ['project_id',$req['project_id']],
+            ['status',strtoupper($req['status'])]
+           ])->get(['status']))>0 )
+           {
+            return response()->json(['Duplicate : Choose Another Name'], Response::HTTP_BAD_REQUEST);
+           }
         return $this->projectService->createStatus($req->all());
     }
     public function getProjects(Request $req){          

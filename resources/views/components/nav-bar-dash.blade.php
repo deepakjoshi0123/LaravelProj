@@ -70,6 +70,7 @@
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
                 localStorage.clear();
+                document.cookie = "jwt-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 window.location.href = "login";
             },
             error: function(err){}

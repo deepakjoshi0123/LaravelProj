@@ -14,6 +14,7 @@ use Config;
 use Illuminate\Support\Facades\Crypt;
 use Dirape\Token\Token;
 use Carbon\Carbon;
+use Cookie;
 use Session;
 
 class MemberAuthController extends Controller
@@ -76,7 +77,11 @@ class MemberAuthController extends Controller
    }
 
     public function verifyMember($token){
-        return response()->json($this->memberAuthService->verifyMember($token));
+        $member = Member::where([['verification_token',$token],["is_verfied","0"]])->first();
+        if($member == null){
+            return response()->json(['error' => 'Invalid request OR invalid token'], Response::HTTP_BAD_REQUEST);
+        }
+        return response()->json($this->memberAuthService->verifyMember($token,$member));
     }
 
     public function Enter_Email_view(){
@@ -84,7 +89,8 @@ class MemberAuthController extends Controller
     }
     // handle exception
     public function change_password_view(Request $req , $key){
-        return $this->memberAuthService->change_password_view($req,$key);
+        return $this->memberAuthService->change_password_view($req,$key) ? redirect('register') : view('changePassword') ;
+        // return $this->memberAuthService->change_password_view;
     }
 
     public function sendRestLink(Request $req){
@@ -116,13 +122,14 @@ class MemberAuthController extends Controller
             
         ]);
 
-            if ($validated->fails()) {    
+        if ($validated->fails()) {    
                 return response()->json($validated->messages(), Response::HTTP_BAD_REQUEST);
             }
-            return $this->memberAuthService->changePassword($req);  
+         return $this->memberAuthService->changePassword($req) ? response()->json(['status' => 'OK']) : redirect('register') ;
         }
 
         public function login(Request $req){
+            $credentials = request(['email', 'password']);
             $validated = Validator::make($req->all(), [ 
                 'email' => 'required|regex:/^([A-Za-z\d\.-]+)@([A-Za-z\d-]+)\.([A-Za-z]{2,8})(\.[A-Za-z]{2,8})?$/', 
                 'password' => 'required'
@@ -131,7 +138,10 @@ class MemberAuthController extends Controller
             if ($validated->fails()) {    
                 return redirect('login')->withErrors($validated->messages());
             }
-            return $this->memberAuthService->login($req);  
+            if($this->memberAuthService->login($req,$credentials)){
+                return redirect('dashboard')->withCookie('jwt-token',auth()->attempt($credentials),60,"/", null, false, false) ;
+            }
+            return redirect('login')->withErrors(['unauthorized' => 'Unauthorized']);
          }
 }
 

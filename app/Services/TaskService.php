@@ -308,7 +308,7 @@ Class TaskService {
 
     public function addComments($request,$task){
         foreach($request['comments'] as $cmnt){
-            (new Comment())->fill(['task_id'=>$task->id,'member_id'=>$request['member_id'],'description'=>$cmnt])->save();
+            (new Comment())->fill(['task_id'=>$task->id,'member_id'=>auth()->guard('api')->user()->id,'description'=>$cmnt])->save();
         }
     }
 

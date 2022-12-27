@@ -58,7 +58,6 @@ Class ProjectService{
         return array(
             'success' => true,
           ); 
-        //send notification only this newly added user
     }
 
     public function getAllMembers($request){
@@ -67,13 +66,6 @@ Class ProjectService{
 
     public function createStatus($request){
      
-     if (count(Status::where([
-      ['project_id',$request['project_id']],
-      ['status',strtoupper($request['status'])]
-     ])->get(['status']))>0 )
-     {
-      return response()->json(['Duplicate : Choose Another Name'], Response::HTTP_BAD_REQUEST);
-     }
      $status = new Status();
       $status->fill([
         'project_id' => $request['project_id'],

@@ -150,7 +150,7 @@
        },
            type:'get',
            success: (response) => {
-             console.log('got res ',response[0][response[0].status][0].status_id,response[0].status,response)
+            //  console.log('got res ',response[0][response[0].status][0].status_id,response[0].status,response)
              showTask(response[0][response[0].status],response[0][response[0].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
              showMore(response[0][response[0].status][0].status_id,response[0].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[0][response[0].status][0].status_id}`)
            },
