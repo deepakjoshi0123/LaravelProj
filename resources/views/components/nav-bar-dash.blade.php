@@ -86,7 +86,7 @@
       localStorage.setItem('page_rec',JSON.stringify(pageRec))
 
       $.ajax({
-      url:'api/getNextSearchedTasks',
+      url:'api/filterTask',
       data:{"project_id":localStorage.getItem('project_id'),
       "status_id":$(this).attr('data-show-more-id'),
       "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
@@ -97,9 +97,12 @@
 
         type:'get',
         success: (response) => {
+            // showTask(response[0][response[0].status],response[0][response[0].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
+            //  showMore(response[0][response[0].status][0].status_id,response[0].len,'show-more-search-tasks',`show-more-search-tasks-${response[0][response[0].status][0].status_id}`)
         //   console.log('got res ',response.tasks)
-          showTask(response.tasks,response.tasks[0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
-          showMore(response.tasks[0].status_id,response.len,'show-more-search-tasks',`show-more-search-tasks-${response.tasks[0].status_id}`)
+        let index = Object.keys(response)[0]
+          showTask(response[index][response[index].status],response[index][response[index].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
+          showMore(response[index][response[index].status][0].status_id,response[index].len,'show-more-search-tasks',`show-more-search-tasks-${response[index][response[index].status][0].status_id}`)
         },
         error:  function(err){}
         })

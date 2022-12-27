@@ -152,7 +152,7 @@ $.ajax({
       localStorage.setItem('page_rec',JSON.stringify(pageRec))
 
       $.ajax({
-      url:'api/getNextTasks',
+      url:'api/filterTask',
       data:{"project_id":localStorage.getItem('project_id'),
       "status_id":$(this).attr('data-show-more-id'),
       "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
@@ -161,9 +161,9 @@ $.ajax({
     },
         type:'get',
         success:   (response) => {
-          console.log('got res ' ,response)
-          showTask(response.tasks,response.tasks[0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
-          showMore(response.tasks[0].status_id,response.len,'show-more-tasks',`show-more-tasks-${response.tasks[0].status_id}`)
+          let index = Object.keys(response)[0]
+          showTask(response[index][response[index].status],response[index][response[index].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
+          showMore(response[index][response[index].status][0].status_id,response[index].len,'show-more-tasks',`show-more-tasks-${response[index][response[index].status][0].status_id}`)
         },
         error:  function(err){}
         })
@@ -214,8 +214,12 @@ $.ajax({
       })
       function taskRefresh(){
         $.ajax({
-                url:'api/tasks',
-                data:{"project_id":localStorage.getItem('project_id')},
+                url:'api/filterTask',
+                data:{"project_id":localStorage.getItem('project_id'),
+                "pageNo":0,
+                "add":0,
+                "del":0
+              },
                 type:'get',
                 success:  function (response) {
                     console.log('checking ress',response)

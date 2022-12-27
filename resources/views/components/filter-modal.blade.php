@@ -150,9 +150,12 @@
        },
            type:'get',
            success: (response) => {
+            let index = Object.keys(response)[0]
+          showTask(response[index][response[index].status],response[index][response[index].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
+          showMore(response[index][response[index].status][0].status_id,response[index].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[index][response[index].status][0].status_id}`)
             //  console.log('got res ',response[0][response[0].status][0].status_id,response[0].status,response)
-             showTask(response[0][response[0].status],response[0][response[0].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
-             showMore(response[0][response[0].status][0].status_id,response[0].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[0][response[0].status][0].status_id}`)
+            //  showTask(response[0][response[0].status],response[0][response[0].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
+            //  showMore(response[0][response[0].status][0].status_id,response[0].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[0][response[0].status][0].status_id}`)
            },
            error:  function(err){}
            })
