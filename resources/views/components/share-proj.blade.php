@@ -35,9 +35,6 @@
             $.ajax({
                     url:'api/shareProject',
                     data:{"email":$('#share-project-email').val(),"project_id":localStorage.getItem('project_id')},
-                    headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                },
                     type:'get',
                     success:  function (response) {
                         var message="Member Added to Project sucessfully"
@@ -51,7 +48,6 @@
                         $('#shareProjModal').modal('toggle')
                     },
                     error:    function (err) {
-                        console.log(err.responseJSON)
                     if(JSON.parse(err.responseText)['email']){
                        $('#email-share-error').append(`<span  style="color:red">`+JSON.parse(err.responseText)['email'][0]+`</span>`)
                        }

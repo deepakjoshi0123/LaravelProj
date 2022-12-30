@@ -12,7 +12,6 @@ Route::get('/changePassword/{token}',[MemberAuthController::class,'change_passwo
 //____________________________________________________________________________________
 
 Route::group(['middleware' => ['web']], function () {
-    // Route::post('/login',[MemberAuthController::class,'login']);
     Route::get('/dashboard',[ProjectController::class,'dashboard'])->name('dashboard');
 });
 
@@ -23,15 +22,10 @@ Route::get('/register',[MemberAuthController::class,'register_view']);
 Route::get('/login', [MemberAuthController::class,'login_view'])->name('login');
 
 Route::get('/dashboard',[ProjectController::class,'dashboard'])->name('dashboard');
-Route::get('/downloadTaskAttachment/{file_ame}',[TaskController::class,'downloadTaskAttachment']);
 
-Route::get('/viewTaskAttachment/{file_ame}',[TaskController::class,'viewTaskAttachment']);
+Route::get('/projects/{id}/tasks/{task_id}/attachment/{file_name}/download',[TaskController::class,'downloadTaskAttachment']);
+Route::get('/projects/{id}/tasks/{task_id}/attachment/{file_name}',[TaskController::class,'viewTaskAttachment']);
 
-Route::group(['middleware' => ['jwt.verify']
-    ], function ($router) {
-
-    Route::post('/me', [MemberAuthController::class,'me']);
- });
-
+//change search and filter routes too
 
  Route::get('/logout',[MemberAuthController::class,'logout']);

@@ -31,8 +31,6 @@
             url:'api/createProject',
             data:{"owner":localStorage.getItem('member_id'),"name":$('#project-name').val()},
             type:'post',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
              var message="project added sucessfully"
               $('#task-list').prepend(`<x-action-modal  message=${message}/>`)

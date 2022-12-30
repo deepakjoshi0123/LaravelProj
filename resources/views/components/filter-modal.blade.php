@@ -51,11 +51,8 @@
         $('#filterModal').modal('toggle')
        console.log('filter modal clicked')
         $.ajax({
-            url:'api/add/assignees',
-            data:{"project_id":localStorage.getItem('project_id')},
+            url:`api/projects/${localStorage.getItem('project_id')}/members`,
             type:'get',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (res) {
                 // console.log(res)
                 $.each(res,function(key,mem){   
@@ -99,14 +96,14 @@
         // console.log(pageRec)
         // return 
         $.ajax({
-            url:'api/filterTask',
+            url:`api/projects/${localStorage.getItem('project_id')}/tasks`,
             data:data,
             type:'get',
             success:  function (response) {
             if(!response.length){
                     response = Object.values(response)
                 }
-            console.log(response , typeof response , response.length)
+
             // return
             $('#task-list').html("")
             // console.log('no task to display')
@@ -140,22 +137,18 @@
          localStorage.setItem('page_rec',JSON.stringify(pageRec))
         // return
       $.ajax({
-         url:'api/filterTask',
+        url:`api/projects/${localStorage.getItem('project_id')}/tasks`,
          data:{"filters":JSON.parse(localStorage.getItem('filterData'))['filters'],
          "status_id":$(this).attr('data-show-more-id'),
          "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
          "add":pageRec[`${$(this).attr('data-show-more-id')}`].Add,
          "del":pageRec[`${$(this).attr('data-show-more-id')}`].del,
-         "project_id":localStorage.getItem('project_id')
        },
            type:'get',
            success: (response) => {
             let index = Object.keys(response)[0]
           showTask(response[index][response[index].status],response[index][response[index].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
           showMore(response[index][response[index].status][0].status_id,response[index].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[index][response[index].status][0].status_id}`)
-            //  console.log('got res ',response[0][response[0].status][0].status_id,response[0].status,response)
-            //  showTask(response[0][response[0].status],response[0][response[0].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
-            //  showMore(response[0][response[0].status][0].status_id,response[0].len,'show-more-filter-tasks',`show-more-filter-tasks-${response[0][response[0].status][0].status_id}`)
            },
            error:  function(err){}
            })

@@ -160,18 +160,10 @@ function resetModal() {
 
 function deleteTask(id) {
     var id = id;
-    console.log("--->", id);
-    // return
-    // console.log('del  --> ',JSON.parse(localStorage.getItem('page_rec'))[id])
-    // return
+
     $.ajax({
-        url: "api/delTask",
-        data: { task_id: id },
+        url: `api/projects/${localStorage.getItem("project_id")}/task/${id}`,
         type: "delete",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-        },
         success: function (res) {
             let page_rec = JSON.parse(localStorage.getItem("page_rec"));
             page_rec[res.status_id].del =

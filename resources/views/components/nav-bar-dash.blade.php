@@ -66,8 +66,6 @@
         $.ajax({
             url:'logout',
             type:'get',
-            headers:{'Authorization': `Bearer ${localStorage.getItem('jwt-token')}`,
-             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             success:  function (response) {
                 localStorage.clear();
                 document.cookie = "jwt-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -78,16 +76,15 @@
     })
 
     $(document).on('click','.show-more-search-tasks',function(e){
-       
-    // console.log($(this).attr('data-show-more-id'))
+    
      let pageRec = JSON.parse(localStorage.getItem('page_rec'))
       pageRec[`${$(this).attr('data-show-more-id')}`].pageNo = pageRec[`${$(this).attr('data-show-more-id')}`].pageNo + 1 
       console.log(pageRec[`${$(this).attr('data-show-more-id')}`].pageNo)
       localStorage.setItem('page_rec',JSON.stringify(pageRec))
 
       $.ajax({
-      url:'api/filterTask',
-      data:{"project_id":localStorage.getItem('project_id'),
+        url:`api/projects/${localStorage.getItem('project_id')}/tasks`,
+      data:{
       "status_id":$(this).attr('data-show-more-id'),
       "pageNo":pageRec[`${$(this).attr('data-show-more-id')}`].pageNo,
       "add":pageRec[`${$(this).attr('data-show-more-id')}`].Add,
@@ -97,9 +94,6 @@
 
         type:'get',
         success: (response) => {
-            // showTask(response[0][response[0].status],response[0][response[0].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
-            //  showMore(response[0][response[0].status][0].status_id,response[0].len,'show-more-search-tasks',`show-more-search-tasks-${response[0][response[0].status][0].status_id}`)
-        //   console.log('got res ',response.tasks)
         let index = Object.keys(response)[0]
           showTask(response[index][response[index].status],response[index][response[index].status][0].status_id,JSON.parse(localStorage.getItem('page_rec'))[`${$(this).attr('data-show-more-id')}`].pageNo*2+1)
           showMore(response[index][response[index].status][0].status_id,response[index].len,'show-more-search-tasks',`show-more-search-tasks-${response[index][response[index].status][0].status_id}`)
@@ -117,24 +111,19 @@
           pageRec[res[i]] = {'pageNo':0,'del':0,'Add':0}
             }
         localStorage.setItem("page_rec",JSON.stringify(pageRec));
-        // console.log(pageRec)
-        // return 
+        
         $.ajax({
-            url:'api/filterTask',
+            url:`api/projects/${localStorage.getItem('project_id')}/tasks`,
             data:{
             "text":$('#search-task').val(),
-            "project_id":localStorage.getItem('project_id'),
             "pageNo":0,
             "add":0,
             "del":0
             },
             type:'get',
             success:  function (response) {
-            // console.log(response)
             $('#task-list').html("")
-            // console.log('no task to display')
             if(response.length === 0){
-            // console.log('no task to display')
             $('#task-list').append(`<div id="no-task-msg"><h5 style="margin-top:20px;margin-left:250px">There are no tasks which matches the search criteria ...</h5></div>`)  
             return
              }

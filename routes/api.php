@@ -18,43 +18,35 @@ use App\Http\Controllers\MemberAuthController;
 */
 
 
-Route::post('/create/status', [ProjectController::class,'createStatus']);
-Route::get('/getCustomStatus', [ProjectController::class,'getCustomStatus']);
+
 Route::group(['middleware' => ['jwt.verify']
     ], function ($router) {
- 
+
     Route::get('/getUserInfo', [MemberAuthController::class,'me']);
-    Route::get('/refresh', [MemberAuthController::class,'refresh']);
+
     Route::get('/projects',[ProjectController::class,'getProjects']);
-    Route::get('/tasks',[TaskController::class,'getTasks']);   
-    Route::post('/refresh', [MemberAuthController::class,'refresh']);
-    Route::post('/me', [MemberAuthController::class,'me']);
-    Route::get('/searchTask',[TaskController::class,'searchTask']);
-    Route::get('/getNextSearchedTasks',[TaskController::class,'getNextSearchedTasks']);
-    Route::get('/getNextFilteredTasks',[TaskController::class,'getNextFilteredTasks']);
-    
-Route::get('/filterTask',[TaskController::class,'filterTask']);
-Route::post('/createProject',[ProjectController::class,'createProject']);
+    Route::get('/projects/{id}/tasks',[TaskController::class,'getTasks']);
 
-Route::get('/projMembers',[ProjectController::class,'getMembers']);
+    Route::get('/refresh', [MemberAuthController::class,'refresh']);
 
-Route::get('/shareProject',[ProjectController::class,'shareProject']);
+ 
+   Route::get('/projects/{id}/tasks/{task_id}/members',[TaskController::class,'taskMembers']);
+   Route::get('/projects/{id}/members',[TaskController::class,'projectMembers']);
 
-Route::get('/add/assignees',[TaskController::class,'getAddAssignees']);//for add modal 
+   Route::get('/projects/{id}/tasks/{task_id}',[TaskController::class,'taskDetails']);
 
-Route::get('/edit/assignees',[TaskController::class,'getEditAssignees']);//for edit modal
+   Route::post('/projects/{id}/task',[TaskController::class,'addTask']);
+   Route::post('/projects/{id}/task/{task_id}',[TaskController::class,'updateTask']);
 
-Route::get('/taskDetails',[TaskController::class,'taskDetails']);
+   Route::delete('/projects/{id}/task/{task_id}',[TaskController::class,'delTask']);
 
-Route::post('/addTask',[TaskController::class,'addTask']);
-Route::post('/updateTask',[TaskController::class,'updateTask']);
+   Route::post('/assignTask',[TaskController::class,'assignTask']);
+   Route::post('/createProject',[ProjectController::class,'createProject']);
 
-Route::get('/getNextTasks',[TaskController::class,'getNextTasks']);
+   Route::get('/shareProject',[ProjectController::class,'shareProject']);
+   Route::post('/create/status', [ProjectController::class,'createStatus']);
+   Route::get('/getCustomStatus', [ProjectController::class,'getCustomStatus']);
 
-Route::post('/assignTask',[TaskController::class,'assignTask']);
-// Route::post('/editTask',[TaskController::class,'editTask']);
-Route::delete('/delTask',[TaskController::class,'delTask']);
-Route::get('/members',[TaskController::class,'members']); // end point and functions should be understable 
 //___________________________________________________________________________________
 });
 
@@ -64,9 +56,4 @@ Route::post('/register',[MemberAuthController::class,'register']);
 Route::post('/sendRestLink',[MemberAuthController::class,'sendRestLink']);
 Route::post('/changePassword',[MemberAuthController::class,'changePassword']);
 
-//task routes
-
-//comments Routes
-Route::get('/comments',[CommentController::class,'getComments']);
-Route::post('/addComment',[CommentController::class,'addComment']);
 

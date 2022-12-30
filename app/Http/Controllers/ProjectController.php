@@ -18,6 +18,9 @@ class ProjectController extends Controller
     public function __construct(ProjectService $projectService) {
         $this->projectService = $projectService;  
     }
+    public function checkParams(Request $req,$id,$task){
+        return ['req'=>$req,'id_name'=>$id,'task'=>$task];
+    }
     public function getCustomStatus(Request $req){
         return $this->projectService->getCustomStatus($req->all());
     }
